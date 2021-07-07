@@ -11,8 +11,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 import services.AssessmentService;
@@ -40,7 +38,7 @@ public class AssessmentServiceTests {
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetAssessments() throws Exception {
+    public void testGetAssessments() {
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(new Assessment());
         Mockito.when(adao.getAssessments()).thenReturn(assessments);
@@ -49,7 +47,7 @@ public class AssessmentServiceTests {
 
     }
     @Test (expectedExceptions= SQLException.class)
-    public void testGetAssessmentsSQLException() throws Exception {
+    public void testGetAssessmentsSQLException() {
         Mockito.when(adao.getAssessments()).thenThrow(SQLException.class);
         assessmentService.getAssessments();
     }
@@ -57,7 +55,7 @@ public class AssessmentServiceTests {
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetAssessmentsByTraineeIdNotEmpty() throws Exception {
+    public void testGetAssessmentsByTraineeIdNotEmpty() {
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(new Assessment());
         Mockito.when(adao.getAssessmentsByTraineeId(2)).thenReturn(assessments);
@@ -66,7 +64,7 @@ public class AssessmentServiceTests {
 
     }
     @Test
-    public void testGetAssessmentsByTraineeIdEmpty() throws Exception {
+    public void testGetAssessmentsByTraineeIdEmpty() {
         List<Assessment> assessments = new ArrayList<>();
         Mockito.when(adao.getAssessmentsByTraineeId(2)).thenReturn(assessments);
         List<Assessment> newAssessments =assessmentService.getAssessmentsByTraineeId(2);
@@ -75,7 +73,7 @@ public class AssessmentServiceTests {
     }
 
     @Test(expectedExceptions= SQLException.class)
-    public void testGetAssessmentsByTraineeIdSqlException() throws Exception {
+    public void testGetAssessmentsByTraineeIdSqlException() {
         Mockito.when(adao.getAssessmentsByTraineeId(2)).thenThrow(SQLException.class);
         assessmentService.getAssessmentsByTraineeId(2);
     }
@@ -83,7 +81,7 @@ public class AssessmentServiceTests {
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetWeekAssessmentsNotEmpty() throws Exception {
+    public void testGetWeekAssessmentsNotEmpty() {
         List<Grade> grades = new ArrayList<>();
         grades.add(new Grade());
         Mockito.when(adao.getGradesForWeek(1, "something")).thenReturn(grades);
@@ -93,7 +91,7 @@ public class AssessmentServiceTests {
     }
 
     @Test
-    public void testGetWeekAssessmentsEmpty() throws Exception {
+    public void testGetWeekAssessmentsEmpty() {
         List<Grade> grades = new ArrayList<>();
         Mockito.when(adao.getGradesForWeek(1, "something")).thenReturn(grades);
         List<Grade> newGrades =assessmentService.getGradesForWeek(1, "something");
@@ -102,7 +100,7 @@ public class AssessmentServiceTests {
     }
 
     @Test(expectedExceptions= SQLException.class)
-    public void testGetWeekAssessmentsEmptySqlException() throws Exception {
+    public void testGetWeekAssessmentsEmptySqlException() {
         Mockito.when(adao.getGradesForWeek(2, "something")).thenThrow(SQLException.class);
         assessmentService.getGradesForWeek(2, "something");
     }
@@ -110,7 +108,7 @@ public class AssessmentServiceTests {
     //----------------------------------------------------------------------
 
     @Test
-    public void testCreateAssessment() throws Exception {
+    public void testCreateAssessment() {
         Assessment assessment = new Assessment();
         Mockito.when(adao.createAssessment(assessment)).thenReturn(assessment);
         Assessment newAssessment =assessmentService.createAssessment(assessment);
@@ -118,7 +116,7 @@ public class AssessmentServiceTests {
     }
 
     @Test(expectedExceptions= SQLException.class)
-    public void testCreateAssessmentSQLException() throws Exception {
+    public void testCreateAssessmentSQLException() {
         Assessment assessment = new Assessment();
         Mockito.when(adao.createAssessment(assessment)).thenThrow(SQLException.class);
         assessmentService.createAssessment(assessment);
@@ -137,7 +135,7 @@ public class AssessmentServiceTests {
     //----------------------------------------------------------------------
 
     @Test
-    public void testCreateAssessmentType() throws Exception {
+    public void testCreateAssessmentType() {
         AssessmentType assessmentType = new AssessmentType();
         Mockito.when(adao.createAssessmentType(assessmentType.getName(),assessmentType.getDefaultWeight())).thenReturn(assessmentType);
         AssessmentType newAssessmentType =assessmentService.createAssessmentType(assessmentType);
@@ -145,7 +143,7 @@ public class AssessmentServiceTests {
     }
 
     @Test(expectedExceptions= SQLException.class)
-    public void testCreateAssessmentTypeSQLException() throws Exception {
+    public void testCreateAssessmentTypeSQLException() {
         AssessmentType assessmentType = new AssessmentType();
         Mockito.when(adao.createAssessmentType(assessmentType.getName(),assessmentType.getDefaultWeight())).thenThrow(SQLException.class);
         assessmentService.createAssessmentType(assessmentType);
@@ -157,9 +155,9 @@ public class AssessmentServiceTests {
     @Test
     public void testGetNotesForTrainee()  {
         List<Note> notes =new ArrayList<>();
-        Mockito.when(adao.getNotesForTrainee(1,"test")).thenReturn(notes);
-        List<Note> newNotes =assessmentService.getNotesForTrainee(1,"test");
-        Assert.assertSame(notes, newNotes);
+            Mockito.when(adao.getNotesForTrainee(1, "test")).thenReturn(notes);
+            List<Note> newNotes = assessmentService.getNotesForTrainee(1, "test");
+            Assert.assertSame(notes, newNotes);
     }
 
 //       This method has no exception
@@ -182,7 +180,7 @@ public class AssessmentServiceTests {
     //----------------------------------------------------------------------
 
     @Test
-    public void testInsertGrade() throws SQLException {
+    public void testInsertGrade() {
         Grade grade =new Grade();
         Mockito.when(adao.insertGrade(grade)).thenReturn(grade);
         Grade newGrade =assessmentService.insertGrade(grade);
@@ -192,7 +190,7 @@ public class AssessmentServiceTests {
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetBatchWeek() throws Exception {
+    public void testGetBatchWeek() {
         List<Assessment> assessments = new ArrayList<>();
         Mockito.when(adao.getBatchWeek(1,"test")).thenReturn(assessments);
         List<Assessment>  newAssessments =assessmentService.getBatchWeek(1,"test");
@@ -200,16 +198,6 @@ public class AssessmentServiceTests {
     }
 
     //----------------------------------------------------------------------
-
-    @AfterMethod
-    void tearDown() {
-
-    }
-
-    @AfterSuite
-    static void tearDownAll() {
-
-    }
 
 }
 

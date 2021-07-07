@@ -83,14 +83,4 @@ public class testCreateAssessment {
         assertEquals("5", returnedAssessment.getWeekId());
     }
 
-    @AfterEach
-    void tearDown() {
-
-    }
-
-    @AfterAll
-    static void tearDownAll() {
-
-    }
-
 }

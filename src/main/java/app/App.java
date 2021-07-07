@@ -19,7 +19,7 @@ public class App {
         // AssessmentRepo ar= new AssessmentRepo();
         // Need a Service
         AssessmentService as = new AssessmentService();
-        app.get("/Testing", (context) -> context.result("Testing"));
+        app.get("/Testing", context -> context.result("Testing"));
 
         // EndPoints
         AssessmentController ac = new AssessmentController(as);
