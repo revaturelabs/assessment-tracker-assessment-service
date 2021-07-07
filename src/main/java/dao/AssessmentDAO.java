@@ -4,35 +4,31 @@ import models.Assessment;
 import models.Grade;
 import models.Note;
 import models.AssessmentType;
-
 import java.util.List;
-import java.sql.SQLException;
 
 public interface AssessmentDAO {
-    public List<Assessment> getAssessments() throws SQLException;
+     List<Assessment> getAssessments();
 
-    public List<Assessment> getAssessmentsByTraineeId(int traineeId) throws SQLException;
+     List<Assessment> getAssessmentsByTraineeId(int traineeId);
 
-    public List<Grade> getGradesForWeek(int traineeId, String weekId) throws SQLException;
+     List<Grade> getGradesForWeek(int traineeId, String weekId);
 
-    public List<Assessment> getBatchWeek(int batchId, String weekId) throws SQLException;
+     List<Assessment> getBatchWeek(int batchId, String weekId);
 
-    public Assessment createAssessment(Assessment a) throws SQLException;
+     Assessment createAssessment(Assessment a);
 
-    public boolean adjustWeight(int assessmentId, int weight) throws SQLException;
+     boolean adjustWeight(int assessmentId, int weight);
 
-    public AssessmentType createAssessmentType(String name, int defaultWeight) throws SQLException;
+     AssessmentType createAssessmentType(String name, int defaultWeight);
 
-    public boolean assignAssessmentType(int assessmentId, int typeId) throws SQLException;
+     boolean assignAssessmentType(int assessmentId, int typeId);
 
-    public List<Note> getNotesForTrainee(int id, String weekId);
+     List<Note> getNotesForTrainee(int id, String weekId);
 
-    public Grade insertGrade(Grade grade);
+     Grade insertGrade(Grade grade);
+    
+     Grade getGradeForAssociate(int associateId, int assessmentId);
 
-
-
-    public Grade getGradeForAssociate(int associateId, int assessmentId) throws SQLException;
-
-    public Grade updateGrade(Grade grade) throws SQLException;
+     Grade updateGrade(Grade grade);
 
 }

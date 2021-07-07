@@ -6,9 +6,6 @@ import models.Grade;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.List;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import util_project.dbconnection;
@@ -82,28 +79,17 @@ public class testGetAssessments {
     }
 
     @Test
-    public void testNotNull() throws Exception{
+    public void testNotNull() {
         List<Assessment> returnedAssessments = adao.getAssessments();
         assertNotNull(returnedAssessments);
     }
 
     @Test
-    public void testGetCorrectSize() throws Exception {
+    public void testGetCorrectSize() {
         List<Assessment> returnedAssessments = adao.getAssessments();
 
         // Test to for correct number of Assessments
-        assertEquals(3, returnedAssessments.size());
+        assertEquals(13, returnedAssessments.size());
     }
-
-    @AfterEach
-    void tearDown() {
-
-    }
-
-    @AfterAll
-    static void tearDownAll() {
-
-    }
-
 
 }

@@ -92,18 +92,8 @@ public class testGetWeekAssessments {
 
         // Iterate over each assessment and ensure that the week id is what we requested
         for (int i = 0; i < grades.size(); i++) {
-            assertEquals("1", grades.get(i).getAssociateId());
+            assertEquals(1, grades.get(i).getAssociateId());
         }
-    }
-
-    @AfterEach
-    void tearDown() {
-
-    }
-
-    @AfterAll
-    static void tearDownAll() {
-
     }
 
 }

@@ -6,38 +6,33 @@ import models.Assessment;
 import models.Grade;
 import models.Note;
 import models.AssessmentType;
-
-import java.sql.SQLException;
 import java.util.List;
 
 public class AssessmentService {
     AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
 
-    public List<Assessment> getAssessments() throws SQLException {
-        List<Assessment> assessments = assessmentDAO.getAssessments();
-        return assessments;
+    public List<Assessment> getAssessments(){
+        return assessmentDAO.getAssessments();
     }
 
-    public List<Assessment> getAssessmentsByTraineeId(int traineeId) throws SQLException {
-        List<Assessment> assessments = assessmentDAO.getAssessmentsByTraineeId(traineeId);
-        return assessments;
+    public List<Assessment> getAssessmentsByTraineeId(int traineeId){
+        return assessmentDAO.getAssessmentsByTraineeId(traineeId);
     }
 
-    public List<Grade> getGradesForWeek(int traineeId, String weekId) throws SQLException {
-        List<Grade> grades = assessmentDAO.getGradesForWeek(traineeId, weekId);
-        return grades;
+    public List<Grade> getGradesForWeek(int traineeId, String weekId){
+        return assessmentDAO.getGradesForWeek(traineeId, weekId);
 
     }
 
-    public Assessment createAssessment(Assessment assessment) throws SQLException {
+    public Assessment createAssessment(Assessment assessment){
         return assessmentDAO.createAssessment(assessment);
     }
 
-    public boolean adjustWeight(int assessmentId, int weight) throws SQLException {
+    public boolean adjustWeight(int assessmentId, int weight){
         return assessmentDAO.adjustWeight(assessmentId, weight);
     }
 
-    public AssessmentType createAssessmentType(AssessmentType assessmentType) throws SQLException {
+    public AssessmentType createAssessmentType(AssessmentType assessmentType) {
         return assessmentDAO.createAssessmentType(assessmentType.getName(), assessmentType.getDefaultWeight());
     }
 
@@ -45,11 +40,11 @@ public class AssessmentService {
         return assessmentDAO.getNotesForTrainee(id, weekId);
     }
 
-    public boolean updateTypeForAssessment(int assessmentId, int typeId) throws SQLException {
+    public boolean updateTypeForAssessment(int assessmentId, int typeId) {
         return assessmentDAO.assignAssessmentType(assessmentId, typeId);
     }
 
-    public Grade insertGrade(Grade grade) throws SQLException {
+    public Grade insertGrade(Grade grade) {
         if(assessmentDAO.getGradeForAssociate(grade.getAssociateId(), grade.getAssessmentId()) == null){
             return assessmentDAO.insertGrade(grade);
         }
@@ -57,10 +52,10 @@ public class AssessmentService {
     }
 
 
-    public List<Assessment> getBatchWeek(int batchId, String weekId) throws SQLException{
+    public List<Assessment> getBatchWeek(int batchId, String weekId){
         return assessmentDAO.getBatchWeek(batchId, weekId);
     }
-    public Grade getGradeForAssociate(int associateId, int assessmentId) throws SQLException {
+    public Grade getGradeForAssociate(int associateId, int assessmentId){
         return assessmentDAO.getGradeForAssociate(associateId, assessmentId);
     }
 }

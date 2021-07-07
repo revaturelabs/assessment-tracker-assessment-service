@@ -41,11 +41,6 @@ public class AssessmentDaoTests {
         Mockito.when(mockPs.executeQuery()).thenReturn(mockRs);
     }
 
-    @BeforeMethod
-    public void setup2() throws Exception {
-
-
-    }
     //----------------------------------------------------------------------
 
     private void createAssessmentRs() throws SQLException {
@@ -251,7 +246,7 @@ public class AssessmentDaoTests {
             Assert.assertSame(newGrade.getGradeId(), grade.getGradeId());
             Assert.assertSame(newGrade.getAssessmentId(), grade.getAssessmentId());
             Assert.assertSame(newGrade.getAssociateId(), grade.getAssociateId());
-            Assert.assertTrue(newGrade.getScore()== grade.getScore());
+            Assert.assertEquals(grade.getScore(), newGrade.getScore());
         } catch (Exception e) {
             System.out.println("error");
         }
@@ -259,16 +254,5 @@ public class AssessmentDaoTests {
 
 
     //----------------------------------------------------------------------
-
-    @AfterMethod
-    void tearDown() {
-
-    }
-
-    @AfterSuite
-    static void tearDownAll() {
-
-    }
-
 
 }
