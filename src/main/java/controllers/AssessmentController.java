@@ -22,157 +22,215 @@ public class AssessmentController {
     private final Gson gson = new Gson();
 
     public AssessmentController(AssessmentService as) {
-        // Setting Service
         this.as = as;
     }
 
     public Handler getAssessments = context -> {
         try {
-            aclogger.info("attempting to get all assessments");
+            aclogger.info("Attempting to get all assessments");
             List<Assessment> assessment = as.getAssessments();
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(assessment));
             context.status(200);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result("No assessments could be found");
             context.status(404);
         }
-
     };
 
     public Handler getAssessmentsByTraineeId = context -> {
+        int traineeId = Integer.parseInt(context.pathParam("id"));
         try {
-            int traineeId = Integer.parseInt(context.pathParam("id"));
-            aclogger.info("attempting to get all assessments");
-            List<Assessment> assessment = as.getAssessmentsByTraineeId(traineeId);
+            aclogger.info("Attempting to get all assessments for trainee with id " + traineeId);
+            List<Assessment> assessments = as.getAssessmentsByTraineeId(traineeId);
+            if(assessments.size() == 0){
+                throw new RuntimeException("The assessment for trainee " + traineeId + " could not be found");
+            }
             context.contentType(CONTENTTYPE);
-            context.result(gson.toJson(assessment));
+            context.result(gson.toJson(assessments));
             context.status(200);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result(e.getMessage());
             context.status(404);
         }
-
     };
 
     public Handler getGradesForWeek = context -> {
+        int traineeId = Integer.parseInt(context.pathParam("id"));
+        String weekId = context.pathParam(WEEKID);
         try {
-            aclogger.info("attempting to get assessments for a trainee");
-            int traineeId = Integer.parseInt(context.pathParam("id"));
-            String weekId = context.pathParam(WEEKID);
-            aclogger.info("attempting to get assessments");
+            aclogger.info("Attempting to get grades for trainee " + traineeId  + "for week " + weekId);
+            aclogger.info("Checking if trainee with id " + traineeId + " exists");
+            List<Assessment> assessments = as.getAssessmentsByTraineeId(traineeId);
+            if(assessments.size() == 0){
+                throw new RuntimeException("The trainee with id " + traineeId + " could not be found");
+            }
+            aclogger.info("Attempting to get grades for trainee with id " + traineeId + " for week " + weekId);
             List<Grade> grades = as.getGradesForWeek(traineeId, weekId);
+            if(grades.size() == 0){
+                throw new RuntimeException("The week with id " + weekId + " could not be found");
+            }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grades));
-        } catch (Exception e) {
+            context.status(200);
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(404);
         }
-
     };
 
     public Handler getBatchWeek = context -> {
+        int batchId = Integer.parseInt(context.pathParam("id"));
+        String weekId = context.pathParam(WEEKID);
         try {
-            aclogger.info("attempting to get assessments for a batch by week");
-            int batchId = Integer.parseInt(context.pathParam("id"));
-            String weekId = context.pathParam(WEEKID);
-            aclogger.info("attempting to get assessments");
+            aclogger.info("Attempting to get assessments for batch " + batchId + " for week " + weekId);
             List<Assessment> assessments = as.getBatchWeek(batchId, weekId);
+            if(assessments.size() == 0){
+                throw new RuntimeException("There are no assessments for the combination of batch " + batchId + " and week " + weekId);
+            }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(assessments));
-        } catch (Exception e) {
+            context.status(200);
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(404);
         }
     };
 
     public Handler getNotesForTrainee = context -> {
+        int id = Integer.parseInt(context.pathParam("id"));
+        String weekId = context.pathParam(WEEKID);
         try {
-            aclogger.info("attempting to get notes params");
-            int id = Integer.parseInt(context.pathParam("id"));
-            String weekId = context.pathParam(WEEKID);
-            aclogger.info("attempting to get notes");
+            aclogger.info("Attempting to get notes for trainee " + id + " for week " + weekId);
+            aclogger.info("Checking if trainee with id " + id + " exists");
+            List<Assessment> assessments = as.getAssessmentsByTraineeId(id);
+            if(assessments.size() == 0){
+                throw new RuntimeException("The trainee with id " + id + " could not be found");
+            }
             List<Note> notes = as.getNotesForTrainee(id, weekId);
+            if(notes.size() == 0){
+                throw new RuntimeException("The week with id " + weekId + " could not be found");
+            }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(notes));
-        } catch (Exception e) {
+            context.status(200);
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(404);
         }
     };
 
     public Handler createAssessment = context -> {
         try {
-            aclogger.info("attempting to create an assessment");
+            aclogger.info("Attempting to create an assessment");
             Assessment assessment = gson.fromJson(context.body(), Assessment.class);
             Assessment updatedAssessment = as.createAssessment(assessment);
             context.contentType(CONTENTTYPE);
-            aclogger.info("attempting to return updated assessment");
+            aclogger.info("Attempting to return updated assessment");
             context.result(gson.toJson(updatedAssessment));
-        } catch (Exception e) {
+            context.status(201);
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result("Could not create the assessment");
         }
-
     };
 
     public Handler insertGrade = context -> {
         try {
-            aclogger.info("attempting to update the grade on an assessment");
+            aclogger.info("Attempting to update the grade on an assessment");
             Grade grade = gson.fromJson(context.body(), Grade.class);
             Grade insertedGrade = as.insertGrade(grade);
             context.contentType(CONTENTTYPE);
-            aclogger.info("attempting to return inserted  grade");
+            aclogger.info("Attempting to return inserted  grade");
             context.result(gson.toJson(insertedGrade));
-        } catch (Exception e) {
+            context.status(201);
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result("Could not update the grade");
         }
     };
 
     public Handler adjustWeight = context -> {
-        aclogger.info("attempting to update the weight on an assessment");
+
+        int weight = Integer.parseInt(context.pathParam("weight"));
+        int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try {
-            aclogger.info("attempting to update the grade on an assessment");
-            int weight = Integer.parseInt(context.pathParam("weight"));
-            int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
+            aclogger.info("Attempting to update the weight on an assessment");
             boolean wasUpdated = as.adjustWeight(assessmentId, weight);
+            if(!wasUpdated){
+                throw new RuntimeException("There is no assessment with id " + assessmentId);
+            }
             context.contentType(CONTENTTYPE);
-            aclogger.info("attempting to return updatedWeight");
+            aclogger.info("Attempting to return updatedWeight");
             context.result(gson.toJson(wasUpdated));
-        } catch (Exception e) {
+            context.status(205);
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(404);
         }
     };
+
     public Handler createAssessmentType = context -> {
         try {
-            aclogger.info("attempting to create a Type for assessments");
+            aclogger.info("Attempting to create a type for assessments");
             AssessmentType assessmentType = gson.fromJson(context.body(), AssessmentType.class);
             AssessmentType updatedAssessmentType = as.createAssessmentType(assessmentType);
             context.contentType(CONTENTTYPE);
-            aclogger.info("attempting to return updated type");
+            aclogger.info("Attempting to return updated type");
             context.result(gson.toJson(updatedAssessmentType));
-        } catch (Exception e) {
+            context.status(201);
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result("Could not create the assessment type");
         }
     };
+
     public Handler assignAssessmentType = context -> {
-        aclogger.info("attempting to update type for assessment");
+        int typeId = Integer.parseInt(context.pathParam("typeId"));
+        int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try {
-            int typeId = Integer.parseInt(context.pathParam("typeId"));
-            int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
+            aclogger.info("Attempting to update type for assessment");
             boolean wasUpdated = as.updateTypeForAssessment(assessmentId,typeId);
+            if(!wasUpdated){
+                throw new RuntimeException("There is no assessment with id " + assessmentId);
+            }
             context.contentType(CONTENTTYPE);
-            aclogger.info("attempting to return updated type for assessment");
+            aclogger.info("Attempting to return updated type for assessment");
             context.result(gson.toJson(wasUpdated));
-        } catch (Exception e) {
+            context.status(205);
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(404);
         }
     };
+
     public Handler getGradeForAssociate = context -> {
+        int associateId = Integer.parseInt(context.pathParam("associateId"));
+        int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try{
-            int associateId = Integer.parseInt(context.pathParam("associateId"));
-            int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
+            aclogger.info("Checking if associate with id " + associateId + " exists");
+            List<Assessment> assessments = as.getAssessmentsByTraineeId(associateId);
+            if(assessments.size() == 0){
+                throw new RuntimeException("The associate with id " + associateId + " could not be found");
+            }
             Grade grade = as.getGradeForAssociate(associateId, assessmentId);
+            if(grade == null){
+                throw new RuntimeException("The assessment with id " + assessmentId + " could not be found");
+            }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grade));
+            context.status(200);
         }catch (Exception e){
             aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(404);
         }
     };
 }
