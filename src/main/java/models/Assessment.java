@@ -89,6 +89,7 @@ public class Assessment {
     public void setAssessmentWeight(int assessmentWeight) throws InvalidValue {
         if(assessmentWeight < 0 || assessmentWeight > 100)
             throw new InvalidValue(String.format("%d is not a valid weight", assessmentWeight));
+        this.assessmentWeight = assessmentWeight;
     }
 
     public int getCategoryId() {
