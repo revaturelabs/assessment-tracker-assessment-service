@@ -3,27 +3,25 @@ package daoTests;
 import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
 import models.Grade;
+import util.ConnectionDB;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import util_project.dbconnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class testInsertGrade {
+public class TestInsertGrade {
     // Class to be tested
     private AssessmentDAO adao;
-
+    
     // Dependencies
     private Connection mockConn;
     private Grade mockGrade;
@@ -43,8 +41,8 @@ public class testInsertGrade {
         mockRs    = Mockito.mock(ResultSet.class);
 
         // Since getconnection is a static method, get a static mock object
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
 
 
             // When prepareStatement is called on the connection, return the prepared statement
