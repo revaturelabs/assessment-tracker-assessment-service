@@ -1,8 +1,5 @@
 package models;
 
-
-import java.util.Date;
-
 public class Grade {
     private int gradeId;
     private int assessmentId;
@@ -45,8 +42,8 @@ public class Grade {
         return associateId;
     }
 
-    public void setAssociateId(int traineeId) {
-        this.associateId = traineeId;
+    public void setAssociateId(int associateId) {
+        this.associateId = associateId;
     }
 
     public double getScore() {

@@ -46,6 +46,14 @@
 # *.iml
 # *.ipr
 
+/.factorypath
+/.project
+/.classpath
+.vscode/
+.apt_generated_tests/
+target/
+
+
 # CMake
 cmake-build-*/
 

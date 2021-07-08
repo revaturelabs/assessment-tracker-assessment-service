@@ -3,8 +3,8 @@ package dao;
 import models.Assessment;
 import models.Grade;
 import models.Note;
+import util.ConnectionDB;
 import models.AssessmentType;
-import util_project.dbconnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,13 +12,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import exceptions.InvalidValue;
+
 public class AssessmentDAOImpl implements AssessmentDAO {
 
 
     @Override
     public List<Assessment> getAssessments(){
         String sql = "SELECT * FROM assessments";
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)) {
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
 
             List<Assessment> assessments = new ArrayList<>();
@@ -29,7 +31,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
             return assessments;
 
-        } catch (SQLException e) {
+        } catch (SQLException | InvalidValue e) {
             e.printStackTrace();
         }
 
@@ -40,7 +42,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     public List<Assessment> getAssessmentsByTraineeId(int traineeId){
         String sql = "SELECT * FROM grades AS g JOIN assessments a ON " +
                 "g.assessment_id = a.id WHERE associate_id = ?";
-        try (PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)){
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
 
             ps.setInt(1, traineeId);
 
@@ -53,7 +55,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
             }
             return assessments;
 
-        } catch (SQLException e) {
+        } catch (SQLException | InvalidValue e) {
             e.printStackTrace();
         }
 
@@ -63,7 +65,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public List<Assessment> getBatchWeek(int batchId, String weekId) {
         String sql = "SELECT * FROM assessments WHERE batch_id = ? AND week = ?";
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)) {
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, batchId);
             ps.setString(2, weekId);
 
@@ -77,7 +79,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
             return assessments;
 
-        } catch (SQLException e) {
+        } catch (SQLException | InvalidValue e) {
             e.printStackTrace();
         }
 
@@ -90,7 +92,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
         String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a " +
                 "ON g.assessment_id = a.id WHERE" +
                 " associate_id = ? AND assessment_id = ?";
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)) {
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, associateId);
             ps.setInt(2, assessmentId);
 
@@ -110,7 +112,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public Grade updateGrade(Grade grade){
         String sql = "UPDATE grades SET score=? WHERE assessment_id=? and associate_id=? RETURNING *";
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)){
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
             ps.setDouble(1, grade.getScore());
             ps.setInt(2, grade.getAssessmentId());
             ps.setInt(3, grade.getAssociateId());
@@ -132,7 +134,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
         String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a " +
                 "ON g.assessment_id = a.id WHERE" +
                 " associate_id = ? AND week = ?";
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)) {
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, traineeId);
             ps.setString(2, weekId);
 
@@ -156,7 +158,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public Assessment createAssessment(Assessment a){
         String sql = "INSERT INTO assessments VALUES (DEFAULT,?,?,?,?,?,?) RETURNING *";
-        try (PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)){
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
             ps.setInt(1, a.getCategoryId());
             ps.setInt(2, a.getTypeId());
             ps.setString(3, a.getAssessmentTitle());
@@ -169,7 +171,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
             if (rs.next()) {
                 return buildAssessment(rs);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | InvalidValue e) {
             e.printStackTrace();
         }
 
@@ -179,7 +181,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public boolean adjustWeight(int assessmentId, int weight) {
         String sql = "UPDATE assessments SET weight=? WHERE id=?";
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)) {
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, weight);
             ps.setInt(2, assessmentId);
 
@@ -197,7 +199,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     public AssessmentType createAssessmentType(String name, int defaultWeight) {
         String sql = "INSERT INTO types values (default, ?, ?)";
 
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, name);
             ps.setInt(2, defaultWeight);
 
@@ -217,7 +219,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public boolean assignAssessmentType(int assessmentId, int typeId) {
         String sql = "UPDATE assessments SET type_id=? WHERE id=?";
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)){
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
             ps.setInt(1, typeId);
             ps.setInt(2, assessmentId);
 
@@ -235,7 +237,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     public List<Note> getNotesForTrainee(int id, String weekId) {
         String sql = "SELECT * FROM notes WHERE associate_id=? AND week=?";
         List<Note> notes = new ArrayList<>();
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)) {
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.setString(2, weekId);
 
@@ -255,7 +257,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     public Grade insertGrade(Grade grade) {
 
         String sql = "INSERT INTO grades VALUES (DEFAULT,?,?,?) RETURNING *";
-        try(PreparedStatement ps = dbconnection.getConnection().prepareStatement(sql)) {
+        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, grade.getAssessmentId());
             ps.setInt(3, grade.getAssociateId());
             ps.setDouble(2, grade.getScore());
@@ -277,7 +279,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
               );
     }
 
-    private Assessment buildAssessment(ResultSet rs) throws SQLException {
+    private Assessment buildAssessment(ResultSet rs) throws SQLException, InvalidValue {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(rs.getInt("id"));
         assessment.setAssessmentTitle(rs.getString("title"));
