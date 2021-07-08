@@ -28,12 +28,12 @@ public class AssessmentController {
 
     public Handler getAssessments = context -> {
         try {
-            aclogger.info("attempting to get all assessments");
+            aclogger.info("Attempting to get all assessments");
             List<Assessment> assessment = as.getAssessments();
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(assessment));
             context.status(200);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             aclogger.info(e);
             context.status(404);
         }
@@ -41,30 +41,33 @@ public class AssessmentController {
     };
 
     public Handler getAssessmentsByTraineeId = context -> {
+        int traineeId = Integer.parseInt(context.pathParam("id"));
         try {
-            int traineeId = Integer.parseInt(context.pathParam("id"));
-            aclogger.info("attempting to get all assessments");
+            aclogger.info("Attempting to get all assessments for trainee with id " + traineeId);
             List<Assessment> assessment = as.getAssessmentsByTraineeId(traineeId);
+            if(assessment.size() == 0){
+                throw new RuntimeException("The assessment for trainee " + traineeId + " could not be found");
+            }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(assessment));
             context.status(200);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             aclogger.info(e);
+            context.result("The assessment for trainee " + traineeId + " could not be found");
             context.status(404);
         }
 
     };
 
     public Handler getGradesForWeek = context -> {
+        int traineeId = Integer.parseInt(context.pathParam("id"));
+        String weekId = context.pathParam(WEEKID);
         try {
-            aclogger.info("attempting to get assessments for a trainee");
-            int traineeId = Integer.parseInt(context.pathParam("id"));
-            String weekId = context.pathParam(WEEKID);
-            aclogger.info("attempting to get assessments");
+            aclogger.info("Attempting to get grades for trainee with id " + traineeId + " for week " + weekId);
             List<Grade> grades = as.getGradesForWeek(traineeId, weekId);
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grades));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             aclogger.info(e);
         }
 
@@ -172,6 +175,7 @@ public class AssessmentController {
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grade));
         }catch (Exception e){
+
             aclogger.info(e);
         }
     };
