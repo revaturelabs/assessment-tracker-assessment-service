@@ -1,6 +1,9 @@
 package daoTests;
 
+import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
+import models.Assessment;
+import models.AssessmentType;
 import models.Grade;
 import util.ConnectionDB;
 
@@ -19,50 +22,21 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAssignAssessmentType {
-    // Class to be tested
-    private AssessmentDAOImpl adao;
 
-    // Dependencies
-    private Connection mockConn;
-    private Grade mockGrade;
-    private PreparedStatement mockPs;
-    private ResultSet mockRs;
+    static AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
+    static AssessmentType testAssessmentType = new AssessmentType(0,"QC", 100);
 
-    @Before
-    public void setup(){
-        // Create our Mock objects
-        mockConn  = Mockito.mock(Connection.class);
-        mockGrade = Mockito.mock(Grade.class);
-        mockPs    = Mockito.mock(PreparedStatement.class);
-        mockRs    = Mockito.mock(ResultSet.class);
-
-        // Since getconnection is a static method, get a static mock object
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-
-
-            // When prepareStatement is called on the connection, return the prepared statement
-            // When executeQuery is called, return the result set
-            Mockito.when(mockConn.prepareStatement(Mockito.any(String.class))).thenReturn(mockPs);
-            Mockito.when(mockPs.executeQuery()).thenReturn(mockRs);
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        // Initialize the class to be tested
-        adao = new AssessmentDAOImpl();
-    }
 
     @Test
     public void testNotNull() {
-        Boolean returnedAssessmentType = adao.assignAssessmentType(1, 1);
+        Boolean returnedAssessmentType = assessmentDAO.assignAssessmentType(testAssessmentType.getTypeId(), testAssessmentType.getDefaultWeight());
         assertNotNull(returnedAssessmentType);
     }
 
     @Test
     public void testEmptyString(){
-        // TODO: Should we return the string os the assessment type here instead of a boolean
-        //Boolean returnedAssessmentType = adao.assignAssessmentType(1);
-        //assertTrue(!returnedAssessmentType.isEmpty());
+        boolean returnedAssessmentType = assessmentDAO.assignAssessmentType(0, 1);
+        assertTrue(returnedAssessmentType);
     }
 
 }
