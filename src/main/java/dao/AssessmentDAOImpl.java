@@ -181,12 +181,13 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public boolean adjustWeight(int assessmentId, int weight) {
         String sql = "UPDATE assessments SET weight=? WHERE id=?";
+        if(weight < 0 || weight > 100)
+            return false;
         try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, weight);
             ps.setInt(2, assessmentId);
 
             ps.executeUpdate();
-
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
