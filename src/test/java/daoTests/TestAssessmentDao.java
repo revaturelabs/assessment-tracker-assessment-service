@@ -4,10 +4,12 @@ import dao.AssessmentDAOImpl;
 import models.Assessment;
 import models.Grade;
 import models.Note;
+import util.ConnectionDB;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.*;
-import org.testng.Assert;
-import org.testng.annotations.*;
-import util_project.dbconnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +18,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-public class AssessmentDaoTests {
+public class TestAssessmentDao {
 
     @Mock
     private Connection mockConn;
@@ -31,7 +33,7 @@ public class AssessmentDaoTests {
 
     //----------------------------------------------------------------------
 
-    @BeforeSuite
+    @Before
     public void setup() throws Exception {
         // Initialize the class to be tested
         assessmentDAOImpl = new AssessmentDAOImpl();
@@ -85,8 +87,8 @@ public class AssessmentDaoTests {
     @Test
     public void testGetAssessments() throws Exception {
         createAssessmentRs();
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             List<Assessment> newAssessments = assessmentDAOImpl.getAssessments();
             Assert.assertEquals(newAssessments.get(0).getAssessmentTitle(), "Title");
         } catch (Exception e) {
@@ -100,8 +102,8 @@ public class AssessmentDaoTests {
     public void testGetAssessmentsByTraineeId() throws Exception {
         createAssessmentRs();
         Mockito.when(mockRs.getInt("id")).thenReturn(2);
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             List<Assessment> newAssessments = assessmentDAOImpl.getAssessmentsByTraineeId(2);
             Assert.assertEquals(newAssessments.get(0).getAssessmentId(), 2);
         } catch (Exception e) {
@@ -117,8 +119,8 @@ public class AssessmentDaoTests {
         createAssessmentRs();
         Mockito.when(mockRs.getInt("associate_id")).thenReturn(2);
         Mockito.when(mockRs.getString("week")).thenReturn("weekNumber");
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             List<Grade> newGrades = assessmentDAOImpl.getGradesForWeek(2,"weekNumber");
             Assert.assertEquals(newGrades.get(0).getAssociateId(), 2);
         } catch (Exception e) {
@@ -132,8 +134,8 @@ public class AssessmentDaoTests {
     public void testGetBatchWeek() throws Exception {
         createAssessmentRs();
         Mockito.when(mockRs.getString("week")).thenReturn("weekNumber");
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             List<Assessment> newAssessments = assessmentDAOImpl.getBatchWeek(2,"weekNumber");
             Assert.assertEquals(newAssessments.get(0).getWeekId(), "weekNumber");
         } catch (Exception e) {
@@ -157,8 +159,8 @@ public class AssessmentDaoTests {
         Assessment.setCategoryId(1);
 
 
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             Assessment newAssessment = assessmentDAOImpl.createAssessment(Assessment);
             Assert.assertEquals(newAssessment.getAssessmentId(), Assessment.getAssessmentId());
             Assert.assertEquals(newAssessment.getAssessmentTitle(), Assessment.getAssessmentTitle());
@@ -174,8 +176,8 @@ public class AssessmentDaoTests {
 
     @Test
     public void testAdjustWeightTrue() throws Exception {
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             boolean didAdjust = assessmentDAOImpl.adjustWeight(1,1);
             Assert.assertTrue(didAdjust);
         } catch (Exception e) {
@@ -185,8 +187,8 @@ public class AssessmentDaoTests {
 
 //    @Test
 //    public void testAdjustWeightFalse() throws Exception {
-//        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-//            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+//        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+//            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
 //            Mockito.doThrow(new SQLException()).when(mockPs).executeUpdate();
 //            boolean didAdjust = assessmentDAOImpl.adjustWeight(1,1);
 //            Assert.assertTrue(didAdjust);
@@ -202,8 +204,8 @@ public class AssessmentDaoTests {
     public void testCreateAssessmentType() throws Exception {
         createAssessmentRs();
         Mockito.when(mockRs.getString("week")).thenReturn("weekNumber");
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             List<Assessment> newAssessments = assessmentDAOImpl.getBatchWeek(2,"weekNumber");
             Assert.assertEquals(newAssessments.get(0).getWeekId(), "weekNumber");
         } catch (Exception e) {
@@ -222,8 +224,8 @@ public class AssessmentDaoTests {
     @Test
     public void testGetNotesForTrainee() throws Exception {
         createAssessmentRs();
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             List<Note> newNotes = assessmentDAOImpl.getNotesForTrainee(2,"weekNumber");
             Assert.assertEquals(newNotes.get(0).getWeekId(), "weekNumber");
         } catch (Exception e) {
@@ -240,8 +242,8 @@ public class AssessmentDaoTests {
         grade.setAssessmentId(3);
         grade.setAssociateId(3);
         grade.setScore(50.0);
-        try (MockedStatic<dbconnection> mockedStatic = Mockito.mockStatic(dbconnection.class)) {
-            mockedStatic.when(dbconnection::getConnection).thenReturn(mockConn);
+        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
+            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
             Grade newGrade = assessmentDAOImpl.insertGrade(grade);
             Assert.assertSame(newGrade.getGradeId(), grade.getGradeId());
             Assert.assertSame(newGrade.getAssessmentId(), grade.getAssessmentId());
