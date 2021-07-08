@@ -1,13 +1,12 @@
-package util_project;
+package util;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
-public class dbconnection {
+public class ConnectionDB {
     private static Connection conn = null;
 
     public static Connection getConnection(){

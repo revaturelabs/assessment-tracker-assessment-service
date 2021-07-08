@@ -3,6 +3,8 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
+import exceptions.InvalidValue;
+
 public class Assessment {
     private int assessmentId;
     private String assessmentTitle;
@@ -26,8 +28,10 @@ public class Assessment {
     }
 
     public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
-            int assessmentWeight, int categoryId, List<String> notes) {
+            int assessmentWeight, int categoryId, List<String> notes) throws InvalidValue {
         super();
+        if(assessmentWeight < 0 || assessmentWeight > 100)
+            throw new InvalidValue(String.format("%d is not a valid weight", assessmentWeight));
         this.assessmentId = assessmentId;
         this.assessmentTitle = assessmentTitle;
         this.typeId = typeId;
@@ -82,8 +86,9 @@ public class Assessment {
         return assessmentWeight;
     }
 
-    public void setAssessmentWeight(int assessmentWeight) {
-        this.assessmentWeight = assessmentWeight;
+    public void setAssessmentWeight(int assessmentWeight) throws InvalidValue {
+        if(assessmentWeight < 0 || assessmentWeight > 100)
+            throw new InvalidValue(String.format("%d is not a valid weight", assessmentWeight));
     }
 
     public int getCategoryId() {
