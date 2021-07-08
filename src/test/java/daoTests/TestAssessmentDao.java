@@ -1,9 +1,16 @@
 package daoTests;
 
+import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
+import exceptions.InvalidValue;
 import models.Assessment;
+import models.AssessmentType;
 import models.Grade;
 import models.Note;
+import org.checkerframework.checker.units.qual.A;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
 import util.ConnectionDB;
 
 import org.junit.Assert;
@@ -15,243 +22,112 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestAssessmentDao {
 
-    @Mock
-    private Connection mockConn;
-    @Mock
-    private PreparedStatement mockPs;
-    @Mock
-    private ResultSet mockRs;
+    private AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
+    private Assessment testAssessment = new Assessment(0, "testAssessment", 1, 1, "3", 100, 1, new ArrayList<String>());
+    private AssessmentType testAssessmentType = new AssessmentType(0, "testAssessmentType", 50);
+    //private Grade testGrade = new Grade(0, testAssessment.getAssessmentId(), 1, 5);
+    private Grade testGrade = new Grade(0, 1, 1, 5);
 
+    public TestAssessmentDao() throws InvalidValue {
+    }
 
-    @InjectMocks
-    AssessmentDAOImpl assessmentDAOImpl;
-
+    @Test
+    @Order(1)
+    public void testCreateAssessment() {
+        Assessment assessment = assessmentDAO.createAssessment(testAssessment);
+        testAssessment = assessment;
+        Assert.assertTrue(assessment.getAssessmentId() != 0);
+    }
     //----------------------------------------------------------------------
 
-    @Before
-    public void setup() throws Exception {
-        // Initialize the class to be tested
-        assessmentDAOImpl = new AssessmentDAOImpl();
-        MockitoAnnotations.openMocks(this);
-
-        Mockito.when(mockConn.prepareStatement(Mockito.any(String.class))).thenReturn(mockPs);
-        Mockito.when(mockPs.executeQuery()).thenReturn(mockRs);
-    }
-
-    //----------------------------------------------------------------------
-
-    private void createAssessmentRs() throws SQLException {
-
-        Mockito.when(mockRs.next()).thenReturn(true).thenReturn(false);
-        Mockito.when(mockRs.getInt("id")).thenReturn(1);
-        Mockito.when(mockRs.getString("title")).thenReturn("Title");
-        Mockito.when(mockRs.getInt("type_id")).thenReturn(1);
-        Mockito.when(mockRs.getInt("batch_id")).thenReturn(1);
-        Mockito.when(mockRs.getString("week")).thenReturn("weekNumber");
-        Mockito.when(mockRs.getInt("weight")).thenReturn(1);
-        Mockito.when(mockRs.getInt("category_id")).thenReturn(1);
-
-    }
-
-    private void createNotesRs() throws SQLException {
-
-        Mockito.when(mockRs.next()).thenReturn(true).thenReturn(false);
-        Mockito.when(mockRs.getInt("id")).thenReturn(1);
-        Mockito.when(mockRs.getString("title")).thenReturn("Title");
-        Mockito.when(mockRs.getInt("type_id")).thenReturn(1);
-        Mockito.when(mockRs.getInt("batch_id")).thenReturn(1);
-        Mockito.when(mockRs.getString("week")).thenReturn("weekNumber");
-        Mockito.when(mockRs.getInt("weight")).thenReturn(1);
-        Mockito.when(mockRs.getInt("category_id")).thenReturn(1);
-
-    }
-
-    private void createGradeRs() throws SQLException {
-
-        Mockito.when(mockRs.next()).thenReturn(true).thenReturn(false);
-        Mockito.when(mockRs.getInt("id")).thenReturn(3);
-        Mockito.when(mockRs.getInt("assessment_id")).thenReturn(3);
-        Mockito.when(mockRs.getInt("associate_id")).thenReturn(3);
-        Mockito.when(mockRs.getDouble("score")).thenReturn(50.0);
-
-
+    @Test
+    @Order(2)
+    public void testGetAssessments()  {
+        assessmentDAO.createAssessment(testAssessment);
+        List<Assessment> assessments = assessmentDAO.getAssessments();
+        Assert.assertTrue(assessments.size() >= 1);
     }
 
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetAssessments() throws Exception {
-        createAssessmentRs();
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            List<Assessment> newAssessments = assessmentDAOImpl.getAssessments();
-            Assert.assertEquals(newAssessments.get(0).getAssessmentTitle(), "Title");
-        } catch (Exception e) {
-            System.out.println("error");
+    @Order(3)
+    public void testGetAssessmentsByTraineeId() {
+        List<Integer> oneBatches = new ArrayList<>();
+        oneBatches.add(1);
+        oneBatches.add(3);
+        oneBatches.add(4);
+        oneBatches.add(5);
+        oneBatches.add(6);
+        List<Assessment> assessments = assessmentDAO.getAssessmentsByTraineeId(1);
+        for (Assessment a : assessments) {
+            System.out.println(a.getBatchId());
+            Assert.assertTrue(oneBatches.contains(a.getBatchId()));
         }
     }
 
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetAssessmentsByTraineeId() throws Exception {
-        createAssessmentRs();
-        Mockito.when(mockRs.getInt("id")).thenReturn(2);
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            List<Assessment> newAssessments = assessmentDAOImpl.getAssessmentsByTraineeId(2);
-            Assert.assertEquals(newAssessments.get(0).getAssessmentId(), 2);
-        } catch (Exception e) {
-            System.out.println("error");
-        }
-
+    @Order(4)
+    public void testGetWeekAssessments() {
+       List<Grade> grades = assessmentDAO.getGradesForWeek(1, "3");
+       for (Grade g : grades) {
+           Assert.assertTrue(g.getAssociateId() == 1);
+       }
     }
 
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetWeekAssessments() throws Exception {
-        createAssessmentRs();
-        Mockito.when(mockRs.getInt("associate_id")).thenReturn(2);
-        Mockito.when(mockRs.getString("week")).thenReturn("weekNumber");
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            List<Grade> newGrades = assessmentDAOImpl.getGradesForWeek(2,"weekNumber");
-            Assert.assertEquals(newGrades.get(0).getAssociateId(), 2);
-        } catch (Exception e) {
-            System.out.println("error");
+    @Order(5)
+    public void testGetBatchWeek() {
+        List<Assessment> assessments = assessmentDAO.getBatchWeek(1, "3");
+        for (Assessment a : assessments) {
+            Assert.assertTrue(a.getWeekId().equals("3"));
         }
     }
 
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetBatchWeek() throws Exception {
-        createAssessmentRs();
-        Mockito.when(mockRs.getString("week")).thenReturn("weekNumber");
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            List<Assessment> newAssessments = assessmentDAOImpl.getBatchWeek(2,"weekNumber");
-            Assert.assertEquals(newAssessments.get(0).getWeekId(), "weekNumber");
-        } catch (Exception e) {
-            System.out.println("error");
-        }
-
-    }
-
-    //----------------------------------------------------------------------
-    @Test
-    public void testCreateAssessment() throws Exception {
-        createAssessmentRs();
-
-        Assessment Assessment= new Assessment();
-        Assessment.setAssessmentId(1);
-        Assessment.setAssessmentTitle("Title");
-        Assessment.setTypeId(1);
-        Assessment.setBatchId(1);
-        Assessment.setWeekId("weekNumber");
-        Assessment.setAssessmentWeight(1);
-        Assessment.setCategoryId(1);
-
-
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            Assessment newAssessment = assessmentDAOImpl.createAssessment(Assessment);
-            Assert.assertEquals(newAssessment.getAssessmentId(), Assessment.getAssessmentId());
-            Assert.assertEquals(newAssessment.getAssessmentTitle(), Assessment.getAssessmentTitle());
-            Assert.assertEquals(newAssessment.getAssessmentWeight(), Assessment.getAssessmentWeight());
-            Assert.assertEquals(newAssessment.getWeekId(), Assessment.getWeekId());
-            Assert.assertEquals(newAssessment.getCategoryId(), Assessment.getCategoryId());
-        } catch (Exception e) {
-            System.out.println("error");
-        }
-
-    }
-    //----------------------------------------------------------------------
-
-    @Test
-    public void testAdjustWeightTrue() throws Exception {
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            boolean didAdjust = assessmentDAOImpl.adjustWeight(1,1);
-            Assert.assertTrue(didAdjust);
-        } catch (Exception e) {
-            System.out.println("error");
-        }
-    }
-
-//    @Test
-//    public void testAdjustWeightFalse() throws Exception {
-//        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-//            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-//            Mockito.doThrow(new SQLException()).when(mockPs).executeUpdate();
-//            boolean didAdjust = assessmentDAOImpl.adjustWeight(1,1);
-//            Assert.assertTrue(didAdjust);
-//        } catch (Exception e) {
-//            System.out.println("error");
-//        }
-//
-//    }
-
-    //----------------------------------------------------------------------
-
-    @Test
-    public void testCreateAssessmentType() throws Exception {
-        createAssessmentRs();
-        Mockito.when(mockRs.getString("week")).thenReturn("weekNumber");
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            List<Assessment> newAssessments = assessmentDAOImpl.getBatchWeek(2,"weekNumber");
-            Assert.assertEquals(newAssessments.get(0).getWeekId(), "weekNumber");
-        } catch (Exception e) {
-            System.out.println("error");
-        }
-
+    @Order(6)
+    public void testAdjustWeightTrue() {
+        Assert.assertTrue(assessmentDAO.adjustWeight(testAssessment.getAssessmentId(),20));
     }
 
     //----------------------------------------------------------------------
 
-
-
+    @Test
+    @Order(7)
+    public void testCreateAssessmentType() {
+        AssessmentType assessmentType = assessmentDAO.createAssessmentType(testAssessmentType.getName(),testAssessmentType.getDefaultWeight());
+        testAssessmentType = assessmentType;
+        Assert.assertTrue(assessmentType.getTypeId() != 0);
+    }
 
     //----------------------------------------------------------------------
 
     @Test
-    public void testGetNotesForTrainee() throws Exception {
-        createAssessmentRs();
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            List<Note> newNotes = assessmentDAOImpl.getNotesForTrainee(2,"weekNumber");
-            Assert.assertEquals(newNotes.get(0).getWeekId(), "weekNumber");
-        } catch (Exception e) {
-            System.out.println("error");
-        }
+    @Order(8)
+    public void testGetNotesForTrainee() {
+        List<Note> notes = assessmentDAO.getNotesForTrainee(1, "1");
+        Assert.assertTrue(notes.get(0) != null);
     }
 
     //----------------------------------------------------------------------
     @Test
-    public void testInsertGrade() throws Exception {
-        createGradeRs();
-        Grade grade=new Grade();
-        grade.setGradeId(3);
-        grade.setAssessmentId(3);
-        grade.setAssociateId(3);
-        grade.setScore(50.0);
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            Grade newGrade = assessmentDAOImpl.insertGrade(grade);
-            Assert.assertSame(newGrade.getGradeId(), grade.getGradeId());
-            Assert.assertSame(newGrade.getAssessmentId(), grade.getAssessmentId());
-            Assert.assertSame(newGrade.getAssociateId(), grade.getAssociateId());
-            Assert.assertEquals(grade.getScore(), newGrade.getScore());
-        } catch (Exception e) {
-            System.out.println("error");
-        }
+    @Order(9)
+    public void testInsertGrade() {
+        Grade grade = assessmentDAO.insertGrade(testGrade);
+        Assert.assertTrue(grade.getGradeId() != 0);
     }
 
 
