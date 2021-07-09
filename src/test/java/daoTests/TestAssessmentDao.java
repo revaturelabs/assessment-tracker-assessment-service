@@ -108,7 +108,7 @@ public class TestAssessmentDao {
     @Test
     @Order(8)
     public void testGetNotesForTrainee() {
-        List<Note> notes = assessmentDAO.getNotesForTrainee(1, "1");
+        List<Note> notes = assessmentDAO.getNotesForTrainee(1, 1);
         Assert.assertTrue(notes.get(0) != null);
     }
 

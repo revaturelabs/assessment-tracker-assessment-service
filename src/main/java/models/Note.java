@@ -4,7 +4,7 @@ public class Note {
     private int noteId;
     private int traineeId;
     private int batchId;
-    private String weekId;
+    private int weekId;
     private String noteContent;
 
     public Note() {
@@ -12,11 +12,11 @@ public class Note {
         noteId = 0;
         traineeId = 0;
         batchId = 0;
-        weekId = "";
+        weekId = 0;
         noteContent = "";
     }
 
-    public Note(int noteId, int traineeId, int batchId, String weekId, String noteContent) {
+    public Note(int noteId, int traineeId, int batchId, int weekId, String noteContent) {
         super();
         this.noteId = noteId;
         this.traineeId = traineeId;
@@ -49,11 +49,11 @@ public class Note {
         this.batchId = batchId;
     }
 
-    public String getWeekId() {
+    public int getWeekId() {
         return weekId;
     }
 
-    public void setWeekId(String weekId) {
+    public void setWeekId(int weekId) {
         this.weekId = weekId;
     }
 

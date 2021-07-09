@@ -6,6 +6,8 @@ import models.Assessment;
 import models.Grade;
 import models.Note;
 import models.AssessmentType;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public class AssessmentService {
@@ -36,11 +38,11 @@ public class AssessmentService {
         return assessmentDAO.createAssessmentType(assessmentType.getName(), assessmentType.getDefaultWeight());
     }
 
-    public List<Note> getNotesForTrainee(int id, String weekId) {
+    public List<Note> getNotesForTrainee(int id, int weekId) {
         return assessmentDAO.getNotesForTrainee(id, weekId);
     }
 
-    public boolean updateTypeForAssessment(int assessmentId, int typeId) {
+    public boolean updateTypeForAssessment(int assessmentId, int typeId) throws SQLException {
         return assessmentDAO.assignAssessmentType(assessmentId, typeId);
     }
 
