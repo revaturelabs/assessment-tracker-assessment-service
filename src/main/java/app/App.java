@@ -8,7 +8,10 @@ import services.AssessmentService;
 public class App {
     public static void main(String[] args) {
 
-        Javalin app = Javalin.create(JavalinConfig::enableCorsForAllOrigins);
+        Javalin app = Javalin.create(config -> {
+            config.enableCorsForAllOrigins();
+            config.enableDevLogging();
+        });
         establishRoutes(app);
         app.start(7001);
 
