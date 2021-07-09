@@ -27,6 +27,7 @@ public class Assessment {
         notes = new ArrayList<String>();
     }
 
+    //DON'T USE THIS CONSTRUCTOR
     public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
             int assessmentWeight, int categoryId, List<String> notes) throws InvalidValue {
         super();
@@ -40,6 +41,21 @@ public class Assessment {
         this.assessmentWeight = assessmentWeight;
         this.categoryId = categoryId;
         this.notes = notes;
+    }
+
+    //USE THIS CONSTRUCTOR
+    public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
+                      int assessmentWeight, int categoryId) throws InvalidValue {
+        super();
+        if(assessmentWeight < 0 || assessmentWeight > 100)
+            throw new InvalidValue(String.format("%d is not a valid weight", assessmentWeight));
+        this.assessmentId = assessmentId;
+        this.assessmentTitle = assessmentTitle;
+        this.typeId = typeId;
+        this.batchId = batchId;
+        this.weekId = weekId;
+        this.assessmentWeight = assessmentWeight;
+        this.categoryId = categoryId;
     }
 
     public int getAssessmentId() {
