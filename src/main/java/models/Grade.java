@@ -1,5 +1,7 @@
 package models;
 
+import exceptions.InvalidValue;
+
 public class Grade {
     private int gradeId;
     private int assessmentId;
@@ -19,7 +21,7 @@ public class Grade {
         this.gradeId = gradeId;
         this.assessmentId = assessmentId;
         this.associateId = associateId;
-        this.score = score;
+        setScore(score);
     }
 
     public int getGradeId() {
@@ -51,6 +53,9 @@ public class Grade {
     }
 
     public void setScore(double score) {
+        if (score < 0 || score > 100)
+            return;
+
         this.score = score;
     }
 
