@@ -231,8 +231,8 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public boolean assignAssessmentType(int assessmentId, int typeId) throws SQLException {
         String sql = "UPDATE assessments SET type_id=? WHERE id=? returning id";
-        String sql1 = "select from types where id=? ";
-        String sql2 = "select from assessments where id=? ";
+        String sql1 = "select from types where id=?";
+        String sql2 = "select from assessments where id=?";
 
         //try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
         try(PreparedStatement ps1 = ConnectionDB.getConnection().prepareStatement(sql1)) {
@@ -259,7 +259,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
     @Override
     public List<Note> getNotesForTrainee(int id, int weekId) {
-        String sql = "SELECT * FROM notes WHERE associate_id=? AND week=?";
+        String sql = "SELECT * FROM notes WHERE associate_id=? AND week_number=?";
         List<Note> notes = new ArrayList<>();
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, id);

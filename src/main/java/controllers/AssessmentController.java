@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import services.AssessmentService;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class AssessmentController {
@@ -160,6 +161,9 @@ public class AssessmentController {
         int weight = Integer.parseInt(context.pathParam("weight"));
         int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try {
+            if(weight>100.00 || weight<0.00){
+                throw new RuntimeException("Weight shouid be between 100 and 0 but it is :" +weight);
+            }
             aclogger.info("Attempting to update the weight on an assessment");
             boolean wasUpdated = as.adjustWeight(assessmentId, weight);
             if(!wasUpdated){
@@ -201,7 +205,7 @@ public class AssessmentController {
             aclogger.info("Attempting to return updated type for assessment");
             context.result(gson.toJson(wasUpdated));
             context.status(205);
-        } catch (RuntimeException e) {
+        } catch (SQLException e) {
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
