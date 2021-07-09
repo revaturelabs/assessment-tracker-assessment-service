@@ -23,7 +23,7 @@ public class TestAdjustWeight {
 
     @Test
     public void testSettingValidWeightBottomLimit(){
-        Assume.assumeTrue("Couldn't get assessments from dao", assessments.size() > 0);
+        Assume.assumeTrue("Couldn't find any assessments in database", assessments.size() > 0);
         Assessment assessment = assessments.get(0);
         boolean result = assessmentDAO.adjustWeight(assessment.getAssessmentId(), 0);
         Assert.assertTrue("Valid weight was not accepted", result);
@@ -39,7 +39,7 @@ public class TestAdjustWeight {
 
     @Test
     public void testSettingValidWeightTopLimit(){
-        Assume.assumeTrue("Couldn't get assessments from dao", assessments.size() > 0);
+        Assume.assumeTrue("Couldn't find any assessments in database", assessments.size() > 0);
         Assessment assessment = assessments.get(0);
         boolean result = assessmentDAO.adjustWeight(assessment.getAssessmentId(), 100);
         Assert.assertTrue("Valid weight was not accepted", result);
@@ -56,7 +56,7 @@ public class TestAdjustWeight {
 
     @Test
     public void testSettingBelowWeightLimit(){
-        Assume.assumeTrue("Couldn't get assessments from dao", assessments.size() > 0);
+        Assume.assumeTrue("Couldn't find any assessments in database", assessments.size() > 0);
         Assessment assessment = assessments.get(0);
         boolean result = assessmentDAO.adjustWeight(assessment.getAssessmentId(), -1);
         Assert.assertFalse("Invalid weight was accepted", result);
@@ -73,7 +73,7 @@ public class TestAdjustWeight {
 
     @Test
     public void testSettingOverWeightLimit(){
-        Assume.assumeTrue("Couldn't get assessments from dao", assessments.size() > 0);
+        Assume.assumeTrue("Couldn't find any assessments in database", assessments.size() > 0);
         Assessment assessment = assessments.get(0);
         boolean result =assessmentDAO.adjustWeight(assessment.getAssessmentId(), 101);
         Assert.assertFalse("Invalid weight was accepted", result);

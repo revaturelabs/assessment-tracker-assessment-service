@@ -16,11 +16,10 @@ import exceptions.InvalidValue;
 
 public class AssessmentDAOImpl implements AssessmentDAO {
 
-
     @Override
-    public List<Assessment> getAssessments(){
+    public List<Assessment> getAssessments() {
         String sql = "SELECT * FROM assessments";
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
 
             List<Assessment> assessments = new ArrayList<>();
@@ -39,10 +38,10 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
-    public List<Assessment> getAssessmentsByTraineeId(int traineeId){
-        String sql = "SELECT * FROM grades AS g JOIN assessments a ON " +
-                "g.assessment_id = a.id WHERE associate_id = ?";
-        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
+    public List<Assessment> getAssessmentsByTraineeId(int traineeId) {
+        String sql = "SELECT * FROM grades AS g JOIN assessments a ON "
+                + "g.assessment_id = a.id WHERE associate_id = ?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
 
             ps.setInt(1, traineeId);
 
@@ -65,7 +64,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public List<Assessment> getBatchWeek(int batchId, String weekId) {
         String sql = "SELECT * FROM assessments WHERE batch_id = ? AND week = ?";
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, batchId);
             ps.setString(2, weekId);
 
@@ -89,15 +88,13 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
     @Override
     public Grade getGradeForAssociate(int associateId, int assessmentId) {
-        String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a " +
-                "ON g.assessment_id = a.id WHERE" +
-                " associate_id = ? AND assessment_id = ?";
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+        String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a "
+                + "ON g.assessment_id = a.id WHERE" + " associate_id = ? AND assessment_id = ?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, associateId);
             ps.setInt(2, assessmentId);
 
             ResultSet rs = ps.executeQuery();
-
 
             if (rs.next()) {
                 return buildGrade(rs);
@@ -110,15 +107,17 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
-    public Grade updateGrade(Grade grade){
+    public Grade updateGrade(Grade grade) {
+        if (grade.getScore() < 0)
+            return null;
         String sql = "UPDATE grades SET score=? WHERE assessment_id=? and associate_id=? RETURNING *";
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setDouble(1, grade.getScore());
             ps.setInt(2, grade.getAssessmentId());
             ps.setInt(3, grade.getAssociateId());
 
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return buildGrade(rs);
             }
 
@@ -131,10 +130,9 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
     @Override
     public List<Grade> getGradesForWeek(int traineeId, String weekId) {
-        String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a " +
-                "ON g.assessment_id = a.id WHERE" +
-                " associate_id = ? AND week = ?";
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+        String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a "
+                + "ON g.assessment_id = a.id WHERE" + " associate_id = ? AND week = ?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, traineeId);
             ps.setString(2, weekId);
 
@@ -156,9 +154,9 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
-    public Assessment createAssessment(Assessment a){
+    public Assessment createAssessment(Assessment a) {
         String sql = "INSERT INTO assessments VALUES (DEFAULT,?,?,?,?,?,?) RETURNING *";
-        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, a.getCategoryId());
             ps.setInt(2, a.getTypeId());
             ps.setString(3, a.getAssessmentTitle());
@@ -181,26 +179,25 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public boolean adjustWeight(int assessmentId, int weight) {
         String sql = "UPDATE assessments SET weight=? WHERE id=?";
-        if(weight < 0 || weight > 100)
+        if (weight < 0 || weight > 100)
             return false;
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, weight);
             ps.setInt(2, assessmentId);
-
-            ps.executeUpdate();
-            return true;
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated > 0)
+                return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
     @Override
     public AssessmentType createAssessmentType(String name, int defaultWeight) {
         String sql = "INSERT INTO types values (default, ?, ?)";
-
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql,
+                Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, name);
             ps.setInt(2, defaultWeight);
 
@@ -220,12 +217,13 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     @Override
     public boolean assignAssessmentType(int assessmentId, int typeId) {
         String sql = "UPDATE assessments SET type_id=? WHERE id=?";
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, typeId);
             ps.setInt(2, assessmentId);
 
-            ps.executeUpdate();
-            return true;
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated > 0)
+                return true;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -238,7 +236,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     public List<Note> getNotesForTrainee(int id, String weekId) {
         String sql = "SELECT * FROM notes WHERE associate_id=? AND week=?";
         List<Note> notes = new ArrayList<>();
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.setString(2, weekId);
 
@@ -256,9 +254,10 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
     @Override
     public Grade insertGrade(Grade grade) {
-
+        if (grade.getScore() < 0)
+            return null;
         String sql = "INSERT INTO grades VALUES (DEFAULT,?,?,?) RETURNING *";
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, grade.getAssessmentId());
             ps.setInt(3, grade.getAssociateId());
             ps.setDouble(2, grade.getScore());
@@ -275,9 +274,8 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     private Note buildNote(ResultSet rs) throws SQLException {
-        return new Note(rs.getInt("id"), rs.getInt("batch_id"), rs.getInt("associate_id"),
-                rs.getString("week"), rs.getString("content")
-              );
+        return new Note(rs.getInt("id"), rs.getInt("batch_id"), rs.getInt("associate_id"), rs.getString("week"),
+                rs.getString("content"));
     }
 
     private Assessment buildAssessment(ResultSet rs) throws SQLException, InvalidValue {
@@ -312,4 +310,3 @@ public class AssessmentDAOImpl implements AssessmentDAO {
         return grade;
     }
 }
-
