@@ -1,7 +1,5 @@
 package models;
 
-import exceptions.InvalidValue;
-
 public class Grade {
     private int gradeId;
     private int assessmentId;
