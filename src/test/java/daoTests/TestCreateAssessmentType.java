@@ -1,8 +1,10 @@
 package daoTests;
 
+import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
 import models.AssessmentType;
 import models.Grade;
+import org.junit.Assert;
 import util.ConnectionDB;
 
 import org.junit.Before;
@@ -18,47 +20,15 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCreateAssessmentType {
-    // Class to be tested
-    private AssessmentDAOImpl adao;
 
-    // Dependencies
-    private Connection mockConn;
-    private Grade mockGrade;
-    private PreparedStatement mockPs;
-    private ResultSet mockRs;
-
-    @Before
-    public void setup() {
-        // Create our Mock objects
-        mockConn  = Mockito.mock(Connection.class);
-        mockGrade = Mockito.mock(Grade.class);
-        mockPs    = Mockito.mock(PreparedStatement.class);
-        mockRs    = Mockito.mock(ResultSet.class);
-
-        // Since getconnection is a static method, get a static mock object
-        try (MockedStatic<ConnectionDB> mockedStatic = Mockito.mockStatic(ConnectionDB.class)) {
-            mockedStatic.when(ConnectionDB::getConnection).thenReturn(mockConn);
-            // When prepareStatement is called on the connection, return the prepared statement
-            // When executeQuery is called, return the result set
-            Mockito.when(mockConn.prepareStatement(Mockito.any(String.class))).thenReturn(mockPs);
-            Mockito.when(mockPs.executeQuery()).thenReturn(mockRs);
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-
-        // Initialize the class to be tested
-        adao = new AssessmentDAOImpl();
-    }
+    private AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
+    private AssessmentType testAssessmentType = new AssessmentType(0, "testAssessmentType", 50);
 
     @Test
-    public void testNotNull() {
-        AssessmentType returnedAssessmentType = adao.createAssessmentType("Quiz", 1);
-        assertNotNull(returnedAssessmentType);
+    public void testCreateAssessmentType() {
+        AssessmentType assessmentType = assessmentDAO.createAssessmentType(testAssessmentType.getName(),testAssessmentType.getDefaultWeight());
+        testAssessmentType = assessmentType;
+        Assert.assertTrue(assessmentType.getTypeId() != 0);
     }
 
-    @Test
-    public void testIsEmpty() {
-        AssessmentType returnedAssessmentType = adao.createAssessmentType("Quiz", 1);
-        assertNotNull(returnedAssessmentType);
-    }
 }
