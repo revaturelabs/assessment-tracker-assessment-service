@@ -55,7 +55,7 @@ public class TestGradeAssessments {
     }
 
     @Test
-    public void testInsertSingleValidGrade(){
+    public void testInsertValidGrade(){
         Assume.assumeTrue("Couldn't find any assessments in database", assessment != null);
         Assume.assumeTrue("Couldn't find any associates in database", associateId > 0);
 
@@ -64,8 +64,6 @@ public class TestGradeAssessments {
         Assert.assertTrue("Grade wasn't inserted correctly into database", grade.getGradeId() > 0);
         Assert.assertEquals("Grade score wasn't updated in database", 50, grade.getScore(), 0);
 
-        grade = assessmentDAO.insertGrade(new Grade(0, assessment.getAssessmentId(), associateId, 50));
-        Assert.assertNull("Grade inserted on assessment with existing grade", grade);
     }
 
     @Test
