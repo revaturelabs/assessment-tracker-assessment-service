@@ -19,6 +19,8 @@ public interface AssessmentDAO {
 
      Assessment createAssessment(Assessment a);
 
+     boolean deleteAssessment(int assessmentId);
+
      boolean adjustWeight(int assessmentId, int weight);
 
      AssessmentType createAssessmentType(String name, int defaultWeight);

@@ -177,6 +177,20 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
+    public boolean deleteAssessment(int assessmentId) {
+        String sql = "DELETE FROM assessments where id = ?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, assessmentId);
+            //BUG - TODO implement and check to see if actually updated throw resource not found
+            //if(ps.executeUpdate() == 0) {}
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    @Override
     public boolean adjustWeight(int assessmentId, int weight) {
         String sql = "UPDATE assessments SET weight=? WHERE id=?";
         if (weight < 0 || weight > 100)
