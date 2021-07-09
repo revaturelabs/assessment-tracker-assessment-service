@@ -4,6 +4,8 @@ import models.Assessment;
 import models.Grade;
 import models.Note;
 import models.AssessmentType;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public interface AssessmentDAO {
@@ -21,9 +23,9 @@ public interface AssessmentDAO {
 
      AssessmentType createAssessmentType(String name, int defaultWeight);
 
-     boolean assignAssessmentType(int assessmentId, int typeId);
+     boolean assignAssessmentType(int assessmentId, int typeId) throws SQLException;
 
-     List<Note> getNotesForTrainee(int id, String weekId);
+     List<Note> getNotesForTrainee(int id, int weekId);
 
      Grade insertGrade(Grade grade);
     

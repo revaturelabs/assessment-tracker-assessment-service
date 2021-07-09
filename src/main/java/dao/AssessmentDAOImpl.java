@@ -215,30 +215,41 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
-    public boolean assignAssessmentType(int assessmentId, int typeId) {
-        String sql = "UPDATE assessments SET type_id=? WHERE id=?";
-        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
-            ps.setInt(1, typeId);
-            ps.setInt(2, assessmentId);
+    public boolean assignAssessmentType(int assessmentId, int typeId) throws SQLException {
+        String sql = "UPDATE assessments SET type_id=? WHERE id=? returning id";
+        String sql1 = "select from types where id=? ";
+        String sql2 = "select from assessments where id=? ";
 
-            int rowsUpdated = ps.executeUpdate();
-            if (rowsUpdated > 0)
-                return true;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        //try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
+        try(PreparedStatement ps1 = ConnectionDB.getConnection().prepareStatement(sql1)) {
+            ps1.setInt(1, typeId);
+            ResultSet rs1 = ps1.executeQuery();
+            if(!rs1.next()){
+                throw new SQLException("The type with id " + typeId + " does not exist");
+            }
+            try(PreparedStatement ps2 = ConnectionDB.getConnection().prepareStatement(sql2)) {
+                ps2.setInt(1, assessmentId);
+                ResultSet rs2 = ps2.executeQuery();
+                if(!rs2.next()){
+                    throw new SQLException("The assessment with id " + assessmentId + " does not exist");
+                }
+                try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)){
+                    ps.setInt(1,typeId);
+                    ps.setInt(2, assessmentId);
+                    ResultSet rs = ps.executeQuery();
+                    return true;
+                }
+            }
         }
-
-        return false;
     }
 
     @Override
-    public List<Note> getNotesForTrainee(int id, String weekId) {
+    public List<Note> getNotesForTrainee(int id, int weekId) {
         String sql = "SELECT * FROM notes WHERE associate_id=? AND week=?";
         List<Note> notes = new ArrayList<>();
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, id);
-            ps.setString(2, weekId);
+            ps.setInt(2, weekId);
 
             ResultSet resultSet = ps.executeQuery();
 
@@ -274,8 +285,9 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     private Note buildNote(ResultSet rs) throws SQLException {
-        return new Note(rs.getInt("id"), rs.getInt("batch_id"), rs.getInt("associate_id"), rs.getString("week"),
-                rs.getString("content"));
+        return new Note(rs.getInt("id"), rs.getInt("batch_id"), rs.getInt("associate_id"),
+                rs.getInt("week_number"), rs.getString("cont")
+        );
     }
 
     private Assessment buildAssessment(ResultSet rs) throws SQLException, InvalidValue {

@@ -103,7 +103,7 @@ public class AssessmentController {
 
     public Handler getNotesForTrainee = context -> {
         int id = Integer.parseInt(context.pathParam("id"));
-        String weekId = context.pathParam(WEEKID);
+        int weekId = Integer.parseInt(context.pathParam(WEEKID));
         try {
             aclogger.info("Attempting to get notes for trainee " + id + " for week " + weekId);
             aclogger.info("Checking if trainee with id " + id + " exists");
@@ -197,9 +197,6 @@ public class AssessmentController {
         try {
             aclogger.info("Attempting to update type for assessment");
             boolean wasUpdated = as.updateTypeForAssessment(assessmentId,typeId);
-            if(!wasUpdated){
-                throw new RuntimeException("There is no assessment with id " + assessmentId);
-            }
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return updated type for assessment");
             context.result(gson.toJson(wasUpdated));

@@ -28,13 +28,13 @@ public class TestAssignAssessmentType {
 
 
     @Test
-    public void testNotNull() {
+    public void testNotNull() throws SQLException {
         Boolean returnedAssessmentType = assessmentDAO.assignAssessmentType(testAssessmentType.getTypeId(), testAssessmentType.getDefaultWeight());
         assertNotNull(returnedAssessmentType);
     }
 
     @Test
-    public void testEmptyString(){
+    public void testEmptyString() throws SQLException {
         boolean returnedAssessmentType = assessmentDAO.assignAssessmentType(0, 1);
         assertTrue(returnedAssessmentType);
     }
