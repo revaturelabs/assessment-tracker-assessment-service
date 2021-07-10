@@ -2,6 +2,8 @@ package services;
 
 import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
+import exceptions.InvalidValue;
+import exceptions.ResourceNotFound;
 import models.Assessment;
 import models.Grade;
 import models.Note;
@@ -26,11 +28,11 @@ public class AssessmentService {
 
     }
 
-    public Assessment createAssessment(Assessment assessment){
+    public Assessment createAssessment(Assessment assessment) throws InvalidValue {
         return assessmentDAO.createAssessment(assessment);
     }
 
-    public boolean adjustWeight(int assessmentId, int weight){
+    public boolean adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound {
         return assessmentDAO.adjustWeight(assessmentId, weight);
     }
 

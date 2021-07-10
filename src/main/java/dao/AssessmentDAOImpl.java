@@ -1,5 +1,6 @@
 package dao;
 
+import exceptions.ResourceNotFound;
 import models.Assessment;
 import models.Grade;
 import models.Note;
@@ -154,9 +155,30 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
-    public Assessment createAssessment(Assessment a) {
+    public Assessment getAssessmentById(int assessmentId) throws ResourceNotFound, InvalidValue {
+        String sql = "SELECT FROM assessments WHERE id=?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, assessmentId);
+
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) return buildAssessment(rs);
+            else throw new ResourceNotFound("Requested assessment with id: " + assessmentId + " could not be found");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (InvalidValue e) {
+            //Invalid value in the database
+            throw new InvalidValue("Something went wrong; invalid assessment data was found");
+        }
+        return null;
+    }
+
+    @Override
+    public Assessment createAssessment(Assessment a) throws InvalidValue {
+        if(a == null) throw new InvalidValue("Empty value supplied assessment cannot be created");
+
         String sql = "INSERT INTO assessments VALUES (DEFAULT,?,?,?,?,?,?) RETURNING *";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            a.verifyAssessment();
             ps.setInt(1, a.getCategoryId());
             ps.setInt(2, a.getTypeId());
             ps.setString(3, a.getAssessmentTitle());
@@ -165,25 +187,22 @@ public class AssessmentDAOImpl implements AssessmentDAO {
             ps.setString(6, a.getWeekId());
 
             ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return buildAssessment(rs);
-            }
-        } catch (SQLException | InvalidValue e) {
+            if(rs.next()) return buildAssessment(rs);
+            else throw new SQLException();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
     @Override
-    public boolean deleteAssessment(int assessmentId) {
+    public boolean deleteAssessment(int assessmentId) throws ResourceNotFound {
         String sql = "DELETE FROM assessments where id = ?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, assessmentId);
-            //BUG - TODO implement and check to see if actually updated throw resource not found
-            //if(ps.executeUpdate() == 0) {}
-
+            if(ps.executeUpdate() == 0) {
+                throw new ResourceNotFound("The assessment with the given id was not found!");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -191,16 +210,17 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
-    public boolean adjustWeight(int assessmentId, int weight) {
+    public boolean adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound {
+        //Ensures weight is within bounds; throws InvalidValue otherwise
+        Assessment validation = new Assessment();
+        validation.setAssessmentWeight(weight);
         String sql = "UPDATE assessments SET weight=? WHERE id=?";
-        if (weight < 0 || weight > 100)
-            return false;
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, weight);
             ps.setInt(2, assessmentId);
-            int rowsUpdated = ps.executeUpdate();
-            if (rowsUpdated > 0)
-                return true;
+
+            if (ps.executeUpdate() > 0) return true;
+            else throw new ResourceNotFound("The assessment with the given id was not found!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -313,7 +333,6 @@ public class AssessmentDAOImpl implements AssessmentDAO {
         assessment.setWeekId(rs.getString("week"));
         assessment.setAssessmentWeight(rs.getInt("weight"));
         assessment.setCategoryId(rs.getInt("category_id"));
-
         return assessment;
     }
 

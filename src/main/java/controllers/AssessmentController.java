@@ -1,5 +1,7 @@
 package controllers;
 
+import exceptions.InvalidValue;
+import exceptions.ResourceNotFound;
 import io.javalin.http.Handler;
 import com.google.gson.Gson;
 import models.Grade;
@@ -135,8 +137,14 @@ public class AssessmentController {
             aclogger.info("Attempting to return updated assessment");
             context.result(gson.toJson(updatedAssessment));
             context.status(201);
-        } catch (RuntimeException e) {
+        } catch (InvalidValue e) {
             aclogger.info(e);
+            context.status(400);
+            context.result(e.getMessage());
+        }
+        catch (RuntimeException e) {
+            aclogger.info(e);
+            context.status(400);
             context.result("Could not create the assessment");
         }
     };
@@ -157,26 +165,23 @@ public class AssessmentController {
     };
 
     public Handler adjustWeight = context -> {
-
-        int weight = Integer.parseInt(context.pathParam("weight"));
-        int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try {
-            if(weight>100.00 || weight<0.00){
-                throw new RuntimeException("Weight shouid be between 100 and 0 but it is :" +weight);
-            }
+            int weight = Integer.parseInt(context.pathParam("weight"));
+            int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
             aclogger.info("Attempting to update the weight on an assessment");
             boolean wasUpdated = as.adjustWeight(assessmentId, weight);
-            if(!wasUpdated){
-                throw new RuntimeException("There is no assessment with id " + assessmentId);
-            }
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return updatedWeight");
             context.result(gson.toJson(wasUpdated));
             context.status(205);
-        } catch (RuntimeException e) {
+        } catch (ResourceNotFound e) {
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
+        } catch (InvalidValue | RuntimeException e) {
+            aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(400);
         }
     };
 
@@ -192,6 +197,7 @@ public class AssessmentController {
         } catch (RuntimeException e) {
             aclogger.info(e);
             context.result("Could not create the assessment type");
+            context.status(400);
         }
     };
 

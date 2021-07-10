@@ -3,6 +3,7 @@ package daoTests;
 import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
 import exceptions.InvalidValue;
+import exceptions.ResourceNotFound;
 import models.Assessment;
 import models.AssessmentType;
 import models.Grade;
@@ -10,6 +11,7 @@ import models.Note;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,28 +21,32 @@ import java.util.List;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestAssessmentDao {
 
-    private AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
-    private Assessment testAssessment = new Assessment(0, "testAssessment", 1, 1, "3", 100, 1, new ArrayList<String>());
+    private AssessmentDAO assessmentDAO;
+    private Assessment testAssessment;
     private AssessmentType testAssessmentType = new AssessmentType(0, "testAssessmentType", 50);
     //private Grade testGrade = new Grade(0, testAssessment.getAssessmentId(), 1, 5);
     private Grade testGrade = new Grade(0, 1, 1, 5);
 
     public TestAssessmentDao() throws InvalidValue {
+        assessmentDAO = new AssessmentDAOImpl();
+        testAssessment = new Assessment(0, "testAssessment", 1, 1, "3", 50, 1);
     }
 
     @Test
     @Order(1)
     public void testCreateAssessment() {
-        Assessment assessment = assessmentDAO.createAssessment(testAssessment);
-        testAssessment = assessment;
-        Assert.assertTrue(assessment.getAssessmentId() != 0);
+        try {
+            testAssessment = assessmentDAO.createAssessment(testAssessment);
+            Assert.assertTrue(testAssessment.getAssessmentId() != 0);
+        } catch (InvalidValue e) {
+            fail();
+        }
     }
     //----------------------------------------------------------------------
 
     @Test
     @Order(2)
     public void testGetAssessments()  {
-        assessmentDAO.createAssessment(testAssessment);
         List<Assessment> assessments = assessmentDAO.getAssessments();
         Assert.assertTrue(assessments.size() >= 1);
     }
@@ -90,7 +96,12 @@ public class TestAssessmentDao {
     @Test
     @Order(6)
     public void testAdjustWeightTrue() {
-        Assert.assertTrue(assessmentDAO.adjustWeight(testAssessment.getAssessmentId(),20));
+        try {
+            //BUG - testAssessmentId isnt set properly here
+            Assert.assertTrue(assessmentDAO.adjustWeight(testAssessment.getAssessmentId(),20));
+        } catch (InvalidValue | ResourceNotFound e) {
+            fail();
+        }
     }
 
     //----------------------------------------------------------------------
@@ -109,7 +120,7 @@ public class TestAssessmentDao {
     @Order(8)
     public void testGetNotesForTrainee() {
         List<Note> notes = assessmentDAO.getNotesForTrainee(1, 1);
-        Assert.assertTrue(notes.get(0) != null);
+        Assert.assertNotNull(notes.get(0));
     }
 
     //----------------------------------------------------------------------
