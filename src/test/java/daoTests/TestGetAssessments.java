@@ -5,6 +5,7 @@ import exceptions.ResourceNotFound;
 import models.Assessment;
 
 import org.eclipse.jetty.util.resource.Resource;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.After;
@@ -38,7 +39,8 @@ public class TestGetAssessments {
     @Test
     public void testGetAssessmentByIdValid() {
         try {
-            adao.getAssessmentById(assessment.getAssessmentId());
+            Assessment result = adao.getAssessmentById(assessment.getAssessmentId());
+            Assert.assertNotNull(result);
         } catch(ResourceNotFound e) {
             fail();
         } catch(InvalidValue e) {

@@ -20,7 +20,7 @@ public interface AssessmentDAO {
 
      boolean adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound;
 
-     boolean assignAssessmentType(int assessmentId, int typeId) throws SQLException;
+     boolean assignAssessmentType(int assessmentId, int typeId) throws SQLException, ResourceNotFound, InvalidValue;
 
      boolean deleteAssessment(int assessmentId) throws ResourceNotFound;
 

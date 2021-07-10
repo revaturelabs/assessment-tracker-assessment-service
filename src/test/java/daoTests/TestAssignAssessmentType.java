@@ -48,7 +48,7 @@ public class TestAssignAssessmentType {
         try {
             boolean result = assessmentDAO.assignAssessmentType(assessment.getAssessmentId(), assessType.getTypeId());
             Assert.assertTrue(result);
-        } catch(SQLException e) {
+        } catch(SQLException | ResourceNotFound | InvalidValue e) {
             fail();
         }
     }
@@ -59,7 +59,13 @@ public class TestAssignAssessmentType {
             assessmentDAO.assignAssessmentType(-1, assessType.getTypeId());
             fail();
         } catch(SQLException e) {
+            e.printStackTrace();
+            fail();
+        } catch( ResourceNotFound e) {
             //Success
+        } catch (InvalidValue e) {
+            //BUG - Database issues
+            fail();
         }
     }
 
@@ -68,8 +74,11 @@ public class TestAssignAssessmentType {
         try {
             assessmentDAO.assignAssessmentType(assessment.getAssessmentId(), -1);
             fail();
-        } catch(SQLException e) {
+        } catch(SQLException | ResourceNotFound e) {
             //Success
+        } catch (InvalidValue e) {
+            //BUG - Database issues
+            fail();
         }
     }
 

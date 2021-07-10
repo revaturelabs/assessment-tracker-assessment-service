@@ -44,7 +44,7 @@ public class AssessmentService {
         return assessmentDAO.getNotesForTrainee(id, weekId);
     }
 
-    public boolean updateTypeForAssessment(int assessmentId, int typeId) throws SQLException {
+    public boolean updateTypeForAssessment(int assessmentId, int typeId) throws SQLException, ResourceNotFound, InvalidValue {
         return assessmentDAO.assignAssessmentType(assessmentId, typeId);
     }
 
