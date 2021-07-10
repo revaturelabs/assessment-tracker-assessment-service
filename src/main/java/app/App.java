@@ -2,8 +2,10 @@ package app;
 
 import io.javalin.Javalin;
 import controllers.AssessmentController;
-import io.javalin.core.JavalinConfig;
+import controllers.CategoryController;
+import dao.CategoryDAOImpl;
 import services.AssessmentService;
+import services.CategoryServiceImpl;
 
 public class App {
     public static void main(String[] args) {
@@ -14,13 +16,13 @@ public class App {
         });
         establishRoutes(app);
         app.start(7001);
-
     }
 
     private static void establishRoutes(Javalin app) {
         // Need a Repo
         // AssessmentRepo ar= new AssessmentRepo();
         // Need a Service
+        CategoryController categoryController = new CategoryController(new CategoryServiceImpl(new CategoryDAOImpl()));
         AssessmentService as = new AssessmentService();
         app.get("/Testing", context -> context.result("Testing"));
 
@@ -37,6 +39,12 @@ public class App {
         app.put("/assessments/weight/:assessmentId/:weight", ac.adjustWeight);
         app.post("/types", ac.createAssessmentType);
         app.put("/assessments/type/:assessmentId/:typeId",ac.assignAssessmentType);
+
+        app.get("/categories", categoryController.getCategories);
+        app.post("/category", categoryController.createCategory);
+        app.get("/category/:id", categoryController.getCategoryById);
+        app.patch("/category", categoryController.updateCategory);
+        app.delete("/category/:id", categoryController.deleteCategory);
     }
 
 }
