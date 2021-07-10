@@ -2,9 +2,13 @@ package daoTests;
 
 import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
+import exceptions.InvalidValue;
+import exceptions.ResourceNotFound;
 import models.Assessment;
 import models.AssessmentType;
 import models.Grade;
+import org.junit.After;
+import org.junit.Assert;
 import util.ConnectionDB;
 
 import org.junit.Before;
@@ -23,20 +27,69 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAssignAssessmentType {
 
-    static AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
-    static AssessmentType testAssessmentType = new AssessmentType(0,"QC", 100);
+    private AssessmentDAO assessmentDAO;
+    private AssessmentType assessType;
+    private Assessment assessment;
 
-
-    @Test
-    public void testNotNull() throws SQLException {
-        Boolean returnedAssessmentType = assessmentDAO.assignAssessmentType(testAssessmentType.getTypeId(), testAssessmentType.getDefaultWeight());
-        assertNotNull(returnedAssessmentType);
+    @Before
+    public void setup() {
+        assessmentDAO = new AssessmentDAOImpl();
+        try {
+            Assessment sampleAssessment1 = new Assessment(0, "Test Assessment 1", 1, 1, "1", 30, 2);
+            assessment = assessmentDAO.createAssessment(sampleAssessment1);
+            assessType = assessmentDAO.createAssessmentType("QC", 100);
+        } catch(InvalidValue e) {
+            //BUG - Display something if we get here
+        }
     }
 
     @Test
-    public void testEmptyString() throws SQLException {
-        boolean returnedAssessmentType = assessmentDAO.assignAssessmentType(0, 1);
-        assertTrue(returnedAssessmentType);
+    public void testAssignAssessmentTypeValid() {
+        try {
+            boolean result = assessmentDAO.assignAssessmentType(assessment.getAssessmentId(), assessType.getTypeId());
+            Assert.assertTrue(result);
+        } catch(SQLException | ResourceNotFound | InvalidValue e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testAssignAssessmentInvalidAssessId() {
+        try {
+            assessmentDAO.assignAssessmentType(-1, assessType.getTypeId());
+            fail();
+        } catch(SQLException e) {
+            e.printStackTrace();
+            fail();
+        } catch( ResourceNotFound e) {
+            //Success
+        } catch (InvalidValue e) {
+            //BUG - Database issues
+            fail();
+        }
+    }
+
+    @Test
+    public void testAssignAssessmentInvalidTypeId() {
+        try {
+            assessmentDAO.assignAssessmentType(assessment.getAssessmentId(), -1);
+            fail();
+        } catch(SQLException | ResourceNotFound e) {
+            //Success
+        } catch (InvalidValue e) {
+            //BUG - Database issues
+            fail();
+        }
+    }
+
+    @After
+    public void cleanup() {
+        try {
+            assessmentDAO.deleteAssessment(assessment.getAssessmentId());
+            //BUG - Delete assessmentType
+        } catch(ResourceNotFound e) {
+            //BUG - Shouldnt get here
+        }
     }
 
 }

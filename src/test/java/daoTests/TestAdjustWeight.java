@@ -2,89 +2,68 @@ package daoTests;
 
 import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
+import exceptions.InvalidValue;
+import exceptions.ResourceNotFound;
 import models.Assessment;
 
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
-import java.util.List;
+import org.junit.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAdjustWeight {
 
     private static AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
-    private static List<Assessment> assessments;
+    private static Assessment assessment;
 
     @Before
     public void setup() {
         assessmentDAO = new AssessmentDAOImpl();
-        assessments = assessmentDAO.getAssessments();
+        try {
+            assessment = new Assessment(0, "Delete now", 1, 3, "5", 20, 1);
+            assessment = assessmentDAO.createAssessment(assessment);
+        } catch (InvalidValue e) {
+            //BUG - Should display something
+        }
     }
 
     @Test
-    public void testSettingValidWeightBottomLimit(){
-        Assume.assumeTrue("Couldn't find any assessments in database", assessments.size() > 0);
-        Assessment assessment = assessments.get(0);
-        boolean result = assessmentDAO.adjustWeight(assessment.getAssessmentId(), 0);
-        Assert.assertTrue("Valid weight was not accepted", result);
-        List<Assessment> assessmentsUpdated = assessmentDAO.getAssessments();
-        Assessment assessmentUpdated = null;
-        for(int i = 0; i < assessmentsUpdated.size(); i++){
-            if(assessmentsUpdated.get(i).getAssessmentId() == assessment.getAssessmentId()){
-                assessmentUpdated = assessmentsUpdated.get(i);
-            }
+    public void testSettingValidWeight(){
+        try {
+            Assert.assertTrue(assessmentDAO.adjustWeight(assessment.getAssessmentId(), 50));
+        } catch (InvalidValue | ResourceNotFound e) {
+            fail();
         }
-        Assert.assertEquals("Assessment weight not updated in database", 0, assessmentUpdated.getAssessmentWeight());
     }
 
     @Test
-    public void testSettingValidWeightTopLimit(){
-        Assume.assumeTrue("Couldn't find any assessments in database", assessments.size() > 0);
-        Assessment assessment = assessments.get(0);
-        boolean result = assessmentDAO.adjustWeight(assessment.getAssessmentId(), 100);
-        Assert.assertTrue("Valid weight was not accepted", result);
-        List<Assessment> assessmentsUpdated = assessmentDAO.getAssessments();
-        Assessment assessmentUpdated = null;
-        for(int i = 0; i < assessmentsUpdated.size(); i++){
-            if(assessmentsUpdated.get(i).getAssessmentId() == assessment.getAssessmentId()){
-                assessmentUpdated = assessmentsUpdated.get(i);
-                break;
-            }
+    public void testSettingInvalidWeight() {
+        try {
+            assessmentDAO.adjustWeight(assessment.getAssessmentId(), -50);
+            fail();
+        } catch (InvalidValue e){
+            //Success
+        } catch (ResourceNotFound e) {
+            fail();
         }
-        Assert.assertEquals("Assessment weight not updated in database", 100, assessmentUpdated.getAssessmentWeight());
     }
 
     @Test
-    public void testSettingBelowWeightLimit(){
-        Assume.assumeTrue("Couldn't find any assessments in database", assessments.size() > 0);
-        Assessment assessment = assessments.get(0);
-        boolean result = assessmentDAO.adjustWeight(assessment.getAssessmentId(), -1);
-        Assert.assertFalse("Invalid weight was accepted", result);
-        List<Assessment> assessmentsUpdated = assessmentDAO.getAssessments();
-        Assessment assessmentUpdated = null;
-        for(int i = 0; i < assessmentsUpdated.size(); i++){
-            if(assessmentsUpdated.get(i).getAssessmentId() == assessment.getAssessmentId()){
-                assessmentUpdated = assessmentsUpdated.get(i);
-                break;
-            }
+    public void testInvalidId() {
+        try {
+            assessmentDAO.adjustWeight(-1, 50);
+            fail();
+        } catch (InvalidValue e){
+            fail();
+        } catch (ResourceNotFound e) {
+            //Success
         }
-        Assert.assertNotEquals("Assessment weight was updated in database", -1, assessmentUpdated.getAssessmentWeight());
     }
 
-    @Test
-    public void testSettingOverWeightLimit(){
-        Assume.assumeTrue("Couldn't find any assessments in database", assessments.size() > 0);
-        Assessment assessment = assessments.get(0);
-        boolean result =assessmentDAO.adjustWeight(assessment.getAssessmentId(), 101);
-        Assert.assertFalse("Invalid weight was accepted", result);
-        List<Assessment> assessmentsUpdated = assessmentDAO.getAssessments();
-        Assessment assessmentUpdated = null;
-        for(int i = 0; i < assessmentsUpdated.size(); i++){
-            if(assessmentsUpdated.get(i).getAssessmentId() == assessment.getAssessmentId()){
-                assessmentUpdated = assessmentsUpdated.get(i);
-                break;
-            }
+    @After
+    public void cleanup() {
+        try {
+            assessmentDAO.deleteAssessment(assessment.getAssessmentId());
+        } catch(ResourceNotFound e) {
+            //BUG - Should display something
         }
-        Assert.assertNotEquals("Assessment weight was updated in database", 101, assessmentUpdated.getAssessmentWeight());
     }
 }
