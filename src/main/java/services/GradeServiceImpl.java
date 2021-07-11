@@ -38,11 +38,13 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public Grade insertGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue, DuplicateResource {
-        if(getGrade(grade.getAssessmentId(), grade.getAssociateId()) != null)
+    public Grade insertGrade(Grade grade) throws ResourceUnchangable, InvalidValue, DuplicateResource {
+        try {
+            getGrade(grade.getAssessmentId(), grade.getAssociateId());
             return updateGrade(grade);
-        else
+        } catch (ResourceNotFound e) {
             return createGrade(grade);
+        }
     }
 
     @Override

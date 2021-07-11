@@ -26,7 +26,7 @@ public class TestGradeAssessments {
     private static AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
     private static GradeService gradeService = new GradeServiceImpl(new GradeDAOImpl());
     private static Assessment assessment;
-    private static Grade gradeValid, gradeValid2, gradeValid3;
+    private static Grade gradeValid, gradeValid2;
     private static int associateId = 0;
 
     private static int findAssociateId(){
@@ -85,10 +85,10 @@ public class TestGradeAssessments {
     public void testUpdateValidGrade(){
         Assume.assumeTrue("Couldn't find any associates in database", associateId > 0);
         try {
-            gradeValid3 = gradeService.createGrade(new Grade(0, assessment.getAssessmentId(), associateId, 50));
-            gradeValid3 = gradeService.updateGrade(new Grade(gradeValid3.getGradeId(), gradeValid3.getAssessmentId(), gradeValid3.getAssociateId(), 75));
-            Assert.assertNotNull("Error occured updating grade in database", gradeValid3);
-            Assert.assertEquals("Grade score wasn't updated in database", 75, gradeValid.getScore(), 0);
+            gradeValid2 = gradeService.createGrade(gradeValid2);
+            Grade updatedGrade = gradeService.updateGrade(new Grade(gradeValid2.getGradeId(), gradeValid2.getAssessmentId(), gradeValid2.getAssociateId(), 75));
+            Assert.assertNotNull("Error occured updating grade in database", updatedGrade);
+            Assert.assertEquals("Grade score wasn't updated in database", 75, updatedGrade.getScore(), 0);
         } catch (InvalidValue | DuplicateResource | ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
@@ -111,12 +111,11 @@ public class TestGradeAssessments {
     public void testGetValidGrade(){
         Assume.assumeTrue("Couldn't find any associates in database", associateId > 0);
         try {
-            gradeValid2 = gradeService.insertGrade(gradeValid2);
-            Grade returnedGrade = gradeService.getGrade(gradeValid2.getAssessmentId(), gradeValid2.getAssociateId());
+            Grade returnedGrade = gradeService.getGrade(gradeValid.getAssessmentId(), gradeValid.getAssociateId());
             Assert.assertNotNull("Coudln't get grade from database", returnedGrade);
-            Assert.assertEquals("Grade incorrect grade returned from database", gradeValid2.getScore(), returnedGrade.getScore(), 0);
-            Assert.assertEquals("Grade incorrect grade returned from database", gradeValid2.getGradeId(), returnedGrade.getGradeId(), 0);
-        } catch (DuplicateResource | ResourceNotFound | ResourceUnchangable | InvalidValue e) {
+            Assert.assertEquals("Grade incorrect grade returned from database", gradeValid.getScore(), returnedGrade.getScore(), 0);
+            Assert.assertEquals("Grade incorrect grade returned from database", gradeValid.getGradeId(), returnedGrade.getGradeId(), 0);
+        } catch (ResourceNotFound  e) {
             fail();
         }
     }
@@ -124,14 +123,20 @@ public class TestGradeAssessments {
     @Test
     public void testGetInvalidGrade(){
         Assume.assumeTrue("Couldn't find any associates in database", associateId > 0);
+        try {
+            Grade returnedGrade = gradeService.getGrade(associateId, -1);
+            Assert.assertNull("Invalid grade returned from database", returnedGrade);
+            fail();
+        } catch (ResourceNotFound e) {
+            //Success
+        }
 
         try {
             Grade returnedGrade = gradeService.getGrade(-1, assessment.getAssessmentId());
             Assert.assertNull("Invalid grade returned from database", returnedGrade);
-            returnedGrade = gradeService.getGrade(associateId, -1);
-            Assert.assertNull("Invalid grade returned from database", returnedGrade);
-        } catch (ResourceNotFound e) {
             fail();
+        } catch (ResourceNotFound e) {
+            //Success
         }
     }
 
@@ -140,7 +145,6 @@ public class TestGradeAssessments {
         try {
             gradeService.deleteGrade(gradeValid.getGradeId());
             gradeService.deleteGrade(gradeValid2.getGradeId());
-            gradeService.deleteGrade(gradeValid3.getGradeId());
         } catch (ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
