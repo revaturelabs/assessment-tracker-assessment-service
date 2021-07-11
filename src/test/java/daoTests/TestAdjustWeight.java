@@ -4,6 +4,7 @@ import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
+import exceptions.ResourceUnchangable;
 import models.Assessment;
 
 import org.junit.*;
@@ -62,7 +63,7 @@ public class TestAdjustWeight {
     public void cleanup() {
         try {
             assessmentDAO.deleteAssessment(assessment.getAssessmentId());
-        } catch(ResourceNotFound e) {
+        } catch(ResourceNotFound | ResourceUnchangable e) {
             //BUG - Should display something
         }
     }
