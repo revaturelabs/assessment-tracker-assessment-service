@@ -57,6 +57,12 @@ public class Grade {
         this.score = score;
     }
 
+    public void verifyGrade() throws InvalidValue {
+        setGradeId(this.gradeId);
+        setAssessmentId(this.assessmentId);
+        setAssociateId(this.associateId);
+        setScore(this.score);
+    }
     private void setDefault() {
         gradeId = 0;
         assessmentId = 0;

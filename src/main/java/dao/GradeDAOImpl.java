@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exceptions.DuplicateResource;
+import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Grade;
@@ -16,9 +17,11 @@ import util.ConnectionDB;
 public class GradeDAOImpl implements GradeDAO{
 
     @Override
-    public Grade createGrade(Grade grade) throws DuplicateResource {
+    public Grade createGrade(Grade grade) throws DuplicateResource, InvalidValue {
+        if(grade == null) throw new InvalidValue("No grade was provided, try again");
         String sql = "INSERT INTO grades VALUES (DEFAULT,?,?,?)";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            grade.verifyGrade();
             ps.setInt(1, grade.getAssessmentId());
             ps.setInt(3, grade.getAssociateId());
             ps.setDouble(2, grade.getScore());
@@ -48,6 +51,8 @@ public class GradeDAOImpl implements GradeDAO{
             return categories;
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (InvalidValue) {
+
         }
         return new ArrayList<>();
     }
@@ -66,13 +71,15 @@ public class GradeDAOImpl implements GradeDAO{
                 throw new ResourceNotFound(String.format("Grade with assessment id %d and associate id %d couldn't be found", assessmentId, associateId));
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (InvalidValue e) {
+
         }
 
         return null;
     }
 
     @Override
-    public Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable{
+    public Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue{
         String sql = "UPDATE grades SET score=? WHERE assessment_id=? and associate_id=?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setDouble(1, grade.getScore());
@@ -112,7 +119,7 @@ public class GradeDAOImpl implements GradeDAO{
         }
     }
 
-    private Grade buildGrade(ResultSet rs) throws SQLException {
+    private Grade buildGrade(ResultSet rs) throws SQLException, InvalidValue {
         Grade grade = new Grade();
         grade.setGradeId(rs.getInt("id"));
         grade.setAssessmentId(rs.getInt("assessment_id"));
@@ -122,7 +129,7 @@ public class GradeDAOImpl implements GradeDAO{
     }
 
     @Override
-    public List<Grade> getGradesForWeek(int associateId, int weekId) {
+    public List<Grade> getGradesForWeek(int associateId, int weekId) throws InvalidValue{
         String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a "
                 + "ON g.assessment_id = a.id WHERE" + " associate_id = ? AND week = ?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
