@@ -139,8 +139,8 @@ public class TestGradeAssessments {
     public static void cleanup() {
         try {
             gradeService.deleteGrade(gradeValid.getGradeId());
-            gradeService.deleteGrade(gradeValid.getGradeId());
-            gradeService.deleteGrade(gradeValid.getGradeId());
+            gradeService.deleteGrade(gradeValid2.getGradeId());
+            gradeService.deleteGrade(gradeValid3.getGradeId());
         } catch (ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
