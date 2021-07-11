@@ -35,8 +35,6 @@ public class AssessmentServiceImpl implements AssessmentService{
 
     @Override
     public Assessment updateAssessment(Assessment assessment) throws ResourceNotFound, ResourceUnchangable, InvalidValue{
-        if(assessment.getAssessmentWeight() < 0)
-            throw new InvalidValue("Assessment weight cannot be negative");
         return this.assessmentDAO.updateAssessment(assessment);
     }
 

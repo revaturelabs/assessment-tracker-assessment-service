@@ -31,8 +31,9 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
             ResultSet rs = ps.executeQuery();
             if(rs.next()) return buildAssessment(rs);
-            else throw new SQLException();
+            else throw new InvalidValue("Check and ensure your all fields are set");
         } catch (SQLException e) {
+            //BUG - Possible that batchId or typeId are invalid; null is returned as result
             e.printStackTrace();
         }
         return null;
