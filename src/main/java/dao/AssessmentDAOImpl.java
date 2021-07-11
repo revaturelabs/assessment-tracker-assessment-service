@@ -156,7 +156,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
     @Override
     public Assessment getAssessmentById(int assessmentId) throws ResourceNotFound, InvalidValue {
-        String sql = "SELECT FROM assessments WHERE id=?";
+        String sql = "SELECT * FROM assessments WHERE id=?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, assessmentId);
 

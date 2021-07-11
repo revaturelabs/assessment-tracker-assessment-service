@@ -13,30 +13,12 @@ public class Assessment {
     private String weekId;
     private int assessmentWeight;
     private int categoryId;
-    private List<String> notes;
 
     public Assessment() {
         super();
         setDefault();
-        notes = new ArrayList<String>();
     }
 
-    //DON'T USE THIS CONSTRUCTOR
-    public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
-            int assessmentWeight, int categoryId, List<String> notes) throws InvalidValue {
-        super();
-        setDefault();
-        setAssessmentId(assessmentId);
-        setAssessmentTitle(assessmentTitle);
-        setTypeId(typeId);
-        setBatchId(batchId);
-        setWeekId(weekId);
-        setAssessmentWeight(assessmentWeight);
-        setCategoryId(categoryId);
-        this.notes = notes;
-    }
-
-    //USE THIS CONSTRUCTOR
     public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
                       int assessmentWeight, int categoryId) throws InvalidValue {
         super();
@@ -49,8 +31,6 @@ public class Assessment {
         setAssessmentWeight(assessmentWeight);
         setCategoryId(categoryId);
     }
-
-
 
     //Getters
     public int getAssessmentId() {
@@ -79,10 +59,6 @@ public class Assessment {
 
     public int getCategoryId() {
         return categoryId;
-    }
-
-    public List<String> getNotes() {
-        return notes;
     }
 
     //Setters
@@ -128,10 +104,6 @@ public class Assessment {
         this.categoryId = categoryId;
     }
 
-    public void setNotes(List<String> notes) {
-        this.notes = notes;
-    }
-
 
     public void verifyAssessment() throws InvalidValue {
         //Ensure all properties are correct values
@@ -148,7 +120,7 @@ public class Assessment {
     public String toString() {
         return "Assessment [assessmentId=" + assessmentId + ", assessmentTitle=" + assessmentTitle
                 + ", assessmentWeight=" + assessmentWeight + ", batchId=" + batchId + ", categoryId=" + categoryId
-                + ", notes=" + notes + ", typeId=" + typeId + ", weekId=" + weekId + "]";
+                + ", typeId=" + typeId + ", weekId=" + weekId + "]";
     }
 
 }
