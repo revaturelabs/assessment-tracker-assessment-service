@@ -18,5 +18,7 @@ public interface GradeService {
 
     Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue;
 
+    Grade insertGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue, DuplicateResource;
+
     void deleteGrade(int id) throws ResourceNotFound, ResourceUnchangable;
 }

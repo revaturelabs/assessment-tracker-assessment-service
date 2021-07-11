@@ -1,7 +1,9 @@
 package controllers;
 
+import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
+import exceptions.ResourceUnchangable;
 import io.javalin.http.Handler;
 import com.google.gson.Gson;
 import models.Grade;
@@ -12,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import services.AssessmentService;
 import services.AssessmentTypeService;
+import services.GradeService;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -22,13 +25,16 @@ public class AssessmentController {
     private static final String WEEKID = "weekid";
     private static final String ASSESSMENTID = "assessmentId";
 
+    //BUG - Extract these later
     private AssessmentService as;
     private AssessmentTypeService ats;
+    private GradeService gs;
     private final Gson gson = new Gson();
 
-    public AssessmentController(AssessmentService as, AssessmentTypeService ats) {
+    public AssessmentController(AssessmentService as, AssessmentTypeService ats, GradeService gs) {
         this.as = as;
         this.ats = ats;
+        this.gs = gs;
     }
 
     public Handler getAssessments = context -> {
@@ -54,21 +60,16 @@ public class AssessmentController {
             aclogger.info("Attempting to return updated assessment");
             context.result(gson.toJson(updatedAssessment));
             context.status(201);
-        } catch (InvalidValue e) {
+        } catch (InvalidValue | RuntimeException e) {
             aclogger.info(e);
             context.status(400);
             context.result(e.getMessage());
         }
-        catch (RuntimeException e) {
-            aclogger.info(e);
-            context.status(400);
-            context.result("Could not create the assessment");
-        }
     };
 
     public Handler getAssessmentsByTraineeId = context -> {
-        int traineeId = Integer.parseInt(context.pathParam("id"));
         try {
+            int traineeId = Integer.parseInt(context.pathParam("id"));
             aclogger.info("Attempting to get all assessments for trainee with id " + traineeId);
             List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
             if(assessments.size() == 0){
@@ -85,9 +86,9 @@ public class AssessmentController {
     };
 
     public Handler getBatchWeek = context -> {
-        int batchId = Integer.parseInt(context.pathParam("id"));
-        String weekId = context.pathParam(WEEKID);
         try {
+            int batchId = Integer.parseInt(context.pathParam("id"));
+            String weekId = context.pathParam(WEEKID);
             aclogger.info("Attempting to get assessments for batch " + batchId + " for week " + weekId);
             List<Assessment> assessments = as.getBatchWeek(batchId, weekId);
             if(assessments.size() == 0){
@@ -125,19 +126,27 @@ public class AssessmentController {
     };
 
     public Handler assignAssessmentType = context -> {
-        int typeId = Integer.parseInt(context.pathParam("typeId"));
-        int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try {
+            int typeId = Integer.parseInt(context.pathParam("typeId"));
+            int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
             aclogger.info("Attempting to update type for assessment");
             Assessment a = as.assignAssessmentType(assessmentId,typeId);
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return updated type for assessment");
             context.result(gson.toJson(a));
             context.status(205);
-        } catch (SQLException e) {
+        } catch (ResourceNotFound e) {
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
+        } catch (ResourceUnchangable e) {
+            aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(403);
+        } catch (RuntimeException | InvalidValue e) {
+            aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(400);
         }
     };
 
@@ -150,14 +159,14 @@ public class AssessmentController {
             if(assessments.size() == 0){
                 throw new RuntimeException("The associate with id " + associateId + " could not be found");
             }
-            Grade grade = as.getGradeForAssociate(associateId, assessmentId);
+            Grade grade = gs.getGrade(assessmentId, associateId);
             if(grade == null){
                 throw new RuntimeException("The assessment with id " + assessmentId + " could not be found");
             }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grade));
             context.status(200);
-        }catch (Exception e){
+        }catch (ResourceNotFound e){
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
@@ -175,6 +184,7 @@ public class AssessmentController {
                 throw new RuntimeException("The trainee with id " + traineeId + " could not be found");
             }
             aclogger.info("Attempting to get grades for trainee with id " + traineeId + " for week " + weekId);
+            //BUG - Extract to grade service
             List<Grade> grades = as.getGradesForWeek(traineeId, weekId);
             if(grades.size() == 0){
                 throw new RuntimeException("The week with id " + weekId + " could not be found");
@@ -193,14 +203,23 @@ public class AssessmentController {
         try {
             aclogger.info("Attempting to update the grade on an assessment");
             Grade grade = gson.fromJson(context.body(), Grade.class);
-            Grade insertedGrade = as.insertGrade(grade);
+            Grade insertedGrade = gs.insertGrade(grade);
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return inserted  grade");
             context.result(gson.toJson(insertedGrade));
             context.status(201);
-        } catch (RuntimeException e) {
+        } catch (ResourceNotFound e) {
             aclogger.info(e);
-            context.result("Could not update the grade");
+            context.result(e.getMessage());
+            context.status(404);
+        } catch (ResourceUnchangable e) {
+            aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(403);
+        } catch (DuplicateResource | InvalidValue | RuntimeException e) {
+            aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(400);
         }
     };
 
@@ -237,9 +256,9 @@ public class AssessmentController {
             aclogger.info("Attempting to return updated type");
             context.result(gson.toJson(updatedAssessmentType));
             context.status(201);
-        } catch (RuntimeException e) {
+        } catch (DuplicateResource | RuntimeException e) {
             aclogger.info(e);
-            context.result("Could not create the assessment type");
+            context.result(e.getMessage());
             context.status(400);
         }
     };

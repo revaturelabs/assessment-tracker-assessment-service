@@ -44,13 +44,14 @@ public class TestGradeAssessments {
         }
     }
 
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void setup() {
         assessmentDAO = new AssessmentDAOImpl();
         try {
             assessment = assessmentDAO.createAssessment(new Assessment(0, "Test Assessment 1", 1, 1, "1", 30, 2));
+            gradeValid = new Grade(0, assessment.getAssessmentId(), associateId, 50)
         } catch(InvalidValue e) {
-
+            fail();
         }
         associateId = findAssociateId();
     }
@@ -59,7 +60,7 @@ public class TestGradeAssessments {
     public void testInsertValidGrade(){
         Assume.assumeTrue("Couldn't find any associates in database", associateId > 0);
 
-        gradeValid = assessmentDAO.insertGrade(new Grade(0, assessment.getAssessmentId(), associateId, 50));
+        gradeValid = assessmentDAO.insertGrade(gradeValid);
         Assert.assertNotNull("Error occured inserting grade into database", gradeValid);
         Assert.assertTrue("Grade wasn't inserted correctly into database", gradeValid.getGradeId() > 0);
         Assert.assertEquals("Grade score wasn't updated in database", 50, gradeValid.getScore(), 0);
@@ -111,8 +112,8 @@ public class TestGradeAssessments {
         Assert.assertNull("Invalid grade returned from database", returnedGrade);
     }
 
-    @After
-    public void cleanup() {
+    @AfterClass
+    public static void cleanup() {
         emptyGrade(gradeValid);
         emptyGrade(gradeValid2);
         emptyGrade(gradeValid3);
