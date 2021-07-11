@@ -145,6 +145,7 @@ public class TestGradeAssessments {
         try {
             gradeService.deleteGrade(gradeValid.getGradeId());
             gradeService.deleteGrade(gradeValid2.getGradeId());
+            assessmentDAO.deleteAssessment(assessment.getAssessmentId());
         } catch (ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
