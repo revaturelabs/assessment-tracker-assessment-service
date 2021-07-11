@@ -22,14 +22,14 @@ public class TestAdjustWeight {
             assessment = new Assessment(0, "Delete now", 1, 3, "5", 20, 1);
             assessment = assessmentDAO.createAssessment(assessment);
         } catch (InvalidValue e) {
-            //BUG - Should display something
+            fail();
         }
     }
 
     @Test
     public void testSettingValidWeight(){
         try {
-            Assert.assertTrue(assessmentDAO.adjustWeight(assessment.getAssessmentId(), 50));
+            Assert.assertNotNull(assessmentDAO.adjustWeight(assessment.getAssessmentId(), 50));
         } catch (InvalidValue | ResourceNotFound e) {
             fail();
         }
@@ -64,7 +64,7 @@ public class TestAdjustWeight {
         try {
             assessmentDAO.deleteAssessment(assessment.getAssessmentId());
         } catch(ResourceNotFound | ResourceUnchangable e) {
-            //BUG - Should display something
+            fail();
         }
     }
 }

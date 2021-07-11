@@ -11,6 +11,7 @@ import models.AssessmentType;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import services.AssessmentService;
+import services.AssessmentTypeService;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -22,10 +23,12 @@ public class AssessmentController {
     private static final String ASSESSMENTID = "assessmentId";
 
     private AssessmentService as;
+    private AssessmentTypeService ats;
     private final Gson gson = new Gson();
 
-    public AssessmentController(AssessmentService as) {
+    public AssessmentController(AssessmentService as, AssessmentTypeService ats) {
         this.as = as;
+        this.ats = ats;
     }
 
     public Handler getAssessments = context -> {
@@ -105,10 +108,10 @@ public class AssessmentController {
             int weight = Integer.parseInt(context.pathParam("weight"));
             int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
             aclogger.info("Attempting to update the weight on an assessment");
-            boolean wasUpdated = as.adjustWeight(assessmentId, weight);
+            Assessment a = as.adjustWeight(assessmentId, weight);
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return updatedWeight");
-            context.result(gson.toJson(wasUpdated));
+            context.result(gson.toJson(a));
             context.status(205);
         } catch (ResourceNotFound e) {
             aclogger.info(e);
@@ -126,10 +129,10 @@ public class AssessmentController {
         int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try {
             aclogger.info("Attempting to update type for assessment");
-            boolean wasUpdated = as.updateTypeForAssessment(assessmentId,typeId);
+            Assessment a = as.assignAssessmentType(assessmentId,typeId);
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return updated type for assessment");
-            context.result(gson.toJson(wasUpdated));
+            context.result(gson.toJson(a));
             context.status(205);
         } catch (SQLException e) {
             aclogger.info(e);
@@ -229,7 +232,7 @@ public class AssessmentController {
         try {
             aclogger.info("Attempting to create a type for assessments");
             AssessmentType assessmentType = gson.fromJson(context.body(), AssessmentType.class);
-            AssessmentType updatedAssessmentType = as.createAssessmentType(assessmentType);
+            AssessmentType updatedAssessmentType = ats.createAssessmentType(assessmentType);
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return updated type");
             context.result(gson.toJson(updatedAssessmentType));

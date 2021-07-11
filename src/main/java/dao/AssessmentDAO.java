@@ -21,7 +21,7 @@ public interface AssessmentDAO {
 
      Assessment updateAssessment(Assessment assessment) throws ResourceNotFound, ResourceUnchangable, InvalidValue;
 
-     boolean adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound;
+     Assessment adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound;
 
      boolean assignAssessmentType(int assessmentId, int typeId) throws SQLException, ResourceNotFound, InvalidValue;
 
@@ -33,8 +33,6 @@ public interface AssessmentDAO {
 
      //BUG - To extract
      List<Grade> getGradesForWeek(int traineeId, String weekId);
-
-     AssessmentType createAssessmentType(String name, int defaultWeight);
 
      List<Note> getNotesForTrainee(int id, int weekId);
 

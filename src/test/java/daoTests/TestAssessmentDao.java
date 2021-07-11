@@ -100,7 +100,7 @@ public class TestAssessmentDao {
     @Test
     public void testAdjustWeightTrue() {
         try {
-            Assert.assertTrue(assessmentDAO.adjustWeight(testAssessment.getAssessmentId(),20));
+            Assert.assertNotNull(assessmentDAO.adjustWeight(testAssessment.getAssessmentId(),20));
         } catch (InvalidValue | ResourceNotFound e) {
             fail();
         }

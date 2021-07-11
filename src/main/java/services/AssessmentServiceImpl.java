@@ -46,9 +46,7 @@ public class AssessmentServiceImpl implements AssessmentService{
 
     @Override
     public Assessment adjustWeight(int id, int weight) throws ResourceNotFound, ResourceUnchangable, InvalidValue {
-        Assessment assessment = this.getAssessment(id);
-        assessment.setAssessmentWeight(weight);
-        return this.updateAssessment(assessment);
+       return assessmentDAO.adjustWeight(id, weight);
     }
 
     @Override

@@ -115,7 +115,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
             }
         } catch (SQLException e) {
             if (e.getErrorCode() >= 23000 || e.getErrorCode() <= 24000) // This need to be changed for the exact code that has issues with forign keys
-                throw new ResourceUnchangable(String.format("Assessment with id %d has dependents that prevent deletion", id));
+                throw new ResourceUnchangable(String.format("Assessment with id %d has dependents that prevent deletion", assessmentId));
             e.printStackTrace();
         }
         return true;
@@ -146,21 +146,22 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
-    public boolean adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound {
+    public Assessment adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound {
         //Ensures weight is within bounds; throws InvalidValue otherwise
         Assessment validation = new Assessment();
         validation.setAssessmentWeight(weight);
-        String sql = "UPDATE assessments SET weight=? WHERE id=?";
+        String sql = "UPDATE assessments SET weight=? WHERE id=? returning * ";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, weight);
             ps.setInt(2, assessmentId);
 
-            if (ps.executeUpdate() > 0) return true;
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return buildAssessment(rs);
             else throw new ResourceNotFound("The assessment with the given id was not found!");
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     @Override
