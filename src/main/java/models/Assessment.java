@@ -7,7 +7,7 @@ public class Assessment {
     private String assessmentTitle;
     private int typeId;
     private int batchId;
-    private int weekId;
+    private String weekId;
     private int assessmentWeight;
     private int categoryId;
 
@@ -15,8 +15,8 @@ public class Assessment {
         super();
         setDefault();
     }
-
-    public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, int weekId,
+    
+    public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
                       int assessmentWeight, int categoryId) throws InvalidValue {
         super();
         setDefault();
@@ -46,7 +46,7 @@ public class Assessment {
         return batchId;
     }
 
-    public int getWeekId() {
+    public String getWeekId() {
         return weekId;
     }
 
@@ -64,7 +64,7 @@ public class Assessment {
         assessmentTitle = "";
         typeId = 0;
         batchId = 0;
-        weekId = 0;
+        weekId = "";
         assessmentWeight = 0;
         categoryId = 0;
     }
@@ -73,7 +73,8 @@ public class Assessment {
         this.assessmentId = assessmentId;
     }
 
-    public void setAssessmentTitle(String assessmentTitle){
+    public void setAssessmentTitle(String assessmentTitle) throws InvalidValue {
+        if(assessmentTitle == null) throw new InvalidValue("Please set a valid title");
         this.assessmentTitle = assessmentTitle;
     }
 
@@ -85,11 +86,14 @@ public class Assessment {
         this.batchId = batchId;
     }
 
-    public void setWeekId(int weekId){
+    public void setWeekId(String weekId) throws InvalidValue {
+        if(weekId == null) throw new InvalidValue("Please set a valid week");
         this.weekId = weekId;
     }
 
-    public void setAssessmentWeight(int assessmentWeight){
+    public void setAssessmentWeight(int assessmentWeight) throws InvalidValue {
+        if(assessmentWeight < 0 || assessmentWeight > 100)
+            throw new InvalidValue(String.format("%d is not a valid weight", assessmentWeight));
         this.assessmentWeight = assessmentWeight;
     }
 
@@ -97,9 +101,16 @@ public class Assessment {
         this.categoryId = categoryId;
     }
 
-    // public void setNotes(List<String> notes) {
-    //     this.notes = notes;
-    // }
+    public void verifyAssessment() throws InvalidValue {
+        //Ensure all properties are correct values
+        setAssessmentId(this.assessmentId);
+        setAssessmentTitle(this.assessmentTitle);
+        setTypeId(this.typeId);
+        setBatchId(this.batchId);
+        setWeekId(this.weekId);
+        setAssessmentWeight(this.assessmentWeight);
+        setCategoryId(this.categoryId);
+    }
 
     @Override
     public String toString() {
