@@ -60,14 +60,7 @@ public class AssessmentServiceImpl implements AssessmentService{
 
     @Override
     public List<Assessment> getBatchWeek(int batchId, String weekId) {
-        List<Assessment> assessmentsInGroup = new ArrayList<Assessment>();
-        List<Assessment> assessments = this.getAssessments();
-        for(int i = 0; i < assessments.size(); i++){
-            Assessment assessment = assessments.get(i);
-            if(assessment.getBatchId() == batchId && assessment.getWeekId() == weekId)
-                assessmentsInGroup.add(assessment);
-        }
-        return assessmentsInGroup;
+        return assessmentDAO.getBatchWeek(batchId, weekId);
     }
 
     @Override

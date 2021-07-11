@@ -122,7 +122,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
     }
 
     @Override
-    public List<Assessment> getAssessmentsByTraineeId(int traineeId) {
+    public List<Assessment> getAssessmentsByAssociateId(int traineeId) {
         String sql = "SELECT * FROM grades AS g JOIN assessments a ON "
                 + "g.assessment_id = a.id WHERE associate_id = ?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {

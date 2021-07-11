@@ -2,6 +2,7 @@ package daoTests;
 import dao.AssessmentDAOImpl;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
+import exceptions.ResourceUnchangable;
 import models.Assessment;
 
 import org.junit.Assert;
@@ -63,7 +64,7 @@ public class TestGetAssessments {
     public static void cleanup() {
         try {
             adao.deleteAssessment(assessment.getAssessmentId());
-        } catch (ResourceNotFound e) {
+        } catch (ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
     }

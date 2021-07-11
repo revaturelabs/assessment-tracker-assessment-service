@@ -67,7 +67,7 @@ public class AssessmentController {
         int traineeId = Integer.parseInt(context.pathParam("id"));
         try {
             aclogger.info("Attempting to get all assessments for trainee with id " + traineeId);
-            List<Assessment> assessments = as.getAssessmentsByTraineeId(traineeId);
+            List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
             if(assessments.size() == 0){
                 throw new RuntimeException("The assessment for trainee " + traineeId + " could not be found");
             }
@@ -143,7 +143,7 @@ public class AssessmentController {
         int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try{
             aclogger.info("Checking if associate with id " + associateId + " exists");
-            List<Assessment> assessments = as.getAssessmentsByTraineeId(associateId);
+            List<Assessment> assessments = as.getAssessmentsByAssociateId(associateId);
             if(assessments.size() == 0){
                 throw new RuntimeException("The associate with id " + associateId + " could not be found");
             }
@@ -167,7 +167,7 @@ public class AssessmentController {
         try {
             aclogger.info("Attempting to get grades for trainee " + traineeId  + "for week " + weekId);
             aclogger.info("Checking if trainee with id " + traineeId + " exists");
-            List<Assessment> assessments = as.getAssessmentsByTraineeId(traineeId);
+            List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
             if(assessments.size() == 0){
                 throw new RuntimeException("The trainee with id " + traineeId + " could not be found");
             }
@@ -207,7 +207,7 @@ public class AssessmentController {
         try {
             aclogger.info("Attempting to get notes for trainee " + id + " for week " + weekId);
             aclogger.info("Checking if trainee with id " + id + " exists");
-            List<Assessment> assessments = as.getAssessmentsByTraineeId(id);
+            List<Assessment> assessments = as.getAssessmentsByAssociateId(id);
             if(assessments.size() == 0){
                 throw new RuntimeException("The trainee with id " + id + " could not be found");
             }

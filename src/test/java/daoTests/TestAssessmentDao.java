@@ -72,7 +72,7 @@ public class TestAssessmentDao {
         oneBatches.add(4);
         oneBatches.add(5);
         oneBatches.add(6);
-        List<Assessment> assessments = assessmentDAO.getAssessmentsByTraineeId(1);
+        List<Assessment> assessments = assessmentDAO.getAssessmentsByAssociateId(1);
         for (Assessment a : assessments) {
             System.out.println(a.getBatchId());
             Assert.assertTrue(oneBatches.contains(a.getBatchId()));

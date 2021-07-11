@@ -27,7 +27,7 @@ public interface AssessmentDAO {
 
      boolean deleteAssessment(int assessmentId) throws ResourceNotFound, ResourceUnchangable;
 
-     List<Assessment> getAssessmentsByTraineeId(int traineeId);
+     List<Assessment> getAssessmentsByAssociateId(int traineeId);
 
      List<Assessment> getBatchWeek(int batchId, String weekId);
 
