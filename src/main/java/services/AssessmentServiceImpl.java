@@ -19,8 +19,6 @@ public class AssessmentServiceImpl implements AssessmentService{
 
     @Override
     public Assessment createAssessment(Assessment assessment) throws InvalidValue {
-        if(assessment.getAssessmentWeight() < 0)
-            throw new InvalidValue("Assessment weight cannot be negative");
         return this.assessmentDAO.createAssessment(assessment);
     }
 
@@ -30,8 +28,8 @@ public class AssessmentServiceImpl implements AssessmentService{
     }
 
     @Override
-    public Assessment getAssessment(int id) throws ResourceNotFound {
-        return this.assessmentDAO.getAssessment(id);
+    public Assessment getAssessment(int id) throws ResourceNotFound, InvalidValue {
+        return this.assessmentDAO.getAssessmentById(id);
     }
 
     @Override
@@ -61,7 +59,7 @@ public class AssessmentServiceImpl implements AssessmentService{
     }
 
     @Override
-    public List<Assessment> getBatchWeek(int batchId, int weekId) {
+    public List<Assessment> getBatchWeek(int batchId, String weekId) {
         List<Assessment> assessmentsInGroup = new ArrayList<Assessment>();
         List<Assessment> assessments = this.getAssessments();
         for(int i = 0; i < assessments.size(); i++){

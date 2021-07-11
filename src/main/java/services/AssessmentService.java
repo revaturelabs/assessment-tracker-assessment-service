@@ -12,7 +12,7 @@ public interface AssessmentService {
 
     List<Assessment> getAssessments();
 
-    Assessment getAssessment(int id) throws ResourceNotFound;
+    Assessment getAssessment(int id) throws ResourceNotFound, InvalidValue;
 
     Assessment updateAssessment(Assessment assessment) throws ResourceNotFound, ResourceUnchangable, InvalidValue;
 
@@ -22,7 +22,7 @@ public interface AssessmentService {
 
     Assessment assignAssessmentType(int id, int typeId) throws ResourceNotFound, ResourceUnchangable, InvalidValue;
 
-    List<Assessment> getBatchWeek(int batchId, int weekId);
+    List<Assessment> getBatchWeek(int batchId, String weekId);
 
     List<Assessment> getAssessmentsByAssociateId(int associateId);
 }

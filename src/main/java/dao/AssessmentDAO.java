@@ -2,6 +2,7 @@ package dao;
 
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
+import exceptions.ResourceUnchangable;
 import models.Assessment;
 import models.Grade;
 import models.Note;
@@ -18,11 +19,13 @@ public interface AssessmentDAO {
 
      List<Assessment> getAssessments();
 
+     Assessment updateAssessment(Assessment assessment) throws ResourceNotFound, ResourceUnchangable, InvalidValue;
+
      boolean adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound;
 
      boolean assignAssessmentType(int assessmentId, int typeId) throws SQLException, ResourceNotFound, InvalidValue;
 
-     boolean deleteAssessment(int assessmentId) throws ResourceNotFound;
+     boolean deleteAssessment(int assessmentId) throws ResourceNotFound, ResourceUnchangable;
 
      List<Assessment> getAssessmentsByTraineeId(int traineeId);
 
