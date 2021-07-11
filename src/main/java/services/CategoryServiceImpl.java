@@ -23,22 +23,22 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public Category getCategory(int categoryId) throws ResourceNotFound {
-        return this.getCategory(categoryId);
+        return this.categoryDAO.getCategory(categoryId);
     }
 
     @Override
     public Category updateCategory(Category category) throws ResourceNotFound {
-        return this.updateCategory(category);
+        return this.categoryDAO.updateCategory(category);
     }
 
     @Override
     public void deleteCategory(int categoryId) throws ResourceNotFound, ResourceUnchangable {
-        this.deleteCategory(categoryId);
+        this.categoryDAO.deleteCategory(categoryId);
     }
 
     @Override
     public Category createCategory(Category category) throws DuplicateResource {
-        return this.createCategory(category);
+        return this.categoryDAO.createCategory(category);
     }
     
 }
