@@ -1,5 +1,6 @@
 package dao;
 
+import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Assessment;
@@ -125,6 +126,24 @@ public class AssessmentDAOImpl implements AssessmentDAO {
             e.printStackTrace();
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public boolean adjustWeight(int assessmentId, int weight) throws InvalidValue, ResourceNotFound {
+        //Ensures weight is within bounds; throws InvalidValue otherwise
+        Assessment validation = new Assessment();
+        validation.setAssessmentWeight(weight);
+        String sql = "UPDATE assessments SET weight=? WHERE id=?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, weight);
+            ps.setInt(2, assessmentId);
+
+            if (ps.executeUpdate() > 0) return true;
+            else throw new ResourceNotFound("The assessment with the given id was not found!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     // @Override
