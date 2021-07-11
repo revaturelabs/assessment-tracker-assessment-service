@@ -1,5 +1,7 @@
 package models;
 
+import exceptions.InvalidValue;
+
 public class Assessment {
     private int assessmentId;
     private String assessmentTitle;
@@ -14,24 +16,8 @@ public class Assessment {
         setDefault();
     }
 
-    // //DON'T USE THIS CONSTRUCTOR
-    // public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, int weekId,
-    //         int assessmentWeight, int categoryId, List<String> notes) throws InvalidValue {
-    //     super();
-    //     setDefault();
-    //     setAssessmentId(assessmentId);
-    //     setAssessmentTitle(assessmentTitle);
-    //     setTypeId(typeId);
-    //     setBatchId(batchId);
-    //     setWeekId(weekId);
-    //     setAssessmentWeight(assessmentWeight);
-    //     setCategoryId(categoryId);
-    //     this.notes = notes;
-    // }
-
-    //USE THIS CONSTRUCTOR
     public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, int weekId,
-                      int assessmentWeight, int categoryId){
+                      int assessmentWeight, int categoryId) throws InvalidValue {
         super();
         setDefault();
         setAssessmentId(assessmentId);
