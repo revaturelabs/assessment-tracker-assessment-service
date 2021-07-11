@@ -174,9 +174,9 @@ public class AssessmentController {
     };
 
     public Handler getGradesForWeek = context -> {
-        int traineeId = Integer.parseInt(context.pathParam("id"));
-        String weekId = context.pathParam(WEEKID);
         try {
+            int traineeId = Integer.parseInt(context.pathParam("id"));
+            String weekId = context.pathParam(WEEKID);
             aclogger.info("Attempting to get grades for trainee " + traineeId  + "for week " + weekId);
             aclogger.info("Checking if trainee with id " + traineeId + " exists");
             List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
@@ -184,14 +184,17 @@ public class AssessmentController {
                 throw new RuntimeException("The trainee with id " + traineeId + " could not be found");
             }
             aclogger.info("Attempting to get grades for trainee with id " + traineeId + " for week " + weekId);
-            //BUG - Extract to grade service
-            List<Grade> grades = as.getGradesForWeek(traineeId, weekId);
+            List<Grade> grades = gs.getGradesForWeek(traineeId, weekId);
             if(grades.size() == 0){
                 throw new RuntimeException("The week with id " + weekId + " could not be found");
             }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grades));
             context.status(200);
+        } catch(InvalidValue e) {
+            aclogger.info(e);
+            context.result(e.getMessage());
+            context.status(400);
         } catch (RuntimeException e) {
             aclogger.info(e);
             context.result(e.getMessage());

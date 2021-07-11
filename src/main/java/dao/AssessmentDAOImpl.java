@@ -4,6 +4,7 @@ import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Assessment;
+import models.Note;
 import util.ConnectionDB;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -187,33 +188,32 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
         return new ArrayList<>();
     }
-        // @Override
-    // public List<Note> getNotesForTrainee(int id, int weekId) {
-    // String sql = "SELECT * FROM notes WHERE associate_id=? AND week_number=?";
-    // List<Note> notes = new ArrayList<>();
-    // try (PreparedStatement ps =
-    // ConnectionDB.getConnection().prepareStatement(sql)) {
-    // ps.setInt(1, id);
-    // ps.setInt(2, weekId);
 
-    // ResultSet resultSet = ps.executeQuery();
+    @Override
+    public List<Note> getNotesForTrainee(int id, int weekId) {
+        String sql = "SELECT * FROM notes WHERE associate_id=? AND week_number=?";
+        List<Note> notes = new ArrayList<>();
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.setInt(2, weekId);
 
-    // while (resultSet.next()) {
-    // notes.add(buildNote(resultSet));
-    // }
-    // } catch (SQLException e) {
-    // e.printStackTrace();
-    // }
+            ResultSet resultSet = ps.executeQuery();
 
-    // return notes;
-    // }
+            while (resultSet.next()) {
+                notes.add(buildNote(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-    // private Note buildNote(ResultSet rs) throws SQLException {
-    // return new Note(rs.getInt("id"), rs.getInt("batch_id"),
-    // rs.getInt("associate_id"),
-    // rs.getInt("week_number"), rs.getString("cont")
-    // );
-    // }
+        return notes;
+    }
+
+    private Note buildNote(ResultSet rs) throws SQLException {
+        return new Note(rs.getInt("id"), rs.getInt("batch_id"), rs.getInt("associate_id"),
+                rs.getInt("week_number"), rs.getString("cont")
+        );
+    }
 
     private Assessment buildAssessment(ResultSet rs) throws SQLException, InvalidValue {
         Assessment assessment = new Assessment();

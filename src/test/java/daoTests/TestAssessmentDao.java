@@ -1,9 +1,6 @@
 package daoTests;
 
-import dao.AssessmentDAO;
-import dao.AssessmentDAOImpl;
-import dao.AssessmentTypeDAO;
-import dao.AssessmentTypeDAOImpl;
+import dao.*;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
@@ -31,14 +28,17 @@ public class TestAssessmentDao {
     private static AssessmentTypeDAO assessmentTypeDAO;
     private static Assessment testAssessment;
     private static AssessmentType testAssessmentType;
-    private Grade testGrade = new Grade(0, 1, 1, 5);
+    private static GradeDAO gradeDAO;
+    private static Grade testGrade;
 
     @BeforeClass
     public static void setup() {
         assessmentDAO = new AssessmentDAOImpl();
         assessmentTypeDAO = new AssessmentTypeDAOImpl();
+        gradeDAO = new GradeDAOImpl();
         try {
             testAssessment = new Assessment(0, "testAssessment", 1, 1, "3", 50, 1);
+            testGrade = new Grade(0, 1, 1, 5);
         } catch(InvalidValue e) {
             fail();
         }
@@ -82,10 +82,14 @@ public class TestAssessmentDao {
     @Test
     @Order(4)
     public void testGetWeekAssessments() {
-       List<Grade> grades = assessmentDAO.getGradesForWeek(1, "3");
-       for (Grade g : grades) {
-           Assert.assertTrue(g.getAssociateId() == 1);
-       }
+        try {
+            List<Grade> grades = gradeDAO.getGradesForWeek(1, "3");
+            for (Grade g : grades) {
+                Assert.assertTrue(g.getAssociateId() == 1);
+            }
+        } catch(InvalidValue e) {
+            fail();
+        }
     }
 
     @Test
@@ -128,7 +132,7 @@ public class TestAssessmentDao {
     @Test
     @Order(9)
     public void testInsertGrade() {
-        Grade grade = assessmentDAO.insertGrade(testGrade);
+        Grade grade = gradeDAO.insertGrade(testGrade);
         Assert.assertTrue(grade.getGradeId() != 0);
     }
 

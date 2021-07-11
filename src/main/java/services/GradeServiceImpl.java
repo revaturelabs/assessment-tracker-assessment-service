@@ -23,7 +23,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public List<Grade> getGrades() {
+    public List<Grade> getGrades() throws InvalidValue {
         return this.gradeDAO.getGrades();
     }
 
@@ -37,6 +37,7 @@ public class GradeServiceImpl implements GradeService {
         return this.gradeDAO.updateGrade(grade);
     }
 
+    @Override
     public Grade insertGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue, DuplicateResource {
         if(getGrade(grade.getAssessmentId(), grade.getAssociateId()) != null)
             return updateGrade(grade);
@@ -47,6 +48,11 @@ public class GradeServiceImpl implements GradeService {
     @Override
     public void deleteGrade(int id) throws ResourceNotFound, ResourceUnchangable {
         this.gradeDAO.deleteGrade(id);
+    }
+
+    @Override
+    public List<Grade> getGradesForWeek(int associateId, String weekId) throws InvalidValue{
+        return this.gradeDAO.getGradesForWeek(associateId, weekId);
     }
     
 }

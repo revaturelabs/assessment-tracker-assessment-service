@@ -32,14 +32,5 @@ public interface AssessmentDAO {
      List<Assessment> getBatchWeek(int batchId, String weekId);
 
      //BUG - To extract
-     List<Grade> getGradesForWeek(int traineeId, String weekId);
-
      List<Note> getNotesForTrainee(int id, int weekId);
-
-     Grade insertGrade(Grade grade);
-
-     Grade getGradeForAssociate(int associateId, int assessmentId);
-
-     Grade updateGrade(Grade grade);
-
 }

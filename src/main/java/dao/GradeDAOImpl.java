@@ -40,7 +40,7 @@ public class GradeDAOImpl implements GradeDAO{
     }
 
     @Override
-    public List<Grade> getGrades() {
+    public List<Grade> getGrades() throws InvalidValue {
         String sql = "SELECT * FROM categories";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
@@ -51,8 +51,9 @@ public class GradeDAOImpl implements GradeDAO{
             return categories;
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (InvalidValue) {
-
+        } catch (InvalidValue e) {
+            //Invalid value in the database
+            throw new InvalidValue("Something went wrong; invalid grade data was found");
         }
         return new ArrayList<>();
     }
@@ -106,10 +107,7 @@ public class GradeDAOImpl implements GradeDAO{
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, id);
             int rowsChanged = ps.executeUpdate();
-            if (rowsChanged > 0) {
-                return;
-            }
-            else{
+            if (rowsChanged == 0) {
                 throw new ResourceNotFound(String.format("Grade with id %d couldn't be found", id));
             }
         } catch (SQLException e) {
@@ -129,12 +127,12 @@ public class GradeDAOImpl implements GradeDAO{
     }
 
     @Override
-    public List<Grade> getGradesForWeek(int associateId, int weekId) throws InvalidValue{
+    public List<Grade> getGradesForWeek(int associateId, String weekId) throws InvalidValue {
         String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a "
                 + "ON g.assessment_id = a.id WHERE" + " associate_id = ? AND week = ?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, associateId);
-            ps.setInt(2, weekId);
+            ps.setString(2, weekId);
             ResultSet rs = ps.executeQuery();
             List<Grade> grades = new ArrayList<>();
             while (rs.next()) {
