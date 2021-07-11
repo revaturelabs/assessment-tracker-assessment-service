@@ -227,9 +227,9 @@ public class AssessmentController {
     };
 
     public Handler getNotesForTrainee = context -> {
-        int id = Integer.parseInt(context.pathParam("id"));
-        int weekId = Integer.parseInt(context.pathParam(WEEKID));
         try {
+            int id = Integer.parseInt(context.pathParam("id"));
+            int weekId = Integer.parseInt(context.pathParam(WEEKID));
             aclogger.info("Attempting to get notes for trainee " + id + " for week " + weekId);
             aclogger.info("Checking if trainee with id " + id + " exists");
             List<Assessment> assessments = as.getAssessmentsByAssociateId(id);

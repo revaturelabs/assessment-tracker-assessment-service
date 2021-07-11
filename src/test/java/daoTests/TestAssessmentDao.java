@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.Assert;
 import org.junit.Test;
+import services.GradeService;
+import services.GradeServiceImpl;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,14 +31,14 @@ public class TestAssessmentDao {
     private static AssessmentTypeDAO assessmentTypeDAO;
     private static Assessment testAssessment;
     private static AssessmentType testAssessmentType;
-    private static GradeDAO gradeDAO;
+    private static GradeService gradeService;
     private static Grade testGrade;
 
     @BeforeClass
     public static void setup() {
         assessmentDAO = new AssessmentDAOImpl();
         assessmentTypeDAO = new AssessmentTypeDAOImpl();
-        gradeDAO = new GradeDAOImpl();
+        gradeService = new GradeServiceImpl(new GradeDAOImpl());
         try {
             testAssessment = new Assessment(0, "testAssessment", 1, 1, "3", 50, 1);
             testGrade = new Grade(0, 1, 1, 5);
@@ -83,7 +86,7 @@ public class TestAssessmentDao {
     @Order(4)
     public void testGetWeekAssessments() {
         try {
-            List<Grade> grades = gradeDAO.getGradesForWeek(1, "3");
+            List<Grade> grades = gradeService.getGradesForWeek(1, "3");
             for (Grade g : grades) {
                 Assert.assertTrue(g.getAssociateId() == 1);
             }
@@ -132,8 +135,12 @@ public class TestAssessmentDao {
     @Test
     @Order(9)
     public void testInsertGrade() {
-        Grade grade = gradeDAO.insertGrade(testGrade);
-        Assert.assertTrue(grade.getGradeId() != 0);
+        try {
+            Grade grade = gradeService.insertGrade(testGrade);
+            Assert.assertTrue(grade.getGradeId() != 0);
+        } catch (DuplicateResource | ResourceUnchangable | ResourceNotFound | InvalidValue e) {
+            fail();
+        }
     }
 
     @AfterClass
