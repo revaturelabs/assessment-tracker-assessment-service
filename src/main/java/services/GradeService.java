@@ -1,5 +1,22 @@
 package services;
 
+import java.util.List;
+
+import exceptions.DuplicateResource;
+import exceptions.InvalidValue;
+import exceptions.ResourceNotFound;
+import exceptions.ResourceUnchangable;
+import models.Grade;
+
 public interface GradeService {
     
+    Grade createGrade(Grade grade) throws DuplicateResource, InvalidValue;
+
+    List<Grade> getGrades();
+
+    Grade getGrade(int assessmentId, int associateId) throws ResourceNotFound;
+
+    Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue;
+
+    void deleteGrade(int id) throws ResourceNotFound, ResourceUnchangable;
 }

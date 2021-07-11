@@ -18,4 +18,6 @@ public interface GradeDAO {
     Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable;
 
     void deleteGrade(int id) throws ResourceNotFound, ResourceUnchangable;
+
+    List<Grade> getGradesForWeek(int associateId, int weekId);
 }

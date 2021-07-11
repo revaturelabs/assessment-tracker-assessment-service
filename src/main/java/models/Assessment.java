@@ -3,14 +3,12 @@ package models;
 import java.util.ArrayList;
 import java.util.List;
 
-import exceptions.InvalidValue;
-
 public class Assessment {
     private int assessmentId;
     private String assessmentTitle;
     private int typeId;
     private int batchId;
-    private String weekId;
+    private int weekId;
     private int assessmentWeight;
     private int categoryId;
     private List<String> notes;
@@ -21,24 +19,24 @@ public class Assessment {
         notes = new ArrayList<String>();
     }
 
-    //DON'T USE THIS CONSTRUCTOR
-    public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
-            int assessmentWeight, int categoryId, List<String> notes) throws InvalidValue {
-        super();
-        setDefault();
-        setAssessmentId(assessmentId);
-        setAssessmentTitle(assessmentTitle);
-        setTypeId(typeId);
-        setBatchId(batchId);
-        setWeekId(weekId);
-        setAssessmentWeight(assessmentWeight);
-        setCategoryId(categoryId);
-        this.notes = notes;
-    }
+    // //DON'T USE THIS CONSTRUCTOR
+    // public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, int weekId,
+    //         int assessmentWeight, int categoryId, List<String> notes) throws InvalidValue {
+    //     super();
+    //     setDefault();
+    //     setAssessmentId(assessmentId);
+    //     setAssessmentTitle(assessmentTitle);
+    //     setTypeId(typeId);
+    //     setBatchId(batchId);
+    //     setWeekId(weekId);
+    //     setAssessmentWeight(assessmentWeight);
+    //     setCategoryId(categoryId);
+    //     this.notes = notes;
+    // }
 
     //USE THIS CONSTRUCTOR
-    public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
-                      int assessmentWeight, int categoryId) throws InvalidValue {
+    public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, int weekId,
+                      int assessmentWeight, int categoryId){
         super();
         setDefault();
         setAssessmentId(assessmentId);
@@ -69,7 +67,7 @@ public class Assessment {
         return batchId;
     }
 
-    public String getWeekId() {
+    public int getWeekId() {
         return weekId;
     }
 
@@ -91,7 +89,7 @@ public class Assessment {
         assessmentTitle = "";
         typeId = 0;
         batchId = 0;
-        weekId = "";
+        weekId = 0;
         assessmentWeight = 0;
         categoryId = 0;
     }
@@ -100,8 +98,7 @@ public class Assessment {
         this.assessmentId = assessmentId;
     }
 
-    public void setAssessmentTitle(String assessmentTitle) throws InvalidValue {
-        if(assessmentTitle == null) throw new InvalidValue("Please set a valid title");
+    public void setAssessmentTitle(String assessmentTitle){
         this.assessmentTitle = assessmentTitle;
     }
 
@@ -113,14 +110,11 @@ public class Assessment {
         this.batchId = batchId;
     }
 
-    public void setWeekId(String weekId) throws InvalidValue {
-        if(weekId == null) throw new InvalidValue("Please set a valid week");
+    public void setWeekId(int weekId){
         this.weekId = weekId;
     }
 
-    public void setAssessmentWeight(int assessmentWeight) throws InvalidValue {
-        if(assessmentWeight < 0 || assessmentWeight > 100)
-            throw new InvalidValue(String.format("%d is not a valid weight", assessmentWeight));
+    public void setAssessmentWeight(int assessmentWeight){
         this.assessmentWeight = assessmentWeight;
     }
 
@@ -130,18 +124,6 @@ public class Assessment {
 
     public void setNotes(List<String> notes) {
         this.notes = notes;
-    }
-
-
-    public void verifyAssessment() throws InvalidValue {
-        //Ensure all properties are correct values
-        setAssessmentId(this.assessmentId);
-        setAssessmentTitle(this.assessmentTitle);
-        setTypeId(this.typeId);
-        setBatchId(this.batchId);
-        setWeekId(this.weekId);
-        setAssessmentWeight(this.assessmentWeight);
-        setCategoryId(this.categoryId);
     }
 
     @Override
