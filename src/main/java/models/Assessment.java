@@ -15,7 +15,7 @@ public class Assessment {
         super();
         setDefault();
     }
-    
+
     public Assessment(int assessmentId, String assessmentTitle, int typeId, int batchId, String weekId,
                       int assessmentWeight, int categoryId) throws InvalidValue {
         super();
