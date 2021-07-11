@@ -120,4 +120,23 @@ public class GradeDAOImpl implements GradeDAO{
         grade.setScore(rs.getDouble("score"));
         return grade;
     }
+
+    @Override
+    public List<Grade> getGradesForWeek(int associateId, int weekId) {
+        String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a "
+                + "ON g.assessment_id = a.id WHERE" + " associate_id = ? AND week = ?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, associateId);
+            ps.setInt(2, weekId);
+            ResultSet rs = ps.executeQuery();
+            List<Grade> grades = new ArrayList<>();
+            while (rs.next()) {
+                grades.add(buildGrade(rs));
+            }
+            return grades;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 }
