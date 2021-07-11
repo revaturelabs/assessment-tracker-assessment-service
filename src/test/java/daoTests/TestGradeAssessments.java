@@ -22,14 +22,14 @@ public class TestGradeAssessments {
     private static Assessment assessment;
     private static int associateId = 0;
 
-    private static void emptyGrades(){
-        String sql = "DELETE FROM grades";
-        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+//    private static void emptyGrades(){
+//        String sql = "DELETE FROM grades";
+//        try(PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+//            ps.executeUpdate();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private static int findAssociateId(){
         String sql = "SELECT * FROM associates";
@@ -51,7 +51,7 @@ public class TestGradeAssessments {
         else
             assessment = null;
         associateId = findAssociateId();
-        emptyGrades();
+        //emptyGrades();
     }
 
     @Test
