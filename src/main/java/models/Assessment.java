@@ -11,12 +11,10 @@ public class Assessment {
     private int weekId;
     private int assessmentWeight;
     private int categoryId;
-    private List<String> notes;
 
     public Assessment() {
         super();
         setDefault();
-        notes = new ArrayList<String>();
     }
 
     // //DON'T USE THIS CONSTRUCTOR
@@ -48,8 +46,6 @@ public class Assessment {
         setCategoryId(categoryId);
     }
 
-
-
     //Getters
     public int getAssessmentId() {
         return assessmentId;
@@ -77,10 +73,6 @@ public class Assessment {
 
     public int getCategoryId() {
         return categoryId;
-    }
-
-    public List<String> getNotes() {
-        return notes;
     }
 
     //Setters
@@ -130,7 +122,7 @@ public class Assessment {
     public String toString() {
         return "Assessment [assessmentId=" + assessmentId + ", assessmentTitle=" + assessmentTitle
                 + ", assessmentWeight=" + assessmentWeight + ", batchId=" + batchId + ", categoryId=" + categoryId
-                + ", notes=" + notes + ", typeId=" + typeId + ", weekId=" + weekId + "]";
+                + ", typeId=" + typeId + ", weekId=" + weekId + "]";
     }
 
 }

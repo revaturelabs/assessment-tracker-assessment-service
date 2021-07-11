@@ -2,44 +2,42 @@ package daoTests;
 
 import dao.AssessmentDAO;
 import dao.AssessmentDAOImpl;
+import dao.AssessmentTypeDAO;
+import dao.AssessmentTypeDAOImpl;
+import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
+import exceptions.ResourceUnchangable;
 import models.Assessment;
 import models.AssessmentType;
-import models.Grade;
-import org.junit.After;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
-import util.ConnectionDB;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAssignAssessmentType {
 
-    private AssessmentDAO assessmentDAO;
-    private AssessmentType assessType;
-    private Assessment assessment;
+    private static AssessmentDAO assessmentDAO;
+    private static AssessmentTypeDAO assessmentTypeDAO;
+    private static AssessmentType assessType;
+    private static Assessment assessment;
 
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void setup() {
         assessmentDAO = new AssessmentDAOImpl();
+        assessmentTypeDAO = new AssessmentTypeDAOImpl();
         try {
-            Assessment sampleAssessment1 = new Assessment(0, "Test Assessment 1", 1, 1, "1", 30, 2);
-            assessment = assessmentDAO.createAssessment(sampleAssessment1);
-            assessType = assessmentDAO.createAssessmentType("QC", 100);
-        } catch(InvalidValue e) {
-            //BUG - Display something if we get here
+            assessment = new Assessment(0, "Test Assessment 1", 1, 1, "1", 30, 2);
+            assessment = assessmentDAO.createAssessment(assessment);
+            assessType = new AssessmentType(0,"QC-Extra", 100);
+            assessType = assessmentTypeDAO.createAssessmentType(assessType);
+        } catch(InvalidValue | DuplicateResource e) {
+            fail();
         }
     }
 
@@ -82,13 +80,13 @@ public class TestAssignAssessmentType {
         }
     }
 
-    @After
-    public void cleanup() {
+    @AfterClass
+    public static void cleanup() {
         try {
             assessmentDAO.deleteAssessment(assessment.getAssessmentId());
-            //BUG - Delete assessmentType
-        } catch(ResourceNotFound e) {
-            //BUG - Shouldnt get here
+            assessmentTypeDAO.deleteAssessmentType(assessType.getTypeId());
+        } catch(ResourceNotFound |  ResourceUnchangable e) {
+            fail();
         }
     }
 
