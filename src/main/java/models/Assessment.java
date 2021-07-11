@@ -1,8 +1,5 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Assessment {
     private int assessmentId;
     private String assessmentTitle;
@@ -114,9 +111,9 @@ public class Assessment {
         this.categoryId = categoryId;
     }
 
-    public void setNotes(List<String> notes) {
-        this.notes = notes;
-    }
+    // public void setNotes(List<String> notes) {
+    //     this.notes = notes;
+    // }
 
     @Override
     public String toString() {
