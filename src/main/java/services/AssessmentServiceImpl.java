@@ -1,5 +1,6 @@
 package services;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class AssessmentServiceImpl implements AssessmentService{
 
     @Override
     public void deleteAssessment(int id) throws ResourceNotFound, ResourceUnchangable {
-        this.deleteAssessment(id);
+        assessmentDAO.deleteAssessment(id);
     }
 
     @Override
@@ -49,10 +50,15 @@ public class AssessmentServiceImpl implements AssessmentService{
     }
 
     @Override
-    public Assessment assignAssessmentType(int id, int typeId) throws ResourceNotFound, ResourceUnchangable, InvalidValue {
-        Assessment assessment = this.getAssessment(id);
-        assessment.setTypeId(typeId);
-        return this.updateAssessment(assessment);
+    public Assessment assignAssessmentType(int id, int typeId) throws ResourceNotFound, SQLException, InvalidValue {
+       // Assessment assessment = this.getAssessment(id);
+        //assessment.setTypeId(typeId);
+        //return this.updateAssessment(assessment);
+        if (assessmentDAO.assignAssessmentType(id, typeId)) {
+            return assessmentDAO.getAssessmentById(id);
+        } else {
+            throw new ResourceNotFound("AssessmentType of id " + typeId + " doesn't exist");
+        }
     }
 
     @Override

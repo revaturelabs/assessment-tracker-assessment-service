@@ -36,7 +36,7 @@ public class App {
         app.get("/assessments", ac.getAssessments);
         app.post("/assessments", ac.createAssessment);
         app.get("/assessments/:traineeId", ac.getAssessmentsByTraineeId);
-        app.get("batches/:batchId/assessments", ac.getBatchWeek); //batches/5/assessments?week=4
+        app.get("/batches/:batchId/assessments", ac.getBatchWeek); //batches/5/assessments?week=4
         app.put("/assessments/:assessmentId/weight", ac.adjustWeight); //assessments/3/weight?weight=55
         app.put("/assessments/:assessmentId/type/:typeId",ac.assignAssessmentType);
 

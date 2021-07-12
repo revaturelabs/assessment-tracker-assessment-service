@@ -126,23 +126,19 @@ public class AssessmentController {
     };
 
     public Handler assignAssessmentType = context -> {
+        int typeId = Integer.parseInt(context.pathParam("typeId"));
+        int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try {
-            int typeId = Integer.parseInt(context.pathParam("typeId"));
-            int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
             aclogger.info("Attempting to update type for assessment");
             Assessment a = as.assignAssessmentType(assessmentId,typeId);
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return updated type for assessment");
             context.result(gson.toJson(a));
             context.status(205);
-        } catch (ResourceNotFound e) {
+        } catch (ResourceNotFound | SQLException e) {
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
-        } catch (ResourceUnchangable e) {
-            aclogger.info(e);
-            context.result(e.getMessage());
-            context.status(403);
         } catch (RuntimeException | InvalidValue e) {
             aclogger.info(e);
             context.result(e.getMessage());
@@ -166,7 +162,7 @@ public class AssessmentController {
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grade));
             context.status(200);
-        }catch (ResourceNotFound e){
+        }catch (ResourceNotFound | RuntimeException e){
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
