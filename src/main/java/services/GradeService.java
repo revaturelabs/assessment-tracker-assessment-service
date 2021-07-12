@@ -25,5 +25,5 @@ public interface GradeService {
     List<Grade> getGradesForWeek(int associateId, String weekId) throws InvalidValue;
 
 
-    double getAverageGrade(int assessmentId);
+    double getAverageGrade(int assessmentId) throws ResourceNotFound;
 }

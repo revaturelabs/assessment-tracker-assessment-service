@@ -143,7 +143,7 @@ public class TestGradeAssessments {
     }
 
     @Test
-    public void testGetAverageGrade(){
+    public void testGetAverageGrade() throws ResourceNotFound {
         Assume.assumeTrue("Couldn't find any assessments in database", assessment != null);
         Assume.assumeTrue("Couldn't find any associates in database", associateId > 0);
 

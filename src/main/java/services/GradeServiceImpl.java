@@ -58,7 +58,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public double getAverageGrade(int assessmentId) {
+    public double getAverageGrade(int assessmentId) throws ResourceNotFound {
         return gradeDAO.getAverageGrade(assessmentId);
     }
 

@@ -146,21 +146,25 @@ public class GradeDAOImpl implements GradeDAO{
     }
 
     @Override
-    public double getAverageGrade(int assessmentId) {
-            String sql ="select avg(score) AS average_score\n" +
-                    "from grades\n" +
-                    "where assessment_id = ?";
-            try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
-                ps.setInt(1, assessmentId);
+    public double getAverageGrade(int assessmentId) throws ResourceNotFound {
 
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()){
-                    return rs.getDouble("average_score");
+        String sql ="select avg(score) AS average_score\n" +
+                "from grades\n" +
+                "where assessment_id = ?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, assessmentId);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                double average = rs.getDouble("average_score");
+                if (rs.wasNull()) {
+                    throw new ResourceNotFound("There are no grades for assessment with id " + assessmentId);
                 }
-            } catch(Exception e) {
-                e.printStackTrace();
+                return average;
             }
-            return 0;
-
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

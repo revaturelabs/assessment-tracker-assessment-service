@@ -268,25 +268,16 @@ public class AssessmentController {
 
         try {
             aclogger.info("Attempting to get average grade per assessment with id " + assessmentId);
-            Grade grade = gson.fromJson(context.body(), Grade.class);
-
-            if(grade.getScore() == 0){
-                throw new RuntimeException("The assessment with id " + assessmentId + " could not be found");
-            }
 
             double averageGrade = gs.getAverageGrade(assessmentId);
-            context.contentType(CONTENTTYPE);
 
-            aclogger.info("Attempting to return average  grade");
+            aclogger.info("Attempting to return average grade");
             context.result(gson.toJson(averageGrade));
             context.status(201);
-
-        } catch(RuntimeException e) {
-            aclogger.info(e);
-            context.result("Couldn't get average grade");
-
+        } catch (ResourceNotFound e) {
+            context.result(e.getMessage());
+            context.status(404);
         }
-
     };
 
 
