@@ -26,7 +26,7 @@ public class TestGradeAssessments {
     private static AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
     private static GradeService gradeService = new GradeServiceImpl(new GradeDAOImpl());
     private static GradeDAO gradeDAO = new GradeDAOImpl();
-    private static Assessment assessment;
+    private static Assessment assessment, assessAVG;
     private static Grade gradeValid, gradeValid2;
     private static int associateId = 0;
     private static int batchId = 0;
@@ -47,6 +47,7 @@ public class TestGradeAssessments {
         assessmentDAO = new AssessmentDAOImpl();
         try {
             assessment = assessmentDAO.createAssessment(new Assessment(0, "Test Assessment 1", 1, 1, "1", 30, 2));
+            assessAVG = assessmentDAO.createAssessment(new Assessment(0, "AssessmentAvg", 1, 1, "1", 30, 2));
             gradeValid = new Grade(0, assessment.getAssessmentId(), associateId, 50);
             gradeValid2 = new Grade(0, assessment.getAssessmentId(), associateId, 50);
         } catch(InvalidValue e) {
@@ -144,14 +145,19 @@ public class TestGradeAssessments {
 
     @Test
     public void testGetAverageGrade() throws ResourceNotFound {
-        Assume.assumeTrue("Couldn't find any assessments in database", assessment != null);
         Assume.assumeTrue("Couldn't find any associates in database", associateId > 0);
-
-
-        double returnAvgrade = gradeDAO.getAverageGrade(assessment.getAssessmentId());
-        Assert.assertNotEquals("Invalid average grade from database", returnAvgrade, 0);
-//        returnAvgrade = gradeDAO.getAverageGrade(assessment.getAssessmentId(), assessment.getWeekId(), assessment.getBatchId());
-//        Assert.assertNotEquals("Invalid average grade return from database", returnAvgrade,);
+        try {
+            Grade gradeAVG1 = gradeService.createGrade(new Grade(0, assessAVG.getAssessmentId(), associateId, 50));
+            Grade gradeAVG2 = gradeService.createGrade(new Grade(0, assessAVG.getAssessmentId(), associateId, 100));
+            Grade gradeAVG3 = gradeService.createGrade(new Grade(0, assessAVG.getAssessmentId(), associateId, 75));
+            double returnAvgrade = gradeDAO.getAverageGrade(assessAVG.getAssessmentId());
+            gradeService.deleteGrade(gradeAVG1.getGradeId());
+            gradeService.deleteGrade(gradeAVG2.getGradeId());
+            gradeService.deleteGrade(gradeAVG3.getGradeId());
+            Assert.assertEquals("Invalid average grade from database", 75, returnAvgrade, 0.0);
+        } catch (DuplicateResource | InvalidValue | ResourceUnchangable e) {
+            fail();
+        }
     }
 
     @AfterClass
@@ -160,6 +166,7 @@ public class TestGradeAssessments {
             gradeService.deleteGrade(gradeValid.getGradeId());
             gradeService.deleteGrade(gradeValid2.getGradeId());
             assessmentDAO.deleteAssessment(assessment.getAssessmentId());
+            assessmentDAO.deleteAssessment(assessAVG.getAssessmentId());
         } catch (ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
