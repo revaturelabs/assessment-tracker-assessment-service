@@ -6,6 +6,7 @@ import exceptions.ResourceUnchangable;
 import models.Assessment;
 import models.Note;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface AssessmentService {
@@ -22,7 +23,7 @@ public interface AssessmentService {
     
     Assessment adjustWeight(int id, int weight) throws ResourceNotFound, ResourceUnchangable, InvalidValue;
 
-    Assessment assignAssessmentType(int id, int typeId) throws ResourceNotFound, ResourceUnchangable, InvalidValue;
+    Assessment assignAssessmentType(int id, int typeId) throws ResourceNotFound, SQLException, InvalidValue;
 
     List<Assessment> getBatchWeek(int batchId, String weekId);
 

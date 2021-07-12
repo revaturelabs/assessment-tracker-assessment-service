@@ -69,7 +69,7 @@ public class AssessmentController {
 
     public Handler getAssessmentsByTraineeId = context -> {
         try {
-            int traineeId = Integer.parseInt(context.pathParam("id"));
+            int traineeId = Integer.parseInt(context.pathParam("traineeId"));
             aclogger.info("Attempting to get all assessments for trainee with id " + traineeId);
             List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
             if(assessments.size() == 0){
@@ -87,12 +87,12 @@ public class AssessmentController {
 
     public Handler getBatchWeek = context -> {
         try {
-            int batchId = Integer.parseInt(context.pathParam("id"));
-            String weekId = context.pathParam(WEEKID);
-            aclogger.info("Attempting to get assessments for batch " + batchId + " for week " + weekId);
-            List<Assessment> assessments = as.getBatchWeek(batchId, weekId);
+            int batchId = Integer.parseInt(context.pathParam("batchId"));
+            String week = context.queryParam("week");
+            aclogger.info("Attempting to get assessments for batch " + batchId + " for week " + week);
+            List<Assessment> assessments = as.getBatchWeek(batchId, week);
             if(assessments.size() == 0){
-                throw new RuntimeException("There are no assessments for the combination of batch " + batchId + " and week " + weekId);
+                throw new RuntimeException("There are no assessments for the combination of batch " + batchId + " and week " + week);
             }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(assessments));
@@ -106,7 +106,7 @@ public class AssessmentController {
 
     public Handler adjustWeight = context -> {
         try {
-            int weight = Integer.parseInt(context.pathParam("weight"));
+            int weight = Integer.parseInt(context.queryParam("weight"));
             int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
             aclogger.info("Attempting to update the weight on an assessment");
             Assessment a = as.adjustWeight(assessmentId, weight);
@@ -126,23 +126,19 @@ public class AssessmentController {
     };
 
     public Handler assignAssessmentType = context -> {
+        int typeId = Integer.parseInt(context.pathParam("typeId"));
+        int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try {
-            int typeId = Integer.parseInt(context.pathParam("typeId"));
-            int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
             aclogger.info("Attempting to update type for assessment");
             Assessment a = as.assignAssessmentType(assessmentId,typeId);
             context.contentType(CONTENTTYPE);
             aclogger.info("Attempting to return updated type for assessment");
             context.result(gson.toJson(a));
             context.status(205);
-        } catch (ResourceNotFound e) {
+        } catch (ResourceNotFound | SQLException e) {
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
-        } catch (ResourceUnchangable e) {
-            aclogger.info(e);
-            context.result(e.getMessage());
-            context.status(403);
         } catch (RuntimeException | InvalidValue e) {
             aclogger.info(e);
             context.result(e.getMessage());
@@ -151,7 +147,7 @@ public class AssessmentController {
     };
 
     public Handler getGradeForAssociate = context -> {
-        int associateId = Integer.parseInt(context.pathParam("associateId"));
+        int associateId = Integer.parseInt(context.queryParam("associateId"));
         int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
         try{
             aclogger.info("Checking if associate with id " + associateId + " exists");
@@ -166,7 +162,7 @@ public class AssessmentController {
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grade));
             context.status(200);
-        }catch (ResourceNotFound e){
+        }catch (ResourceNotFound | RuntimeException e){
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
@@ -175,8 +171,8 @@ public class AssessmentController {
 
     public Handler getGradesForWeek = context -> {
         try {
-            int traineeId = Integer.parseInt(context.pathParam("id"));
-            String weekId = context.pathParam(WEEKID);
+            int traineeId = Integer.parseInt(context.queryParam("traineeId"));
+            String weekId = context.queryParam("week");
             aclogger.info("Attempting to get grades for trainee " + traineeId  + "for week " + weekId);
             aclogger.info("Checking if trainee with id " + traineeId + " exists");
             List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
@@ -226,29 +222,29 @@ public class AssessmentController {
         }
     };
 
-    public Handler getNotesForTrainee = context -> {
-        try {
-            int id = Integer.parseInt(context.pathParam("id"));
-            int weekId = Integer.parseInt(context.pathParam(WEEKID));
-            aclogger.info("Attempting to get notes for trainee " + id + " for week " + weekId);
-            aclogger.info("Checking if trainee with id " + id + " exists");
-            List<Assessment> assessments = as.getAssessmentsByAssociateId(id);
-            if(assessments.size() == 0){
-                throw new RuntimeException("The trainee with id " + id + " could not be found");
-            }
-            List<Note> notes = as.getNotesForTrainee(id, weekId);
-            if(notes.size() == 0){
-                throw new RuntimeException("The week with id " + weekId + " could not be found");
-            }
-            context.contentType(CONTENTTYPE);
-            context.result(gson.toJson(notes));
-            context.status(200);
-        } catch (RuntimeException e) {
-            aclogger.info(e);
-            context.result(e.getMessage());
-            context.status(404);
-        }
-    };
+//    public Handler getNotesForTrainee = context -> {
+//        try {
+//            int id = Integer.parseInt(context.pathParam("id"));
+//            int weekId = Integer.parseInt(context.pathParam(WEEKID));
+//            aclogger.info("Attempting to get notes for trainee " + id + " for week " + weekId);
+//            aclogger.info("Checking if trainee with id " + id + " exists");
+//            List<Assessment> assessments = as.getAssessmentsByAssociateId(id);
+//            if(assessments.size() == 0){
+//                throw new RuntimeException("The trainee with id " + id + " could not be found");
+//            }
+//            List<Note> notes = as.getNotesForTrainee(id, weekId);
+//            if(notes.size() == 0){
+//                throw new RuntimeException("The week with id " + weekId + " could not be found");
+//            }
+//            context.contentType(CONTENTTYPE);
+//            context.result(gson.toJson(notes));
+//            context.status(200);
+//        } catch (RuntimeException e) {
+//            aclogger.info(e);
+//            context.result(e.getMessage());
+//            context.status(404);
+//        }
+//    };
 
     public Handler createAssessmentType = context -> {
         try {

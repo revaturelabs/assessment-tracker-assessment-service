@@ -35,16 +35,16 @@ public class App {
         AssessmentController ac = new AssessmentController(as, ats, gs);
         app.get("/assessments", ac.getAssessments);
         app.post("/assessments", ac.createAssessment);
-        app.get("/assessments/:id/", ac.getAssessmentsByTraineeId);
-        app.get("/assessments/batch/:id/:weekid", ac.getBatchWeek);
-        app.put("/assessments/weight/:assessmentId/:weight", ac.adjustWeight);
-        app.put("/assessments/type/:assessmentId/:typeId",ac.assignAssessmentType);
+        app.get("/assessments/:traineeId", ac.getAssessmentsByTraineeId);
+        app.get("/batches/:batchId/assessments", ac.getBatchWeek); //batches/5/assessments?week=4
+        app.put("/assessments/:assessmentId/weight", ac.adjustWeight); //assessments/3/weight?weight=55
+        app.put("/assessments/:assessmentId/type/:typeId",ac.assignAssessmentType);
 
-        app.get("/grade/:associateId/:assessmentId", ac.getGradeForAssociate);
-        app.get("/grades/:id/:weekid", ac.getGradesForWeek);
-        app.put("/grades/", ac.insertGrade);
+        app.get("/assessments/:assessmentId/grade", ac.getGradeForAssociate); //assessments/3/grade?associateId=3
+        app.get("/grades", ac.getGradesForWeek); //grades?traineeId=1&week=3
+        app.put("/grades", ac.insertGrade);
 
-        app.get("/notes/:id/:weekid/", ac.getNotesForTrainee);
+        //app.get("/notes/:id/:weekid/", ac.getNotesForTrainee);
 
         app.post("/types", ac.createAssessmentType);
 
