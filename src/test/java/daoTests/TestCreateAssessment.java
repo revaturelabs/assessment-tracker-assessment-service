@@ -3,6 +3,7 @@ package daoTests;
 import dao.AssessmentDAOImpl;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
+import exceptions.ResourceUnchangable;
 import models.Assessment;
 
 import org.junit.After;
@@ -39,7 +40,7 @@ public class TestCreateAssessment {
             assertEquals(1, returnedAssessment.getCategoryId());
             //Cleanup
             adao.deleteAssessment(assessValid.getAssessmentId());
-        } catch (InvalidValue | ResourceNotFound e) {
+        } catch (InvalidValue | ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
     }
@@ -54,7 +55,7 @@ public class TestCreateAssessment {
             fail();
         } catch (InvalidValue e) {
             //Success
-        } catch (ResourceNotFound e) {
+        } catch (ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
     }
@@ -69,7 +70,7 @@ public class TestCreateAssessment {
             fail();
         } catch (InvalidValue e) {
             //Success
-        } catch (ResourceNotFound e) {
+        } catch (ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
     }

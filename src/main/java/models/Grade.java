@@ -10,17 +10,15 @@ public class Grade {
 
     public Grade() {
         super();
-        gradeId = 0;
-        assessmentId = 0;
-        associateId = 0;
-        score = 0;
+        setDefault();
     }
 
-    public Grade(int gradeId, int assessmentId, int associateId, double score) {
+    public Grade(int gradeId, int assessmentId, int associateId, double score) throws InvalidValue {
         super();
+        setDefault();
         setGradeId(gradeId);
-        this.assessmentId = assessmentId;
-        this.associateId = associateId;
+        setAssessmentId(assessmentId);
+        setAssociateId(associateId);
         setScore(score);
     }
 
@@ -52,13 +50,25 @@ public class Grade {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(double score) throws InvalidValue{
         if (score < 0 || score > 100)
-            return;
+            throw new InvalidValue("Grade must be between 0 and 100");
 
         this.score = score;
     }
 
+    public void verifyGrade() throws InvalidValue {
+        setGradeId(this.gradeId);
+        setAssessmentId(this.assessmentId);
+        setAssociateId(this.associateId);
+        setScore(this.score);
+    }
+    private void setDefault() {
+        gradeId = 0;
+        assessmentId = 0;
+        associateId = 0;
+        score = 0;
+    }
     @Override
     public String toString() {
         return "Grade [assessmentId=" + assessmentId + ", gradeId=" + gradeId + ", score=" + score + ", traineeId="

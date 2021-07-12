@@ -1,11 +1,14 @@
 package app;
 
+import dao.AssessmentDAOImpl;
+import dao.AssessmentTypeDAOImpl;
+import dao.GradeDAOImpl;
 import io.javalin.Javalin;
 import controllers.AssessmentController;
 import controllers.CategoryController;
 import dao.CategoryDAOImpl;
-import services.AssessmentService;
-import services.CategoryServiceImpl;
+import models.AssessmentType;
+import services.*;
 
 public class App {
     public static void main(String[] args) {
@@ -23,11 +26,13 @@ public class App {
         // AssessmentRepo ar= new AssessmentRepo();
         // Need a Service
         CategoryController categoryController = new CategoryController(new CategoryServiceImpl(new CategoryDAOImpl()));
-        AssessmentService as = new AssessmentService();
+        AssessmentService as = new AssessmentServiceImpl(new AssessmentDAOImpl());
+        AssessmentTypeService ats = new AssessmentTypeServiceImpl(new AssessmentTypeDAOImpl());
+        GradeService gs = new GradeServiceImpl(new GradeDAOImpl());
         app.get("/Testing", context -> context.result("Testing"));
 
         // EndPoints
-        AssessmentController ac = new AssessmentController(as);
+        AssessmentController ac = new AssessmentController(as, ats, gs);
         app.get("/assessments", ac.getAssessments);
         app.post("/assessments", ac.createAssessment);
         app.get("/assessments/:id/", ac.getAssessmentsByTraineeId);

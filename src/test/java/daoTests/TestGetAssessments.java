@@ -2,30 +2,30 @@ package daoTests;
 import dao.AssessmentDAOImpl;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
+import exceptions.ResourceUnchangable;
 import models.Assessment;
 
-import org.eclipse.jetty.util.resource.Resource;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.After;
+import org.junit.AfterClass;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class TestGetAssessments {
     // Class to be tested
-    private AssessmentDAOImpl adao;
-    private Assessment assessment;
+    private static AssessmentDAOImpl adao;
+    private static Assessment assessment;
 
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void setup() {
         // Initialize the class to be tested
         adao = new AssessmentDAOImpl();
         try {
             Assessment sampleAssessment1 = new Assessment(0, "Test Assessment 1", 1, 1, "1", 30, 2);
             assessment = adao.createAssessment(sampleAssessment1);
         } catch(InvalidValue e) {
-            //BUG - Display something if we get here
+            fail();
         }
     }
 
@@ -60,12 +60,12 @@ public class TestGetAssessments {
         }
     }
 
-    @After
-    public void cleanup() {
+    @AfterClass
+    public static void cleanup() {
         try {
             adao.deleteAssessment(assessment.getAssessmentId());
-        } catch (ResourceNotFound e) {
-            //
+        } catch (ResourceNotFound | ResourceUnchangable e) {
+            fail();
         }
     }
 
