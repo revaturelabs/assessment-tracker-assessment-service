@@ -24,6 +24,7 @@ public class AssessmentController {
     private static final String CONTENTTYPE = "application/json";
     private static final String WEEKID = "weekid";
     private static final String ASSESSMENTID = "assessmentId";
+    private static final String BATCHID = "batchId";
 
     //BUG - Extract these later
     private AssessmentService as;
@@ -259,6 +260,23 @@ public class AssessmentController {
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(400);
+        }
+    };
+
+    public Handler getAverageGrade = context -> {
+        int assessmentId = Integer.parseInt(context.queryParam(ASSESSMENTID));
+
+        try {
+            aclogger.info("Attempting to get average grade per assessment with id " + assessmentId);
+
+            double averageGrade = gs.getAverageGrade(assessmentId);
+
+            aclogger.info("Attempting to return average grade");
+            context.result(gson.toJson(averageGrade));
+            context.status(201);
+        } catch (ResourceNotFound e) {
+            context.result(e.getMessage());
+            context.status(404);
         }
     };
 

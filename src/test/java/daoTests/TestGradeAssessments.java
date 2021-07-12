@@ -25,9 +25,11 @@ public class TestGradeAssessments {
     
     private static AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
     private static GradeService gradeService = new GradeServiceImpl(new GradeDAOImpl());
+    private static GradeDAO gradeDAO = new GradeDAOImpl();
     private static Assessment assessment;
     private static Grade gradeValid, gradeValid2;
     private static int associateId = 0;
+    private static int batchId = 0;
 
     private static int findAssociateId(){
         String sql = "SELECT * FROM associates";
@@ -138,6 +140,18 @@ public class TestGradeAssessments {
         } catch (ResourceNotFound e) {
             //Success
         }
+    }
+
+    @Test
+    public void testGetAverageGrade() throws ResourceNotFound {
+        Assume.assumeTrue("Couldn't find any assessments in database", assessment != null);
+        Assume.assumeTrue("Couldn't find any associates in database", associateId > 0);
+
+
+        double returnAvgrade = gradeDAO.getAverageGrade(assessment.getAssessmentId());
+        Assert.assertNotEquals("Invalid average grade from database", returnAvgrade, 0);
+//        returnAvgrade = gradeDAO.getAverageGrade(assessment.getAssessmentId(), assessment.getWeekId(), assessment.getBatchId());
+//        Assert.assertNotEquals("Invalid average grade return from database", returnAvgrade,);
     }
 
     @AfterClass

@@ -9,6 +9,7 @@ import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Assessment;
+import models.Grade;
 import models.Note;
 
 public class AssessmentServiceImpl implements AssessmentService{
@@ -75,4 +76,9 @@ public class AssessmentServiceImpl implements AssessmentService{
     public List<Note> getNotesForTrainee(int id, int weekId) {
         return this.assessmentDAO.getNotesForTrainee(id, weekId);
     }
+
+
+
+
 }
+

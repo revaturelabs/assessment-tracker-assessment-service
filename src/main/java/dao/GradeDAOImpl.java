@@ -41,7 +41,7 @@ public class GradeDAOImpl implements GradeDAO{
 
     @Override
     public List<Grade> getGrades() throws InvalidValue {
-        String sql = "SELECT * FROM categories";
+        String sql = "SELECT * FROM grades";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             List<Grade> categories = new ArrayList<>();
@@ -143,5 +143,28 @@ public class GradeDAOImpl implements GradeDAO{
             e.printStackTrace();
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public double getAverageGrade(int assessmentId) throws ResourceNotFound {
+
+        String sql ="select avg(score) AS average_score\n" +
+                "from grades\n" +
+                "where assessment_id = ?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, assessmentId);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){
+                double average = rs.getDouble("average_score");
+                if (rs.wasNull()) {
+                    throw new ResourceNotFound("There are no grades for assessment with id " + assessmentId);
+                }
+                return average;
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

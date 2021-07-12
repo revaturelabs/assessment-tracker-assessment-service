@@ -56,5 +56,10 @@ public class GradeServiceImpl implements GradeService {
     public List<Grade> getGradesForWeek(int associateId, String weekId) throws InvalidValue{
         return this.gradeDAO.getGradesForWeek(associateId, weekId);
     }
-    
+
+    @Override
+    public double getAverageGrade(int assessmentId) throws ResourceNotFound {
+        return gradeDAO.getAverageGrade(assessmentId);
+    }
+
 }

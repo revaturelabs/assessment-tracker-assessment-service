@@ -23,4 +23,7 @@ public interface GradeService {
     void deleteGrade(int id) throws ResourceNotFound, ResourceUnchangable;
 
     List<Grade> getGradesForWeek(int associateId, String weekId) throws InvalidValue;
+
+
+    double getAverageGrade(int assessmentId) throws ResourceNotFound;
 }
