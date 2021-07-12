@@ -2,110 +2,113 @@ package daoTests;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import dao.CategoryDAO;
 import dao.CategoryDAOImpl;
 import exceptions.DuplicateResource;
+import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Category;
 
 public class TestCategoriesDAO {
     private static CategoryDAO categoryDAO = new CategoryDAOImpl();
+    private static Category category;
 
-    @Test
-    public void createValidCategory() {
-        try {
-            Category category = categoryDAO.createCategory(new Category(0, "Test Category"));
-            Assert.assertNotNull("Error occured creating category", category);
-            Assert.assertTrue("Category ID not updated", category.getCategoryId() > 0);
-            Assert.assertEquals("Category wasn't created properly", "Test Category", category.getName());
-            categoryDAO.deleteCategory(category.getCategoryId());
-        } catch (ResourceNotFound | DuplicateResource | ResourceUnchangable e) {
-            Assert.assertFalse("Exception called when no exception should have been called", true);
-        }
-    }
-
-    @Test
-    public void createDuplicateCategory() { // Database must require unique names for this test to pass
+    public Category createCategory(String categoryName){
         Category category = null;
         try {
-            category = categoryDAO.createCategory(new Category(0, "Test Category"));
+            category = categoryDAO.createCategory(new Category(0, categoryName));
             Assert.assertNotNull("Error occured creating category", category);
             Assert.assertTrue("Category ID not updated", category.getCategoryId() > 0);
-            Assert.assertEquals("Category wasn't created properly", "Test Category", category.getName());
-        } catch (DuplicateResource e) {
-            Assert.assertFalse("Exception called when no exception should have been called", true);
+            Assert.assertEquals("Category wasn't created properly", categoryName, category.getName());
+        } catch (DuplicateResource | InvalidValue e) {
+            Assert.assertFalse("Exception called creating category when no exception should have been called", true);
         }
-        try{
-            categoryDAO.createCategory(new Category(0, category.getName()));
-            Assert.assertFalse("Exception wasn't thrown for duplicate name", true);
-        }
-        catch(DuplicateResource e){
-        }
+        return category;
+    }
+
+    public void deleteCategory(Category category){
         try {
             categoryDAO.deleteCategory(category.getCategoryId());
         } catch (ResourceNotFound | ResourceUnchangable e) {
             Assert.assertFalse("Exception was thrown deleting a valid category", true);
+        }
+    }
+
+    @Before
+    public void createValidCategory() {
+        category = createCategory("Test Category");
+    }
+
+    @After
+    public void deleteValidCategory(){
+        deleteCategory(category);
+    }
+
+    @Test
+    public void deleteInvalidCategory(){
+        try {
+            categoryDAO.deleteCategory(0);
+            Assert.assertFalse(true);
+        } catch (ResourceNotFound e) {
+            Assert.assertTrue(true);
+        } catch (ResourceUnchangable e) {
+            Assert.assertFalse(true);
+        }
+    }
+
+    @Test
+    public void createDuplicateCategory() {
+        try {
+            categoryDAO.createCategory(new Category(0, "Test Category"));
+            Assert.assertFalse(true);
+        } catch (DuplicateResource e) {
+            Assert.assertTrue(true);
+        } catch (InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+    }
+
+    @Test
+    public void createEmptyCategory() {
+        try {
+            categoryDAO.createCategory(new Category(0, ""));
+            Assert.assertFalse(true);
+        } catch (DuplicateResource e) {
+            Assert.assertFalse(true);
+        } catch (InvalidValue e) {
+            Assert.assertTrue(true);
         }
     }
 
     @Test
     public void getValidCategory() {
-        Category category = null;
         try {
-            category = categoryDAO.createCategory(new Category(0, "Test Category"));
-            Assert.assertNotNull("Error occured creating category", category);
-            Assert.assertTrue("Category ID not updated", category.getCategoryId() > 0);
-            Assert.assertEquals("Category wasn't created properly", "Test Category", category.getName());
-            Category newCategory = categoryDAO.getCategory(category.getCategoryId());
-            Assert.assertEquals("Category wasn't created properly", category.getName(), newCategory.getName());
-        } catch (ResourceNotFound | DuplicateResource e) {
-            Assert.assertFalse("Exception created getting a valid category", true);
-        }
-        try {
-            categoryDAO.deleteCategory(category.getCategoryId());
-        } catch (ResourceNotFound | ResourceUnchangable e) {
-            Assert.assertFalse("Exception was thrown deleting a valid category", true);
+            Category returnedCategory = categoryDAO.getCategory(category.getCategoryId());
+            Assert.assertEquals("Category IDs did not match", category.getCategoryId(), returnedCategory.getCategoryId());
+            Assert.assertEquals("Category names did not match", category.getName(), returnedCategory.getName());
+        } catch (ResourceNotFound e) {
+            Assert.assertFalse("Error getting valid category from dao", true);
         }
     }
 
     @Test
     public void getInvalidCategory() {
-        Category category = null;
-        try {
-            category = categoryDAO.createCategory(new Category(0, "Test Category"));
-            Assert.assertNotNull("Error occured creating category", category);
-            Assert.assertTrue("Category ID not updated", category.getCategoryId() > 0);
-            Assert.assertEquals("Category wasn't created properly", "Test Category", category.getName());
-        } catch (DuplicateResource e) {
-            Assert.assertFalse("Exception created getting a valid category", true);
-        }
         try {
             categoryDAO.getCategory(0);
-            Assert.assertFalse("Invalid category was retrieved", true);
+            Assert.assertFalse(true);
         } catch (ResourceNotFound e) {
-        }
-        try {
-            categoryDAO.deleteCategory(category.getCategoryId());
-        } catch (ResourceNotFound | ResourceUnchangable e) {
-            Assert.assertFalse("Exception was thrown deleting a valid category", true);
+            Assert.assertTrue(true);
         }
     }
 
     @Test
     public void getCategories() {
-        Category category = null;
-        try {
-            category = categoryDAO.createCategory(new Category(0, "Test Category"));
-            Assert.assertNotNull("Error occured creating category", category);
-            Assert.assertTrue("Category ID not updated", category.getCategoryId() > 0);
-            Assert.assertEquals("Category wasn't created properly", "Test Category", category.getName());
-        } catch (DuplicateResource e) {
-            Assert.assertFalse("Exception created getting a valid category", true);
-        }
         List<Category> categories = categoryDAO.getCategories();
         boolean contains = false;
         for (int i = 0; i < categories.size(); i++) {
@@ -115,10 +118,62 @@ public class TestCategoriesDAO {
             }
         }
         Assert.assertTrue("Category created wasn't found in list", contains);
+    }
+
+    @Test
+    public void updateValidCategory(){
         try {
-            categoryDAO.deleteCategory(category.getCategoryId());
-        } catch (ResourceNotFound | ResourceUnchangable e) {
-            Assert.assertFalse("Exception was thrown deleting a valid category", true);
+            category.setName("New Test Category");
+            Category returnedCategory = categoryDAO.updateCategory(category);
+            Assert.assertNotNull("Error occured updating category", returnedCategory);
+            Assert.assertEquals("Category IDs did not match", category.getCategoryId(), returnedCategory.getCategoryId());
+            Assert.assertEquals("Category names did not match", category.getName(), returnedCategory.getName());
+        } catch (ResourceNotFound | DuplicateResource | InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+    }
+
+    @Test
+    public void updateInvalidCategory(){
+        try {
+            categoryDAO.updateCategory(new Category(0, "Updated Category Name"));
+            Assert.assertFalse(true);
+        } catch (ResourceNotFound e) {
+            Assert.assertTrue(true);
+        } catch (DuplicateResource e) {
+            Assert.assertFalse(true);
+        } catch (InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+    }
+
+    @Test
+    public void updateDuplicateCategory(){
+        Category newCategory = createCategory("New Test Category");
+        try {
+            categoryDAO.updateCategory(new Category(category.getCategoryId(), newCategory.getName()));
+            Assert.assertFalse(true);
+        } catch (ResourceNotFound e) {
+            Assert.assertFalse(true);
+        } catch (DuplicateResource e) {
+            Assert.assertTrue(true);
+        } catch (InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+        deleteCategory(newCategory);
+    }
+
+    @Test
+    public void updateEmptyCategory(){
+        try {
+            categoryDAO.updateCategory(new Category(category.getCategoryId(), ""));
+            Assert.assertFalse(true);
+        } catch (ResourceNotFound e) {
+            Assert.assertFalse(true);
+        } catch (DuplicateResource e) {
+            Assert.assertFalse(true);
+        } catch (InvalidValue e) {
+            Assert.assertTrue(true);
         }
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import dao.CategoryDAO;
 import exceptions.DuplicateResource;
+import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Category;
@@ -27,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public Category updateCategory(Category category) throws ResourceNotFound {
+    public Category updateCategory(Category category) throws ResourceNotFound, DuplicateResource, InvalidValue {
         return this.categoryDAO.updateCategory(category);
     }
 
@@ -37,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public Category createCategory(Category category) throws DuplicateResource {
+    public Category createCategory(Category category) throws DuplicateResource, InvalidValue {
         return this.categoryDAO.createCategory(category);
     }
     
