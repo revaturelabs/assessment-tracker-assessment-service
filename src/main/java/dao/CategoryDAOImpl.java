@@ -8,12 +8,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exceptions.DuplicateResource;
+import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Category;
 import util.ConnectionDB;
 
 public class CategoryDAOImpl implements CategoryDAO {
+
+    @Override
+    public Category createCategory(Category category) throws DuplicateResource, InvalidValue{
+        if(category.getName() == null || category.getName().length() == 0)
+            throw new InvalidValue("Category name cannot be empty");
+        String sql = "INSERT INTO categories VALUES (DEFAULT,?)";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, category.getName());
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return buildCategory(rs);
+            }
+        } catch (SQLException e) {
+            if(e.getSQLState().equals("23505"))
+                throw new DuplicateResource(String.format("Category with name %s already exists", category.getName()));
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public List<Category> getCategories() {
@@ -48,7 +69,9 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     @Override
-    public Category updateCategory(Category category) throws ResourceNotFound{
+    public Category updateCategory(Category category) throws ResourceNotFound, DuplicateResource, InvalidValue{
+        if(category.getName() == null || category.getName().length() == 0)
+            throw new InvalidValue("Category name cannot be empty");
         String sql = "UPDATE categories SET name=? WHERE id=?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, category.getName());
@@ -60,6 +83,8 @@ public class CategoryDAOImpl implements CategoryDAO {
             else
                 throw new ResourceNotFound(String.format("Category with id %d couldn't be found", category.getCategoryId()));
         } catch (SQLException e) {
+            if(e.getSQLState().equals("23505"))
+                throw new DuplicateResource(String.format("Category with name %s already exists", category.getName()));
             e.printStackTrace();
         }
         return null;
@@ -83,29 +108,10 @@ public class CategoryDAOImpl implements CategoryDAO {
         }
     }
 
-    @Override
-    public Category createCategory(Category category) throws DuplicateResource{
-        String sql = "INSERT INTO categories VALUES (DEFAULT,?)";
-        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, category.getName());
-            ps.executeUpdate();
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) {
-                return buildCategory(rs);
-            }
-        } catch (SQLException e) {
-            if(e.getErrorCode() >= 23000 || e.getErrorCode() <= 24000)
-                throw new DuplicateResource(String.format("Category with name %s already exists", category.getName()));
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     private Category buildCategory(ResultSet rs) throws SQLException {
         Category category = new Category();
         category.setCategoryId(rs.getInt("id"));
         category.setName(rs.getString("name"));
         return category;
     }
-    
 }
