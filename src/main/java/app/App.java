@@ -43,7 +43,7 @@ public class App {
         app.get("/assessments/:assessmentId/grade", ac.getGradeForAssociate); //assessments/3/grade?associateId=3
         app.get("/grades", ac.getGradesForWeek); //grades?traineeId=1&week=3
         app.put("/grades", ac.insertGrade);
-
+        app.get("/grades/average", ac.getAverageGrade);
         //app.get("/notes/:id/:weekid/", ac.getNotesForTrainee);
 
         app.post("/types", ac.createAssessmentType);
@@ -54,6 +54,10 @@ public class App {
         app.get("/category/:id", categoryController.getCategoryById);
         app.patch("/category", categoryController.updateCategory);
         app.delete("/category/:id", categoryController.deleteCategory);
+
+
+
+
     }
 
 }

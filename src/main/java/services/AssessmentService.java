@@ -4,6 +4,7 @@ import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Assessment;
+import models.Grade;
 import models.Note;
 
 import java.sql.SQLException;
@@ -31,4 +32,6 @@ public interface AssessmentService {
 
     //BUG - To extract
     List<Note> getNotesForTrainee(int id, int weekId);
+
+
 }

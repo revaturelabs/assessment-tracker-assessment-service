@@ -21,4 +21,6 @@ public interface GradeDAO {
     void deleteGrade(int id) throws ResourceNotFound, ResourceUnchangable;
 
     List<Grade> getGradesForWeek(int associateId, String weekId) throws InvalidValue;
+
+    double getAverageGrade(int assessmentId);
 }
