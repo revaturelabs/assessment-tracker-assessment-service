@@ -4,6 +4,7 @@ import java.util.List;
 
 import dao.AssessmentTypeDAO;
 import exceptions.DuplicateResource;
+import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.AssessmentType;
@@ -17,7 +18,9 @@ public class AssessmentTypeServiceImpl implements AssessmentTypeService{
     }
 
     @Override
-    public AssessmentType createAssessmentType(AssessmentType assessmentType) throws DuplicateResource {
+    public AssessmentType createAssessmentType(AssessmentType assessmentType) throws DuplicateResource, InvalidValue {
+        if(assessmentType.getDefaultWeight() < 0)
+            throw new InvalidValue("Assessment type default weight cannot be negative");
         return this.assessmentTypeDAO.createAssessmentType(assessmentType);
     }
 
@@ -32,7 +35,9 @@ public class AssessmentTypeServiceImpl implements AssessmentTypeService{
     }
 
     @Override
-    public AssessmentType updateAssessmentType(AssessmentType assessmentType) throws ResourceNotFound {
+    public AssessmentType updateAssessmentType(AssessmentType assessmentType) throws ResourceNotFound, DuplicateResource, InvalidValue {
+        if(assessmentType.getDefaultWeight() < 0)
+            throw new InvalidValue("Assessment type default weight cannot be negative");
         return this.assessmentTypeDAO.updateAssessmentType(assessmentType);
     }
 

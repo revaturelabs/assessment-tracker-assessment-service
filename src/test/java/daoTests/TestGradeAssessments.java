@@ -104,7 +104,7 @@ public class TestGradeAssessments {
             Assert.assertNull("Invalid grade was updated into database", resultGrade);
         } catch(InvalidValue e) {
             //Success
-        } catch(ResourceNotFound | ResourceUnchangable e) {
+        } catch(DuplicateResource | ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
     }

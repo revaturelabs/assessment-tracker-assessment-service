@@ -173,7 +173,7 @@ public class AssessmentController {
     public Handler getGradesForWeek = context -> {
         try {
             int traineeId = Integer.parseInt(context.queryParam("traineeId"));
-            String weekId = context.queryParam("week");
+            int weekId = Integer.parseInt(context.queryParam("week"));
             aclogger.info("Attempting to get grades for trainee " + traineeId  + "for week " + weekId);
             aclogger.info("Checking if trainee with id " + traineeId + " exists");
             List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
@@ -188,10 +188,6 @@ public class AssessmentController {
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(grades));
             context.status(200);
-        } catch(InvalidValue e) {
-            aclogger.info(e);
-            context.result(e.getMessage());
-            context.status(400);
         } catch (RuntimeException e) {
             aclogger.info(e);
             context.result(e.getMessage());

@@ -5,9 +5,9 @@ import dao.AssessmentTypeDAOImpl;
 import dao.GradeDAOImpl;
 import io.javalin.Javalin;
 import controllers.AssessmentController;
+import controllers.AssessmentTypeController;
 import controllers.CategoryController;
 import dao.CategoryDAOImpl;
-import models.AssessmentType;
 import services.*;
 
 public class App {
@@ -26,6 +26,7 @@ public class App {
         // AssessmentRepo ar= new AssessmentRepo();
         // Need a Service
         CategoryController categoryController = new CategoryController(new CategoryServiceImpl(new CategoryDAOImpl()));
+        AssessmentTypeController assessmentTypeController = new AssessmentTypeController(new AssessmentTypeServiceImpl(new AssessmentTypeDAOImpl()));
         AssessmentService as = new AssessmentServiceImpl(new AssessmentDAOImpl());
         AssessmentTypeService ats = new AssessmentTypeServiceImpl(new AssessmentTypeDAOImpl());
         GradeService gs = new GradeServiceImpl(new GradeDAOImpl());
@@ -46,18 +47,17 @@ public class App {
         app.get("/grades/average", ac.getAverageGrade);
         //app.get("/notes/:id/:weekid/", ac.getNotesForTrainee);
 
-        app.post("/types", ac.createAssessmentType);
+        app.post("types", assessmentTypeController.createAssessmentType);
+        app.get("types", assessmentTypeController.getAssessmentTypes);
+        app.get("types/:typeId", assessmentTypeController.getAssessmentTypeById);
+        app.put("types", assessmentTypeController.updateAssessmentType);
+        app.delete("types/:typeId", assessmentTypeController.deleteAssessmentType);
 
-
+        app.post("/categories", categoryController.createCategory);
         app.get("/categories", categoryController.getCategories);
-        app.post("/category", categoryController.createCategory);
-        app.get("/category/:id", categoryController.getCategoryById);
-        app.patch("/category", categoryController.updateCategory);
-        app.delete("/category/:id", categoryController.deleteCategory);
-
-
-
-
+        app.get("/categories/:categoryId", categoryController.getCategoryById);
+        app.put("/categories", categoryController.updateCategory);
+        app.delete("/categories/:categoryId", categoryController.deleteCategory);
     }
 
 }
