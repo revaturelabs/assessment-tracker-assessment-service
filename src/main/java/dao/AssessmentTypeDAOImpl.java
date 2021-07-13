@@ -73,11 +73,11 @@ public class AssessmentTypeDAOImpl implements AssessmentTypeDAO{
     public AssessmentType updateAssessmentType(AssessmentType assessmentType) throws ResourceNotFound, DuplicateResource, InvalidValue{
         if(assessmentType.getName() == null || assessmentType.getName().length() == 0)
             throw new InvalidValue("Assessment type name cannot be empty");
-        String sql = "UPDATE types SET name=? default_weight=? WHERE id=?";
+        String sql = "UPDATE types SET name=?, default_weight=? WHERE id=?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, assessmentType.getName());
             ps.setInt(2, assessmentType.getDefaultWeight());
-            ps.setInt(2, assessmentType.getTypeId());
+            ps.setInt(3, assessmentType.getTypeId());
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             if(rs.next())

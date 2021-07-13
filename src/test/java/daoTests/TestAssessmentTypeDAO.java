@@ -125,4 +125,62 @@ public class TestAssessmentTypeDAO {
         }
         Assert.assertTrue(contains);
     }
+
+    @Test
+    public void updateValidAssessmentType(){
+        try {
+            assessmentType.setName("Test Updated Type");
+            AssessmentType returnedAssessmentType = assessmentTypeDAO.updateAssessmentType(assessmentType);
+            Assert.assertNotNull(returnedAssessmentType);
+            Assert.assertEquals(assessmentType.getTypeId(), returnedAssessmentType.getTypeId());
+            Assert.assertEquals(assessmentType.getName(), returnedAssessmentType.getName());
+            Assert.assertEquals(assessmentType.getDefaultWeight(), returnedAssessmentType.getDefaultWeight());
+        } catch (ResourceNotFound | DuplicateResource | InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+    }
+
+    @Test
+    public void updateInvalidAssessmentType(){
+        try {
+            assessmentTypeDAO.updateAssessmentType(new AssessmentType(0, "Test Assessment Type", 50));
+            Assert.assertFalse(true);
+        } catch (ResourceNotFound e) {
+            Assert.assertTrue(true);
+        } catch (DuplicateResource e) {
+            Assert.assertFalse(true);
+        } catch (InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+    }
+
+    @Test
+    public void updateDuplicateAssessmentType(){
+        AssessmentType newAssessmentType = createAssessmentType("New Updated Test Assessment Type", 50);
+        try {
+            assessmentTypeDAO.updateAssessmentType(new AssessmentType(assessmentType.getTypeId(), "New Updated Test Assessment Type", 50));
+            Assert.assertFalse(true);
+        } catch (ResourceNotFound e) {
+            Assert.assertFalse(true);
+        } catch (DuplicateResource e) {
+            Assert.assertTrue(true);
+        } catch (InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+        deleteAssessmentType(newAssessmentType);
+    }
+
+    @Test
+    public void updateEmptyAssessmentType(){
+        try {
+            assessmentTypeDAO.updateAssessmentType(new AssessmentType(assessmentType.getTypeId(),"", 50));
+            Assert.assertFalse(true);
+        } catch (ResourceNotFound e) {
+            Assert.assertFalse(true);
+        } catch (DuplicateResource e) {
+            Assert.assertFalse(true);
+        } catch (InvalidValue e) {
+            Assert.assertTrue(true);
+        }
+    }
 }
