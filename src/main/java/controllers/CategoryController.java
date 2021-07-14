@@ -5,6 +5,9 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import io.javalin.http.Handler;
+import io.javalin.plugin.openapi.annotations.*;
+import models.Assessment;
+import models.AssessmentType;
 import services.CategoryService;
 import models.Category;
 import exceptions.DuplicateResource;
@@ -23,6 +26,20 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @OpenApi(
+            path = "/categories",
+            method = HttpMethod.POST,
+            summary = "Create an Assessment Category",
+            operationId = "createCategory",
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Category.class)}),
+            tags = {"Category"},
+            responses = {
+                    @OpenApiResponse(status = "201", content = {@OpenApiContent(from = Category.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler createCategory = context -> {
         try {
             Category category = gson.fromJson(context.body(), Category.class);
@@ -47,6 +64,17 @@ public class CategoryController {
         }
     };
 
+    @OpenApi(
+            path = "/categories",
+            method = HttpMethod.GET,
+            summary = "Get all Assessment Categories",
+            operationId = "getCategories",
+            tags = {"Category"},
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Category[].class)}),
+
+            }
+    )
     public Handler getCategories = context -> {
         List<Category> categories = categoryService.getCategories();
         context.contentType(CONTENT_TYPE_JSON);
@@ -54,6 +82,19 @@ public class CategoryController {
         context.status(200);
     };
 
+    @OpenApi(
+            path = "/categories/:categoryId",
+            method = HttpMethod.GET,
+            summary = "Get an Assessment Category by ID",
+            operationId = "getCategoryById",
+            pathParams = {@OpenApiParam(name = "categoryId", type = Integer.class, description = "The category ID")},
+            tags = {"Category"},
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Category.class)}),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler getCategoryById = context -> {
         try {
             int categoryId = Integer.parseInt(context.pathParam("categoryId"));
@@ -72,6 +113,21 @@ public class CategoryController {
         }
     };
 
+    @OpenApi(
+            path = "/categories",
+            method = HttpMethod.PUT,
+            summary = "Update an Assessment Category",
+            operationId = "updateCategory",
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Category.class)}),
+            tags = {"Category"},
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Category.class)}),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler updateCategory = context -> {
         try {
             Category category = gson.fromJson(context.body(), Category.class);
@@ -99,6 +155,20 @@ public class CategoryController {
         }
     };
 
+    @OpenApi(
+            path = "/categories/:categoryId",
+            method = HttpMethod.DELETE,
+            summary = "Delete an Assessment Category by ID",
+            operationId = "deleteCategory",
+            pathParams = {@OpenApiParam(name = "categoryId", type = Integer.class, description = "The category ID")},
+            tags = {"Category"},
+            responses = {
+                    @OpenApiResponse(status = "204"),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler deleteCategory = context -> {
         try {
             int categoryId = Integer.parseInt(context.pathParam("categoryId"));
