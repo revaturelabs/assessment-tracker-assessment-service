@@ -35,10 +35,10 @@ public class App {
         // EndPoints
         app.get("/assessments", ac.getAssessments);
         app.post("/assessments", ac.createAssessment);
-        app.get("/assessments/:traineeId", ac.getAssessmentsByTraineeId);
-        app.get("/batches/:batchId/assessments", ac.getBatchWeek); //batches/5/assessments?week=4
-        app.put("/assessments/:assessmentId/weight", ac.adjustWeight); //assessments/3/weight?weight=55
-        app.put("/assessments/:assessmentId/type/:typeId",ac.assignAssessmentType);
+        app.get("/assessments/associates/:associateId", ac.getAssessmentsByTraineeId);
+        app.get("/assessments/batches/:batchId/weeks/:weekId", ac.getBatchWeek); //batches/5/assessments?week=4
+        app.put("/assessments/:assessmentId/weight/:weight", ac.adjustWeight);
+        app.put("/assessments/:assessmentId/types/:typeId",ac.assignAssessmentType);
 
         // app.get("/assessments/:assessmentId/grade", ac.getGradeForAssociate); //assessments/3/grade?associateId=3
         // app.get("/grades", ac.getGradesForWeek); //grades?traineeId=1&week=3
@@ -47,11 +47,11 @@ public class App {
         //app.get("/notes/:id/:weekid/", ac.getNotesForTrainee);
 
         app.post("/grades", gradeController.createGrade);
-        app.get("/grades/:assessmentId/:associateId", gradeController.getGradeForAssociateAssessment);
+        app.get("/grades/assessments/:assessmentId/associates/:associateId", gradeController.getGradeForAssociateAssessment);
         app.put("/grades", gradeController.updateGrade);
         app.delete("/grades/:gradeId", gradeController.deleteGrade);
-        app.get("/grades/week/:associateId", gradeController.getGradesForWeek);
-        app.get("/grades/average/:assessmentId", gradeController.getAverageGrade);
+        app.get("/grades/associates/:associateId/week", gradeController.getGradesForWeek);
+        app.get("/grades/assessments/:assessmentId/average", gradeController.getAverageGrade);
 
         app.post("types", assessmentTypeController.createAssessmentType);
         app.get("types", assessmentTypeController.getAssessmentTypes);

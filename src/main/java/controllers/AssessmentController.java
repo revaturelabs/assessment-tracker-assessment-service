@@ -57,7 +57,7 @@ public class AssessmentController {
 
     public Handler getAssessmentsByTraineeId = context -> {
         try {
-            int traineeId = Integer.parseInt(context.pathParam("traineeId"));
+            int traineeId = Integer.parseInt(context.pathParam("associateId"));
             aclogger.info("Attempting to get all assessments for trainee with id " + traineeId);
             List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
             if(assessments.size() == 0){
@@ -76,7 +76,7 @@ public class AssessmentController {
     public Handler getBatchWeek = context -> {
         try {
             int batchId = Integer.parseInt(context.pathParam("batchId"));
-            String week = context.queryParam("week");
+            String week = context.queryParam("weekId");
             aclogger.info("Attempting to get assessments for batch " + batchId + " for week " + week);
             List<Assessment> assessments = as.getBatchWeek(batchId, week);
             if(assessments.size() == 0){
@@ -94,7 +94,7 @@ public class AssessmentController {
 
     public Handler adjustWeight = context -> {
         try {
-            int weight = Integer.parseInt(context.queryParam("weight"));
+            int weight = Integer.parseInt(context.pathParam("weight"));
             int assessmentId = Integer.parseInt(context.pathParam(ASSESSMENTID));
             aclogger.info("Attempting to update the weight on an assessment");
             Assessment a = as.adjustWeight(assessmentId, weight);
