@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exceptions.DuplicateResource;
+import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.AssessmentType;
@@ -16,7 +17,9 @@ import util.ConnectionDB;
 public class AssessmentTypeDAOImpl implements AssessmentTypeDAO{
 
     @Override
-    public AssessmentType createAssessmentType(AssessmentType assessmentType) throws DuplicateResource{
+    public AssessmentType createAssessmentType(AssessmentType assessmentType) throws DuplicateResource, InvalidValue{
+        if(assessmentType.getName() == null || assessmentType.getName().length() == 0)
+            throw new InvalidValue("Assessment type name cannot be empty");
         String sql = "INSERT INTO types values (default, ?, ?)";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, assessmentType.getName());
@@ -67,12 +70,14 @@ public class AssessmentTypeDAOImpl implements AssessmentTypeDAO{
     }
 
     @Override
-    public AssessmentType updateAssessmentType(AssessmentType assessmentType) throws ResourceNotFound{
-        String sql = "UPDATE types SET name=? default_weight=? WHERE id=?";
+    public AssessmentType updateAssessmentType(AssessmentType assessmentType) throws ResourceNotFound, DuplicateResource, InvalidValue{
+        if(assessmentType.getName() == null || assessmentType.getName().length() == 0)
+            throw new InvalidValue("Assessment type name cannot be empty");
+        String sql = "UPDATE types SET name=?, default_weight=? WHERE id=?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, assessmentType.getName());
             ps.setInt(2, assessmentType.getDefaultWeight());
-            ps.setInt(2, assessmentType.getTypeId());
+            ps.setInt(3, assessmentType.getTypeId());
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             if(rs.next())
@@ -80,6 +85,8 @@ public class AssessmentTypeDAOImpl implements AssessmentTypeDAO{
             else
                 throw new ResourceNotFound(String.format("Assessment type with id %d couldn't be found", assessmentType.getTypeId()));
         } catch (SQLException e) {
+            if(e.getSQLState().equals("23505"))
+                throw new DuplicateResource(String.format("Category with name %s already exists", assessmentType.getName()));
             e.printStackTrace();
         }
         return null;

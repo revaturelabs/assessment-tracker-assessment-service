@@ -6,14 +6,9 @@ public class AssessmentType {
     private int defaultWeight;
 
     public AssessmentType() {
-        super();
-        typeId = 0;
-        name = "";
-        defaultWeight = 0;
     }
 
     public AssessmentType(int typeId, String name, int defaultWeight) {
-        super();
         this.typeId = typeId;
         this.name = name;
         this.defaultWeight = defaultWeight;

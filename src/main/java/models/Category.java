@@ -5,13 +5,9 @@ public class Category {
     private String name;
 
     public Category() {
-        super();
-        categoryId = 0;
-        name = "";
     }
 
     public Category(int categoryId, String name) {
-        super();
         this.categoryId = categoryId;
         this.name = name;
     }

@@ -4,33 +4,33 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import io.javalin.http.Handler;
-import services.CategoryService;
-import models.Category;
+
 import exceptions.DuplicateResource;
+import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
-import exceptions.InvalidValue;
+import io.javalin.http.Handler;
+import models.AssessmentType;
+import services.AssessmentTypeService;
 
-public class CategoryController {
-
+public class AssessmentTypeController {
     private static final String CONTENT_TYPE_JSON = "application/json";
     private static final String CONTENT_TYPE_TEXT = "text/plain";
-    private CategoryService categoryService;
-    private final Gson gson = new Gson();
+    private AssessmentTypeService assessmentTypeService;
+    private static final Gson gson = new Gson();
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
+    public AssessmentTypeController(AssessmentTypeService assessmentTypeService) {
+        this.assessmentTypeService = assessmentTypeService;
     }
 
-    public Handler createCategory = context -> {
+    public Handler createAssessmentType = context -> {
         try {
-            Category category = gson.fromJson(context.body(), Category.class);
-            if (category == null)
+            AssessmentType assessmentType = gson.fromJson(context.body(), AssessmentType.class);
+            if (assessmentType == null)
                 throw new JsonSyntaxException("");
-            category = this.categoryService.createCategory(category);
+            assessmentType = this.assessmentTypeService.createAssessmentType(assessmentType);
             context.contentType(CONTENT_TYPE_JSON);
-            context.result(gson.toJson(category));
+            context.result(gson.toJson(assessmentType));
             context.status(201);
         } catch (DuplicateResource e) {
             context.contentType(CONTENT_TYPE_TEXT);
@@ -47,19 +47,19 @@ public class CategoryController {
         }
     };
 
-    public Handler getCategories = context -> {
-        List<Category> categories = categoryService.getCategories();
+    public Handler getAssessmentTypes = context -> {
+        List<AssessmentType> assessmentTypes = this.assessmentTypeService.getAssessmentTypes();
         context.contentType(CONTENT_TYPE_JSON);
-        context.result(gson.toJson(categories));
+        context.result(gson.toJson(assessmentTypes));
         context.status(200);
     };
 
-    public Handler getCategoryById = context -> {
+    public Handler getAssessmentTypeById = context -> {
         try {
-            int categoryId = Integer.parseInt(context.pathParam("categoryId"));
-            Category category = this.categoryService.getCategory(categoryId);
+            int id = Integer.parseInt(context.pathParam("typeId"));
+            AssessmentType assessmentType = this.assessmentTypeService.getAssessmentType(id);
             context.contentType(CONTENT_TYPE_JSON);
-            context.result(gson.toJson(category));
+            context.result(gson.toJson(assessmentType));
             context.status(200);
         } catch (ResourceNotFound e) {
             context.contentType(CONTENT_TYPE_TEXT);
@@ -67,19 +67,19 @@ public class CategoryController {
             context.status(404);
         } catch (NumberFormatException e) {
             context.contentType(CONTENT_TYPE_TEXT);
-            context.result("Category ID couldn't be parsed correctly");
+            context.result("Assessment ID couldn't be parsed correctly");
             context.status(400);
         }
     };
 
-    public Handler updateCategory = context -> {
+    public Handler updateAssessmentType = context -> {
         try {
-            Category category = gson.fromJson(context.body(), Category.class);
-            if (category == null)
+            AssessmentType assessmentType = gson.fromJson(context.body(), AssessmentType.class);
+            if (assessmentType == null)
                 throw new JsonSyntaxException("");
-            category = this.categoryService.updateCategory(category);
+            assessmentType = this.assessmentTypeService.updateAssessmentType(assessmentType);
             context.contentType(CONTENT_TYPE_JSON);
-            context.result(gson.toJson(category));
+            context.result(gson.toJson(assessmentType));
             context.status(200);
         } catch (ResourceNotFound e) {
             context.contentType(CONTENT_TYPE_TEXT);
@@ -99,10 +99,10 @@ public class CategoryController {
         }
     };
 
-    public Handler deleteCategory = context -> {
+    public Handler deleteAssessmentType = context -> {
         try {
-            int categoryId = Integer.parseInt(context.pathParam("categoryId"));
-            this.categoryService.deleteCategory(categoryId);
+            int id = Integer.parseInt(context.pathParam("typeId"));
+            this.assessmentTypeService.deleteAssessmentType(id);
             context.status(204);
         } catch (ResourceNotFound e) {
             context.contentType(CONTENT_TYPE_TEXT);
@@ -114,7 +114,7 @@ public class CategoryController {
             context.status(409);
         } catch (NumberFormatException e) {
             context.contentType(CONTENT_TYPE_TEXT);
-            context.result("Category ID couldn't be parsed correctly");
+            context.result("Assessment ID couldn't be parsed correctly");
             context.status(400);
         }
     };

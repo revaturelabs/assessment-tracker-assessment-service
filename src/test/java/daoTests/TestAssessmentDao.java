@@ -82,18 +82,18 @@ public class TestAssessmentDao {
         }
     }
 
-    @Test
-    @Order(4)
-    public void testGetWeekAssessments() {
-        try {
-            List<Grade> grades = gradeService.getGradesForWeek(1, "3");
-            for (Grade g : grades) {
-                Assert.assertTrue(g.getAssociateId() == 1);
-            }
-        } catch(InvalidValue e) {
-            fail();
-        }
-    }
+    // @Test
+    // @Order(4)
+    // public void testGetWeekAssessments() {
+    //     try {
+    //         List<Grade> grades = gradeService.getGradesForWeek(1, "3");
+    //         for (Grade g : grades) {
+    //             Assert.assertTrue(g.getAssociateId() == 1);
+    //         }
+    //     } catch(InvalidValue e) {
+    //         fail();
+    //     }
+    // }
 
     @Test
     @Order(5)
@@ -120,7 +120,7 @@ public class TestAssessmentDao {
         try {
             testAssessmentType = assessmentTypeDAO.createAssessmentType(testAssessmentType);
             Assert.assertTrue(testAssessmentType.getTypeId() != 0);
-        } catch(DuplicateResource e) {
+        } catch(DuplicateResource | InvalidValue e) {
             fail();
         }
     }
@@ -138,7 +138,7 @@ public class TestAssessmentDao {
         try {
             Grade grade = gradeService.insertGrade(testGrade);
             Assert.assertTrue(grade.getGradeId() != 0);
-        } catch (DuplicateResource | ResourceUnchangable | ResourceNotFound | InvalidValue e) {
+        } catch (DuplicateResource | ResourceNotFound | InvalidValue e) {
             fail();
         }
     }
