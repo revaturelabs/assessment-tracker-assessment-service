@@ -2,17 +2,17 @@
 
 - GET: "/assessments": gets all assessments
 - POST: "/assessments": creates an assessment
-- GET: "/assessments/associates/:associateId": gets all assessments for an associate
-- GET: "/assessments/batches/:batchId/weeks/:weekId": gets all assessments in a batch for a certain week
-- PATCH: "/assessments/:assessmentId/weight/:weight": updates the weight of an assessment
-- PATCH: "/assessments/:assessmentId/types/:typeId": updates the assessment type with a type id
+- GET: "/associates/:associateId/assessments": gets all assessments for an associate
+- GET: "/batches/:batchId/weeks/:weekId/assessments": gets all assessments in a batch for a certain week
+- PATCH: "/weight/:weight/assessments/:assessmentId": updates the weight of an assessment
+- PATCH: "/types/:typeId/assessments/:assessmentId": updates the assessment type with a type id
 
 - POST: "/grades": creates a grade
-- GET: "/grades/assessments/:assessmentId/associates/:associateId": gets a grade for a specific associate and assessment
+- GET: "/assessments/:assessmentId/associates/:associateId/grades": gets a grade for a specific associate and assessment
 - PUT: "/grades": updates a grade
 - DELETE: "/grades/:gradeId": deletes a grade
-- GET: "/grades/associates/:associateId/week": gets the week grades for an associate
-- GET: "/grades/assessments/:assessmentId/average": gets the average grade for an assessment
+- GET: "/associates/:associateId/week/:weekId/grades": gets the week grades for an associate
+- GET: "/assessments/:assessmentId/average/grades": gets the average grade for an assessment
 
 - POST: "/types": creates an assessment type
 - GET: "/types": gets all assessment types
