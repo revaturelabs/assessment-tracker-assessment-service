@@ -11,12 +11,21 @@ import controllers.GradeController;
 import dao.CategoryDAOImpl;
 import services.*;
 
+import io.javalin.plugin.openapi.OpenApiOptions;
+import io.javalin.plugin.openapi.OpenApiPlugin;
+import io.javalin.plugin.openapi.ui.ReDocOptions;
+import io.javalin.plugin.openapi.ui.SwaggerOptions;
+import io.swagger.v3.oas.models.info.Info;
+
+import static io.javalin.apibuilder.ApiBuilder.*;
+
 public class App {
     public static void main(String[] args) {
 
         Javalin app = Javalin.create(config -> {
             config.enableCorsForAllOrigins();
             config.enableDevLogging();
+            config.registerPlugin(getConfiguredOpenApiPlugin());
         });
         establishRoutes(app);
         app.start(7001);
@@ -64,6 +73,16 @@ public class App {
         app.get("/categories/:categoryId", categoryController.getCategoryById);
         app.put("/categories", categoryController.updateCategory);
         app.delete("/categories/:categoryId", categoryController.deleteCategory);
+    }
+
+    private static OpenApiPlugin getConfiguredOpenApiPlugin() {
+        Info info = new Info().version("1.0").description("User API");
+        OpenApiOptions options = new OpenApiOptions(info)
+                .activateAnnotationScanningFor("app")
+                .path("/swagger-docs") // endpoint for OpenAPI json
+                .swagger(new SwaggerOptions("/swagger-ui")) // endpoint for swagger-ui
+                .reDoc(new ReDocOptions("/redoc")); // endpoint for redo
+        return new OpenApiPlugin(options);
     }
 
 }
