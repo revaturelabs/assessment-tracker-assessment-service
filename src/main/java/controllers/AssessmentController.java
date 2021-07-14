@@ -76,7 +76,7 @@ public class AssessmentController {
     public Handler getBatchWeek = context -> {
         try {
             int batchId = Integer.parseInt(context.pathParam("batchId"));
-            String week = context.queryParam("weekId");
+            String week = Integer.toString(Integer.parseInt(context.pathParam("weekId")));
             aclogger.info("Attempting to get assessments for batch " + batchId + " for week " + week);
             List<Assessment> assessments = as.getBatchWeek(batchId, week);
             if(assessments.size() == 0){
