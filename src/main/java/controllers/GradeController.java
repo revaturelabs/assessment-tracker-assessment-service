@@ -10,6 +10,7 @@ import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import io.javalin.http.Handler;
+import io.javalin.plugin.openapi.annotations.*;
 import models.Grade;
 import services.GradeService;
 
@@ -23,6 +24,20 @@ public class GradeController {
         this.gradeService = gradeService;
     }
 
+    @OpenApi(
+            path = "/grades",
+            method = HttpMethod.POST,
+            summary = "Create new grade",
+            operationId = "createGrade",
+            tags = {"Grade"},
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
+            responses = {
+                    @OpenApiResponse(status = "201", content = {@OpenApiContent(from = Grade.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler createGrade = context -> {
         try {
             Grade grade = gson.fromJson(context.body(), Grade.class);
@@ -47,6 +62,23 @@ public class GradeController {
         }
     };
 
+    @OpenApi(
+            path = "/assessments/:assessmentId/associates/:associateId/grades",
+            method = HttpMethod.GET,
+            summary = "Get an given associate's grade for a given assessment",
+            operationId = "getGradeForAssociateAssessment",
+            pathParams = {
+                    @OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID"),
+                    @OpenApiParam(name = "associateId", type = Integer.class, description = "The associate ID")
+            },
+            tags = {"Grade"},
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Grade.class)}),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler getGradeForAssociateAssessment = context -> {
         try {
             int associateId = Integer.parseInt(context.pathParam("associateId"));
@@ -66,6 +98,21 @@ public class GradeController {
         }
     };
 
+    @OpenApi(
+            path = "/grades",
+            method = HttpMethod.PUT,
+            summary = "Update grade",
+            operationId = "updateGrade",
+            tags = {"Grade"},
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
+            responses = {
+                    @OpenApiResponse(status = "201", content = {@OpenApiContent(from = Grade.class)}),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler updateGrade = context -> {
         try {
             Grade grade = gson.fromJson(context.body(), Grade.class);
@@ -94,8 +141,22 @@ public class GradeController {
         }
     };
 
+    @OpenApi(
+            summary = "Delete grade by gradeId",
+            operationId = "deleteGrade",
+            path = "/grades/:gradeId",
+            method = HttpMethod.DELETE,
+            pathParams = {@OpenApiParam(name = "gradeId", type = Integer.class, description = "The grade ID")},
+            tags = {"Grade"},
+            responses = {
+                    @OpenApiResponse(status = "204"),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler deleteGrade = context -> {
-        try{
+        try {
             int id = Integer.parseInt(context.pathParam("gradeId"));
             this.gradeService.deleteGrade(id);
             context.status(204);
@@ -114,6 +175,22 @@ public class GradeController {
         }
     };
 
+    @OpenApi(
+            path = "/associates/:associateId/week/:weekId/grades",
+            method = HttpMethod.GET,
+            summary = "Get a given associate's grades for a given week",
+            operationId = "getGradesForWeek",
+            pathParams = {
+                    @OpenApiParam(name = "associateId", type = Integer.class, description = "The associate ID"),
+                    @OpenApiParam(name = "weekId", type = Integer.class, description = "The week ID")
+            },
+            tags = {"Grade"},
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Grade[].class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler getGradesForWeek = context -> {
         try {
             int associateId = Integer.parseInt(context.pathParam("associateId"));
@@ -129,6 +206,20 @@ public class GradeController {
         }
     };
 
+    @OpenApi(
+            path = "/assessments/:assessmentId/grades/average",
+            method = HttpMethod.GET,
+            summary = "Get the average of all grades for a given assessment",
+            operationId = "getAverageGrade",
+            pathParams = {@OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID")},
+            tags = {"Grade"},
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Double.class)}),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler getAverageGrade = context -> {
         try {
             int assessmentId = Integer.parseInt(context.queryParam("assessmentId"));
