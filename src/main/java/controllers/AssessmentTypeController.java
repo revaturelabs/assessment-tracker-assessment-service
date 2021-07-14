@@ -10,6 +10,7 @@ import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import io.javalin.http.Handler;
+import io.javalin.plugin.openapi.annotations.*;
 import models.AssessmentType;
 import services.AssessmentTypeService;
 
@@ -23,6 +24,20 @@ public class AssessmentTypeController {
         this.assessmentTypeService = assessmentTypeService;
     }
 
+    @OpenApi(
+            path = "/types",            // only necessary to include when using static method references
+            method = HttpMethod.POST,    // only necessary to include when using static method references
+            summary = "Create an Assessment Type",
+            operationId = "createAssessmentType",
+            tags = {"assessmentType"},
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = AssessmentType.class)}),
+            responses = {
+                    @OpenApiResponse(status = "201", content = {@OpenApiContent(from = AssessmentType.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler createAssessmentType = context -> {
         try {
             AssessmentType assessmentType = gson.fromJson(context.body(), AssessmentType.class);
@@ -47,6 +62,16 @@ public class AssessmentTypeController {
         }
     };
 
+    @OpenApi(
+            path = "/types",            // only necessary to include when using static method references
+            method = HttpMethod.GET,    // only necessary to include when using static method references
+            summary = "Get all Assessment Types",
+            operationId = "getAssessmentTypes",
+            tags = {"assessmentType"},
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = AssessmentType[].class)})
+            }
+    )
     public Handler getAssessmentTypes = context -> {
         List<AssessmentType> assessmentTypes = this.assessmentTypeService.getAssessmentTypes();
         context.contentType(CONTENT_TYPE_JSON);
@@ -54,6 +79,19 @@ public class AssessmentTypeController {
         context.status(200);
     };
 
+    @OpenApi(
+            path = "/types/:typeId",            // only necessary to include when using static method references
+            method = HttpMethod.GET,    // only necessary to include when using static method references
+            summary = "Get Assessment Type by type id",
+            operationId = "getAssessmentTypeById",
+            tags = {"assessmentType"},
+            pathParams = {@OpenApiParam(name = "typeId", type = Integer.class, description = "The type ID")},
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = AssessmentType.class)}),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler getAssessmentTypeById = context -> {
         try {
             int id = Integer.parseInt(context.pathParam("typeId"));
@@ -72,6 +110,21 @@ public class AssessmentTypeController {
         }
     };
 
+    @OpenApi(
+            path = "/types",            // only necessary to include when using static method references
+            method = HttpMethod.PUT,    // only necessary to include when using static method references
+            summary = "Update an Assessment Type",
+            operationId = "updateAssessmentType",
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = AssessmentType.class)}),
+            tags = {"assessmentType"},
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = AssessmentType.class)}),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler updateAssessmentType = context -> {
         try {
             AssessmentType assessmentType = gson.fromJson(context.body(), AssessmentType.class);
@@ -99,6 +152,20 @@ public class AssessmentTypeController {
         }
     };
 
+    @OpenApi(
+            path = "/types/:typeId",            // only necessary to include when using static method references
+            method = HttpMethod.DELETE,    // only necessary to include when using static method references
+            summary = "Delete an Assessment Type",
+            operationId = "deleteAssessmentType",
+            tags = {"assessmentType"},
+            pathParams = {@OpenApiParam(name = "typeId", type = Integer.class, description = "The type ID")},
+            responses = {
+                    @OpenApiResponse(status = "204"),
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
     public Handler deleteAssessmentType = context -> {
         try {
             int id = Integer.parseInt(context.pathParam("typeId"));
