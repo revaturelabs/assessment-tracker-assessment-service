@@ -114,16 +114,16 @@ public class TestAssessmentDao {
     }
 
     //BUG - This test really doesnt belong here
-    @Test
-    @Order(7)
-    public void testCreateAssessmentType() {
-        try {
-            testAssessmentType = assessmentTypeDAO.createAssessmentType(testAssessmentType);
-            Assert.assertTrue(testAssessmentType.getTypeId() != 0);
-        } catch(DuplicateResource | InvalidValue e) {
-            fail();
-        }
-    }
+    //@Test
+    //@Order(7)
+    //public void testCreateAssessmentType() {
+    //    try {
+    //        testAssessmentType = assessmentTypeDAO.createAssessmentType(testAssessmentType);
+    //        Assert.assertTrue(testAssessmentType.getTypeId() != 0);
+    //    } catch(DuplicateResource | InvalidValue e) {
+    //        fail();
+    //    }
+    //}
 
     @Test
     @Order(8)
