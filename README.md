@@ -12,7 +12,7 @@
 - PUT: "/grades": updates a grade
 - DELETE: "/grades/:gradeId": deletes a grade
 - GET: "/associates/:associateId/week/:weekId/grades": gets the week grades for an associate
-- GET: "/assessments/:assessmentId/average/grades": gets the average grade for an assessment
+- GET: "/assessments/:assessmentId/grades/average": gets the average grade for an assessment
 
 - POST: "/types": creates an assessment type
 - GET: "/types": gets all assessment types
