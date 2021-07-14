@@ -5,7 +5,7 @@
 - GET: "/assessments/associates/:associateId": gets all assessments for an associate
 - GET: "/assessments/batches/:batchId/weeks/:weekId": gets all assessments in a batch for a certain week
 - PATCH: "/assessments/:assessmentId/weight/:weight": updates the weight of an assessment
-- PATCH: "/assessments/:assessmentId/type/:typeId": updates the assessment type with a type id
+- PATCH: "/assessments/:assessmentId/types/:typeId": updates the assessment type with a type id
 
 - POST: "/grades": creates a grade
 - GET: "/grades/assessments/:assessmentId/associates/:associateId": gets a grade for a specific associate and assessment
