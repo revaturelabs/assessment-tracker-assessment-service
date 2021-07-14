@@ -36,9 +36,9 @@ public class App {
         app.get("/assessments", ac.getAssessments);
         app.post("/assessments", ac.createAssessment);
         app.get("/assessments/associates/:associateId", ac.getAssessmentsByTraineeId);
-        app.get("/assessments/batches/:batchId/weeks/:weekId", ac.getBatchWeek); //batches/5/assessments?week=4
-        app.put("/assessments/:assessmentId/weight/:weight", ac.adjustWeight);
-        app.put("/assessments/:assessmentId/types/:typeId",ac.assignAssessmentType);
+        app.get("/assessments/batches/:batchId/weeks/:weekId", ac.getBatchWeek);
+        app.patch("/assessments/:assessmentId/weight/:weight", ac.adjustWeight);
+        app.patch("/assessments/:assessmentId/types/:typeId",ac.assignAssessmentType);
 
         // app.get("/assessments/:assessmentId/grade", ac.getGradeForAssociate); //assessments/3/grade?associateId=3
         // app.get("/grades", ac.getGradesForWeek); //grades?traineeId=1&week=3
