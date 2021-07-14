@@ -51,7 +51,7 @@ public class App {
         app.put("/grades", gradeController.updateGrade);
         app.delete("/grades/:gradeId", gradeController.deleteGrade);
         app.get("/associates/:associateId/week/:weekId/grades", gradeController.getGradesForWeek);
-        app.get("/assessments/:assessmentId/average/grades", gradeController.getAverageGrade);
+        app.get("/assessments/:assessmentId/grades/average", gradeController.getAverageGrade);
 
         app.post("types", assessmentTypeController.createAssessmentType);
         app.get("types", assessmentTypeController.getAssessmentTypes);
