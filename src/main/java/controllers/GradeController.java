@@ -33,9 +33,9 @@ public class GradeController {
             requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
             responses = {
                     @OpenApiResponse(status = "201", content = {@OpenApiContent(from = Grade.class)}),
-                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = DuplicateResource.class)}),
-                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = InvalidValue.class)}),
-                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = JsonSyntaxException.class)})
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
             }
     )
     public Handler createGrade = context -> {
@@ -75,8 +75,8 @@ public class GradeController {
             requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
             responses = {
                     @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Grade.class)}),
-                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = ResourceNotFound.class)}),
-                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = NumberFormatException.class)})
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
             }
     )
     public Handler getGradeForAssociateAssessment = context -> {
@@ -107,10 +107,10 @@ public class GradeController {
             requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
             responses = {
                     @OpenApiResponse(status = "201", content = {@OpenApiContent(from = Grade.class)}),
-                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = ResourceNotFound.class)}),
-                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = InvalidValue.class)}),
-                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = DuplicateResource.class)}),
-                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = JsonSyntaxException.class)})
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
             }
     )
     public Handler updateGrade = context -> {
@@ -150,9 +150,9 @@ public class GradeController {
             tags = {"Grade"},
             responses = {
                     @OpenApiResponse(status = "204"),
-                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = ResourceNotFound.class)}),
-                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = ResourceUnchangable.class)}),
-                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = NumberFormatException.class)})
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "409", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
             }
     )
     public Handler deleteGrade = context -> {
@@ -185,9 +185,10 @@ public class GradeController {
                     @OpenApiParam(name = "weekId", type = Integer.class, description = "The week ID")
             },
             tags = {"Grade"},
-            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade[].class)}),
+            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
             responses = {
-                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = NumberFormatException.class)})
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Grade[].class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
             }
     )
     public Handler getGradesForWeek = context -> {
@@ -215,8 +216,8 @@ public class GradeController {
             requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
             responses = {
                     @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Double.class)}),
-                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = ResourceNotFound.class)}),
-                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = NumberFormatException.class)})
+                    @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
             }
     )
     public Handler getAverageGrade = context -> {
