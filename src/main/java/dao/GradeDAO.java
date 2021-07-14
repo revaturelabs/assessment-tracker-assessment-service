@@ -16,7 +16,7 @@ public interface GradeDAO {
 
     Grade getGrade(int assessmentId, int associateId) throws ResourceNotFound;
 
-    Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue, DuplicateResource;
+    Grade updateGrade(Grade grade) throws ResourceNotFound, InvalidValue, DuplicateResource;
 
     void deleteGrade(int id) throws ResourceNotFound, ResourceUnchangable;
 

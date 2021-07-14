@@ -7,6 +7,7 @@ import io.javalin.Javalin;
 import controllers.AssessmentController;
 import controllers.AssessmentTypeController;
 import controllers.CategoryController;
+import controllers.GradeController;
 import dao.CategoryDAOImpl;
 import services.*;
 
@@ -27,13 +28,11 @@ public class App {
         // Need a Service
         CategoryController categoryController = new CategoryController(new CategoryServiceImpl(new CategoryDAOImpl()));
         AssessmentTypeController assessmentTypeController = new AssessmentTypeController(new AssessmentTypeServiceImpl(new AssessmentTypeDAOImpl()));
-        AssessmentService as = new AssessmentServiceImpl(new AssessmentDAOImpl());
-        AssessmentTypeService ats = new AssessmentTypeServiceImpl(new AssessmentTypeDAOImpl());
-        GradeService gs = new GradeServiceImpl(new GradeDAOImpl());
+        GradeController gradeController = new GradeController(new GradeServiceImpl(new GradeDAOImpl()));
+        AssessmentController ac = new AssessmentController(new AssessmentServiceImpl(new AssessmentDAOImpl()));
         app.get("/Testing", context -> context.result("Testing"));
 
         // EndPoints
-        AssessmentController ac = new AssessmentController(as, ats, gs);
         app.get("/assessments", ac.getAssessments);
         app.post("/assessments", ac.createAssessment);
         app.get("/assessments/:traineeId", ac.getAssessmentsByTraineeId);
@@ -41,11 +40,18 @@ public class App {
         app.put("/assessments/:assessmentId/weight", ac.adjustWeight); //assessments/3/weight?weight=55
         app.put("/assessments/:assessmentId/type/:typeId",ac.assignAssessmentType);
 
-        app.get("/assessments/:assessmentId/grade", ac.getGradeForAssociate); //assessments/3/grade?associateId=3
-        app.get("/grades", ac.getGradesForWeek); //grades?traineeId=1&week=3
-        app.put("/grades", ac.insertGrade);
-        app.get("/grades/average", ac.getAverageGrade);
+        // app.get("/assessments/:assessmentId/grade", ac.getGradeForAssociate); //assessments/3/grade?associateId=3
+        // app.get("/grades", ac.getGradesForWeek); //grades?traineeId=1&week=3
+        // app.put("/grades", ac.insertGrade);
+        // app.get("/grades/average", ac.getAverageGrade);
         //app.get("/notes/:id/:weekid/", ac.getNotesForTrainee);
+
+        app.post("/grades", gradeController.createGrade);
+        app.get("/grades/:assessmentId/:associateId", gradeController.getGradeForAssociateAssessment);
+        app.put("/grades", gradeController.updateGrade);
+        app.delete("/grades/:gradeId", gradeController.deleteGrade);
+        app.get("/grades/week/:associateId", gradeController.getGradesForWeek);
+        app.get("/grades/average/:assessmentId", gradeController.getAverageGrade);
 
         app.post("types", assessmentTypeController.createAssessmentType);
         app.get("types", assessmentTypeController.getAssessmentTypes);

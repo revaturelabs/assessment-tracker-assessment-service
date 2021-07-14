@@ -138,7 +138,7 @@ public class TestAssessmentDao {
         try {
             Grade grade = gradeService.insertGrade(testGrade);
             Assert.assertTrue(grade.getGradeId() != 0);
-        } catch (DuplicateResource | ResourceUnchangable | ResourceNotFound | InvalidValue e) {
+        } catch (DuplicateResource | ResourceNotFound | InvalidValue e) {
             fail();
         }
     }

@@ -25,7 +25,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public List<Grade> getGrades() throws InvalidValue {
+    public List<Grade> getGrades(){
         return this.gradeDAO.getGrades();
     }
 
@@ -35,14 +35,14 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue, DuplicateResource {
+    public Grade updateGrade(Grade grade) throws ResourceNotFound, InvalidValue, DuplicateResource {
         if(grade.getScore() < 0)
             throw new InvalidValue("Grade score cannot be negative");
         return this.gradeDAO.updateGrade(grade);
     }
 
     @Override
-    public Grade insertGrade(Grade grade) throws ResourceUnchangable, InvalidValue, DuplicateResource {
+    public Grade insertGrade(Grade grade) throws InvalidValue, DuplicateResource {
         try {
             getGrade(grade.getAssessmentId(), grade.getAssociateId());
             return updateGrade(grade);

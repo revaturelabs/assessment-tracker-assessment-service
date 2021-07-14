@@ -21,7 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TestGradeAssessments {
+public class TestGradeDAO {
     
     private static AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
     private static GradeService gradeService = new GradeServiceImpl(new GradeDAOImpl());
@@ -64,7 +64,7 @@ public class TestGradeAssessments {
             Assert.assertNotNull("Error occured inserting grade into database", gradeValid);
             Assert.assertTrue("Grade wasn't inserted correctly into database", gradeValid.getGradeId() > 0);
             Assert.assertEquals("Grade score wasn't updated in database", 50, gradeValid.getScore(), 0);
-        } catch (DuplicateResource | ResourceNotFound | ResourceUnchangable | InvalidValue e) {
+        } catch (DuplicateResource | ResourceNotFound | InvalidValue e) {
             fail();
         }
     }
@@ -91,7 +91,7 @@ public class TestGradeAssessments {
             Grade updatedGrade = gradeService.updateGrade(new Grade(gradeValid2.getGradeId(), gradeValid2.getAssessmentId(), gradeValid2.getAssociateId(), 75));
             Assert.assertNotNull("Error occured updating grade in database", updatedGrade);
             Assert.assertEquals("Grade score wasn't updated in database", 75, updatedGrade.getScore(), 0);
-        } catch (InvalidValue | DuplicateResource | ResourceNotFound | ResourceUnchangable e) {
+        } catch (InvalidValue | DuplicateResource | ResourceNotFound e) {
             fail();
         }
     }
@@ -104,7 +104,7 @@ public class TestGradeAssessments {
             Assert.assertNull("Invalid grade was updated into database", resultGrade);
         } catch(InvalidValue e) {
             //Success
-        } catch(DuplicateResource | ResourceNotFound | ResourceUnchangable e) {
+        } catch(DuplicateResource | ResourceNotFound e) {
             fail();
         }
     }

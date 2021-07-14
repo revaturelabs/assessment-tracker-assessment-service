@@ -67,7 +67,7 @@ public class AssessmentTypeController {
             context.status(404);
         } catch (NumberFormatException e) {
             context.contentType(CONTENT_TYPE_TEXT);
-            context.result("Category ID couldn't be parsed correctly");
+            context.result("Assessment ID couldn't be parsed correctly");
             context.status(400);
         }
     };
@@ -114,7 +114,7 @@ public class AssessmentTypeController {
             context.status(409);
         } catch (NumberFormatException e) {
             context.contentType(CONTENT_TYPE_TEXT);
-            context.result("Category ID couldn't be parsed correctly");
+            context.result("Assessment ID couldn't be parsed correctly");
             context.status(400);
         }
     };

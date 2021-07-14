@@ -12,13 +12,13 @@ public interface GradeService {
     
     Grade createGrade(Grade grade) throws DuplicateResource, InvalidValue;
 
-    List<Grade> getGrades() throws InvalidValue;
+    List<Grade> getGrades();
 
     Grade getGrade(int assessmentId, int associateId) throws ResourceNotFound;
 
-    Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue, DuplicateResource;
+    Grade updateGrade(Grade grade) throws ResourceNotFound, InvalidValue, DuplicateResource;
 
-    Grade insertGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue, DuplicateResource;
+    Grade insertGrade(Grade grade) throws ResourceNotFound, InvalidValue, DuplicateResource;
 
     void deleteGrade(int id) throws ResourceNotFound, ResourceUnchangable;
 

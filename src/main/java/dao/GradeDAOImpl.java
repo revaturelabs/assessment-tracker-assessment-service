@@ -77,7 +77,7 @@ public class GradeDAOImpl implements GradeDAO {
     }
 
     @Override
-    public Grade updateGrade(Grade grade) throws ResourceNotFound, ResourceUnchangable, InvalidValue, DuplicateResource {
+    public Grade updateGrade(Grade grade) throws ResourceNotFound, InvalidValue, DuplicateResource {
         String sql = "UPDATE grades SET score=? WHERE assessment_id=? AND associate_id=?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql,
                 Statement.RETURN_GENERATED_KEYS)) {
@@ -92,12 +92,9 @@ public class GradeDAOImpl implements GradeDAO {
                 throw new ResourceNotFound(String.format("Grade with id %d couldn't be found", grade.getGradeId()));
         } catch (SQLException e) {
             if (e.getSQLState().equals("23514"))
-            throw new DuplicateResource(
-                    String.format("Grade with assessment id %d and associate id %d already exists",
-                            grade.getAssessmentId(), grade.getAssociateId()));
-            if (e.getSQLState().equals("23000"))
-                throw new ResourceUnchangable(
-                        String.format("Grade with id %d has dependents that prevent modification", grade.getGradeId()));
+                throw new DuplicateResource(
+                        String.format("Grade with assessment id %d and associate id %d already exists",
+                                grade.getAssessmentId(), grade.getAssociateId()));
             if (e.getSQLState().equals("23503"))
                 throw new InvalidValue("The grade contains one or more references to values that do not exist");
             e.printStackTrace();
@@ -161,7 +158,10 @@ public class GradeDAOImpl implements GradeDAO {
                 if (rs.wasNull()) {
                     throw new ResourceNotFound("There are no grades for assessment with id " + assessmentId);
                 }
-                return average;
+                int twoDecimalPlace = (int) (average * 100.0);
+                double roundedToTwoDecimalPlace = ((double) twoDecimalPlace) / 100.0;
+
+                return roundedToTwoDecimalPlace;
             }
         } catch (SQLException e) {
             e.printStackTrace();
