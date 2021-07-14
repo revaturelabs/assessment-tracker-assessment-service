@@ -117,7 +117,7 @@ public class GradeController {
     public Handler getGradesForWeek = context -> {
         try {
             int associateId = Integer.parseInt(context.pathParam("associateId"));
-            int weekId = Integer.parseInt(context.pathParam("week"));
+            int weekId = Integer.parseInt(context.pathParam("weekId"));
             List<Grade> grades = this.gradeService.getGradesForWeek(associateId, weekId);
             context.contentType(CONTENT_TYPE_JSON);
             context.result(gson.toJson(grades));
