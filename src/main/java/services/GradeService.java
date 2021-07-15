@@ -25,4 +25,6 @@ public interface GradeService {
     List<Grade> getGradesForWeek(int associateId, int weekId);
 
     double getAverageGrade(int assessmentId) throws ResourceNotFound;
+
+    List<Grade> getGrades(int batchId, int weekId);
 }

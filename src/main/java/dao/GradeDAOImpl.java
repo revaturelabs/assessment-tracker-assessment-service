@@ -168,4 +168,22 @@ public class GradeDAOImpl implements GradeDAO {
         }
         return 0;
     }
+
+    @Override
+    public List<Grade> getGrades(int batchId, int weekId) {
+        String sql = "SELECT * FROM grades INNER JOIN assessments ON assessments.id = grades.assessment_id WHERE batch_id=? AND week=?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, batchId);
+            ps.setInt(2, weekId);
+            ResultSet rs = ps.executeQuery();
+            List<Grade> grades = new ArrayList<>();
+            while (rs.next()) {
+                grades.add(buildGrade(rs));
+            }
+            return grades;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 }

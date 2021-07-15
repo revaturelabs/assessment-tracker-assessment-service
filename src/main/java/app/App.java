@@ -60,6 +60,7 @@ public class App {
         app.delete("/grades/:gradeId", gradeController.deleteGrade);
         app.get("/associates/:associateId/week/:weekId/grades", gradeController.getGradesForWeek);
         app.get("/assessments/:assessmentId/grades/average", gradeController.getAverageGrade);
+        app.get("/batches/:batchId/week/:weekId/grades", gradeController.getGradesForBatchWeek);
 
         app.post("types", assessmentTypeController.createAssessmentType);
         app.get("types", assessmentTypeController.getAssessmentTypes);
