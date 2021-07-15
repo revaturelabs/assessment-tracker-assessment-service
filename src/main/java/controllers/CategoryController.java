@@ -188,6 +188,22 @@ public class CategoryController {
         }
     };
 
+    @OpenApi(
+        path = "/assessments/:assessmentId/categories/:categoryId",
+        method = HttpMethod.POST,
+        summary = "Adds a category to an assessment",
+        operationId = "addCategoryToAssessment",
+        pathParams = {
+            @OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID"),
+            @OpenApiParam(name = "categoryId", type = Integer.class, description = "The category ID")},
+        tags = {"Category"},
+        responses = {
+                @OpenApiResponse(status = "201", content = {@OpenApiContent(from = Category.class)}),
+                @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+        }
+    )
     public Handler addCategoryToAssessment = context -> {
         try {
             int assessmentId = Integer.parseInt(context.pathParam("assessmentId"));
@@ -211,6 +227,19 @@ public class CategoryController {
         }
     };
 
+    @OpenApi(
+        path = "/assessments/:assessmentId/categories",
+        method = HttpMethod.GET,
+        summary = "Gets all categories of an assessment",
+        operationId = "getCategoriesForAssessment",
+        pathParams = {
+            @OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID")},
+        tags = {"Category"},
+        responses = {
+                @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Category.class)}),
+                @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+        }
+    )
     public Handler getCategoriesForAssessment = context -> {
         try{
             int assessmentId = Integer.parseInt(context.pathParam("assessmentId"));
@@ -225,6 +254,21 @@ public class CategoryController {
         }
     };
 
+    @OpenApi(
+        path = "/assessments/:assessmentId/categories/:categoryId",
+        method = HttpMethod.DELETE,
+        summary = "Deletes a category from an assessment",
+        operationId = "deleteCategoryForAssessment",
+        pathParams = {
+            @OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID"),
+            @OpenApiParam(name = "categoryId", type = Integer.class, description = "The category ID")},
+        tags = {"Category"},
+        responses = {
+                @OpenApiResponse(status = "204"),
+                @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+        }
+    )
     public Handler deleteCategoryForAssessment = context -> {
         try {
             int assessmentId = Integer.parseInt(context.pathParam("assessmentId"));
