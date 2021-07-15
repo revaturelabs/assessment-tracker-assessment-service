@@ -238,8 +238,8 @@ public class GradeController {
         method = HttpMethod.GET,
         summary = "Gets all grades for a batch and week",
         operationId = "getGradesForBatchWeek",
-        pathParams = {@OpenApiParam(name = "batchId", type = Integer.class, description = "The assessment ID"),
-                      @OpenApiParam(name = "weekId", type = Integer.class, description = "The assessment ID")},
+        pathParams = {@OpenApiParam(name = "batchId", type = Integer.class, description = "The batch ID"),
+                      @OpenApiParam(name = "weekId", type = Integer.class, description = "The week ID")},
         tags = {"Grade"},
         responses = {
                 @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Grade[].class)}),
