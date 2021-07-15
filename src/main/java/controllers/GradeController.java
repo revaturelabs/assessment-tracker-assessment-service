@@ -72,7 +72,6 @@ public class GradeController {
                     @OpenApiParam(name = "associateId", type = Integer.class, description = "The associate ID")
             },
             tags = {"Grade"},
-            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
             responses = {
                     @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Grade.class)}),
                     @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
@@ -185,7 +184,6 @@ public class GradeController {
                     @OpenApiParam(name = "weekId", type = Integer.class, description = "The week ID")
             },
             tags = {"Grade"},
-            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
             responses = {
                     @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Grade[].class)}),
                     @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
@@ -213,7 +211,6 @@ public class GradeController {
             operationId = "getAverageGrade",
             pathParams = {@OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID")},
             tags = {"Grade"},
-            requestBody = @OpenApiRequestBody(content = {@OpenApiContent(from = Grade.class)}),
             responses = {
                     @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Double.class)}),
                     @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
@@ -222,7 +219,7 @@ public class GradeController {
     )
     public Handler getAverageGrade = context -> {
         try {
-            int assessmentId = Integer.parseInt(context.queryParam("assessmentId"));
+            int assessmentId = Integer.parseInt(context.pathParam("assessmentId"));
             double averageGrade = this.gradeService.getAverageGrade(assessmentId);
             context.result(gson.toJson(averageGrade));
             context.status(200);
@@ -232,6 +229,34 @@ public class GradeController {
         } catch (NumberFormatException e) {
             context.contentType(CONTENT_TYPE_TEXT);
             context.result("Assessment ID couldn't be parsed correctly");
+            context.status(400);
+        }
+    };
+
+    @OpenApi(
+        path = "/batches/:batchId/week/:weekId/grades",
+        method = HttpMethod.GET,
+        summary = "Gets all grades for a batch and week",
+        operationId = "getGradesForBatchWeek",
+        pathParams = {@OpenApiParam(name = "batchId", type = Integer.class, description = "The batch ID"),
+                      @OpenApiParam(name = "weekId", type = Integer.class, description = "The week ID")},
+        tags = {"Grade"},
+        responses = {
+                @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Grade[].class)}),
+                @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+        }
+    )
+    public Handler getGradesForBatchWeek = context -> {
+        try{
+            int batchId = Integer.parseInt(context.pathParam("batchId"));
+            int weekId = Integer.parseInt(context.pathParam("weekId"));
+            List<Grade> grades = this.gradeService.getGrades(batchId, weekId);
+            context.contentType(CONTENT_TYPE_JSON);
+            context.result(gson.toJson(grades));
+            context.status(200);
+        } catch (NumberFormatException e) {
+            context.contentType(CONTENT_TYPE_TEXT);
+            context.result("Batch or week ID couldn't be parsed correctly");
             context.status(400);
         }
     };
