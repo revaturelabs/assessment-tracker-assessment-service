@@ -159,9 +159,8 @@ public class GradeDAOImpl implements GradeDAO {
                     throw new ResourceNotFound("There are no grades for assessment with id " + assessmentId);
                 }
                 int twoDecimalPlace = (int) (average * 100.0);
-                double roundedToTwoDecimalPlace = ((double) twoDecimalPlace) / 100.0;
 
-                return roundedToTwoDecimalPlace;
+                return twoDecimalPlace / 100.0;
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -210,7 +210,7 @@ public class TestCategoriesDAO {
             Assert.assertFalse(true);
         }
         List<Category> returnedCategories = categoryDAO.getCategories(assessment.getAssessmentId());
-        Assert.assertTrue(returnedCategories.size() == 1);
+        Assert.assertEquals(returnedCategories.size(), 1);
         try {
             categoryDAO.removeCategory(assessment.getAssessmentId(), category.getCategoryId());
         } catch (ResourceNotFound e) {

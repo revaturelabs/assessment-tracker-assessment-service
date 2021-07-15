@@ -53,7 +53,7 @@ public class TestAssessmentDao {
     public void testCreateAssessment() {
         try {
             testAssessment = assessmentDAO.createAssessment(testAssessment);
-            Assert.assertTrue(testAssessment.getAssessmentId() != 0);
+            Assert.assertNotEquals(testAssessment.getAssessmentId(), 0);
         } catch (InvalidValue e) {
             fail();
         }
@@ -100,7 +100,7 @@ public class TestAssessmentDao {
     public void testGetBatchWeek() {
         List<Assessment> assessments = assessmentDAO.getBatchWeek(1, "3");
         for (Assessment a : assessments) {
-            Assert.assertTrue(a.getWeekId().equals("3"));
+            Assert.assertEquals(a.getWeekId(), "3");
         }
     }
 
@@ -137,7 +137,7 @@ public class TestAssessmentDao {
     public void testInsertGrade() {
         try {
             Grade grade = gradeService.insertGrade(testGrade);
-            Assert.assertTrue(grade.getGradeId() != 0);
+            Assert.assertNotEquals(grade.getGradeId(), 0);
         } catch (DuplicateResource | ResourceNotFound | InvalidValue e) {
             fail();
         }
