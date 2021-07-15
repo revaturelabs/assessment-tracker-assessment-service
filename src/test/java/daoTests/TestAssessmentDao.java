@@ -146,8 +146,9 @@ public class TestAssessmentDao {
     @AfterClass
     public static void cleanup() {
         try {
-            assessmentDAO.deleteAssessment(testAssessment.getAssessmentId());
             assessmentTypeDAO.deleteAssessmentType(testAssessmentType.getTypeId());
+            assessmentDAO.deleteAssessment(testAssessment.getAssessmentId());
+
         } catch(ResourceNotFound | ResourceUnchangable e) {
             fail();
         }
