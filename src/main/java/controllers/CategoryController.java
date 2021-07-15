@@ -4,10 +4,9 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+
 import io.javalin.http.Handler;
 import io.javalin.plugin.openapi.annotations.*;
-import models.Assessment;
-import models.AssessmentType;
 import services.CategoryService;
 import models.Category;
 import exceptions.DuplicateResource;
@@ -185,6 +184,104 @@ public class CategoryController {
         } catch (NumberFormatException e) {
             context.contentType(CONTENT_TYPE_TEXT);
             context.result("Category ID couldn't be parsed correctly");
+            context.status(400);
+        }
+    };
+
+    @OpenApi(
+        path = "/assessments/:assessmentId/categories/:categoryId",
+        method = HttpMethod.POST,
+        summary = "Adds a category to an assessment",
+        operationId = "addCategoryToAssessment",
+        pathParams = {
+            @OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID"),
+            @OpenApiParam(name = "categoryId", type = Integer.class, description = "The category ID")},
+        tags = {"Category"},
+        responses = {
+                @OpenApiResponse(status = "201", content = {@OpenApiContent(from = Category.class)}),
+                @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                @OpenApiResponse(status = "422", content = {@OpenApiContent(from = String.class)}),
+                @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+        }
+    )
+    public Handler addCategoryToAssessment = context -> {
+        try {
+            int assessmentId = Integer.parseInt(context.pathParam("assessmentId"));
+            int categoryId = Integer.parseInt(context.pathParam("categoryId"));
+            Category category = this.categoryService.addCategory(assessmentId, categoryId);
+            context.contentType(CONTENT_TYPE_JSON);
+            context.result(gson.toJson(category));
+            context.status(201);
+        } catch (ResourceNotFound e) {
+            context.contentType(CONTENT_TYPE_TEXT);
+            context.result(e.getMessage());
+            context.status(404);
+        } catch (InvalidValue e) {
+            context.contentType(CONTENT_TYPE_TEXT);
+            context.result(e.getMessage());
+            context.status(422);
+        } catch (NumberFormatException e) {
+            context.contentType(CONTENT_TYPE_TEXT);
+            context.result("Category or assessment ID couldn't be parsed correctly");
+            context.status(400);
+        }
+    };
+
+    @OpenApi(
+        path = "/assessments/:assessmentId/categories",
+        method = HttpMethod.GET,
+        summary = "Gets all categories of an assessment",
+        operationId = "getCategoriesForAssessment",
+        pathParams = {
+            @OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID")},
+        tags = {"Category"},
+        responses = {
+                @OpenApiResponse(status = "200", content = {@OpenApiContent(from = Category.class)}),
+                @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+        }
+    )
+    public Handler getCategoriesForAssessment = context -> {
+        try{
+            int assessmentId = Integer.parseInt(context.pathParam("assessmentId"));
+            List<Category> categories = this.categoryService.getCategories(assessmentId);
+            context.contentType(CONTENT_TYPE_JSON);
+            context.result(gson.toJson(categories));
+            context.status(200);
+        } catch (NumberFormatException e) {
+            context.contentType(CONTENT_TYPE_TEXT);
+            context.result("Assessment ID couldn't be parsed correctly");
+            context.status(400);
+        }
+    };
+
+    @OpenApi(
+        path = "/assessments/:assessmentId/categories/:categoryId",
+        method = HttpMethod.DELETE,
+        summary = "Deletes a category from an assessment",
+        operationId = "deleteCategoryForAssessment",
+        pathParams = {
+            @OpenApiParam(name = "assessmentId", type = Integer.class, description = "The assessment ID"),
+            @OpenApiParam(name = "categoryId", type = Integer.class, description = "The category ID")},
+        tags = {"Category"},
+        responses = {
+                @OpenApiResponse(status = "204"),
+                @OpenApiResponse(status = "404", content = {@OpenApiContent(from = String.class)}),
+                @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+        }
+    )
+    public Handler deleteCategoryForAssessment = context -> {
+        try {
+            int assessmentId = Integer.parseInt(context.pathParam("assessmentId"));
+            int categoryId = Integer.parseInt(context.pathParam("categoryId"));
+            this.categoryService.removeCategory(assessmentId, categoryId);
+            context.status(204);
+        } catch (ResourceNotFound e) {
+            context.contentType(CONTENT_TYPE_TEXT);
+            context.result(e.getMessage());
+            context.status(404);
+        } catch (NumberFormatException e) {
+            context.contentType(CONTENT_TYPE_TEXT);
+            context.result("Category or assessment ID couldn't be parsed correctly");
             context.status(400);
         }
     };

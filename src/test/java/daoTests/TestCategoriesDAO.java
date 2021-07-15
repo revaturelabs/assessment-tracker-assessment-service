@@ -4,19 +4,24 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
+import dao.AssessmentDAO;
+import dao.AssessmentDAOImpl;
 import dao.CategoryDAO;
 import dao.CategoryDAOImpl;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
+import models.Assessment;
 import models.Category;
 
 public class TestCategoriesDAO {
     private static CategoryDAO categoryDAO = new CategoryDAOImpl();
+    private static AssessmentDAO assessmentDAO = new AssessmentDAOImpl();
     private static Category category;
 
     public Category createCategory(String categoryName){
@@ -108,7 +113,7 @@ public class TestCategoriesDAO {
     }
 
     @Test
-    public void getCategories() {
+    public void getAllCategories() {
         List<Category> categories = categoryDAO.getCategories();
         boolean contains = false;
         for (int i = 0; i < categories.size(); i++) {
@@ -174,6 +179,42 @@ public class TestCategoriesDAO {
             Assert.assertFalse(true);
         } catch (InvalidValue e) {
             Assert.assertTrue(true);
+        }
+    }
+
+    @Test
+    public void addRemoveCategory(){
+        List<Assessment> assessments = assessmentDAO.getAssessments();
+        Assume.assumeTrue(assessments.size() > 0);
+        Assessment assessment = assessments.get(0);
+        try {
+            Category returnedCategory = categoryDAO.addCategory(assessment.getAssessmentId(), category.getCategoryId());
+            Assert.assertEquals(category.getCategoryId(), returnedCategory.getCategoryId());
+            Assert.assertEquals(category.getName(), returnedCategory.getName());
+            categoryDAO.removeCategory(assessment.getAssessmentId(), returnedCategory.getCategoryId());
+        } catch (ResourceNotFound | InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+    }
+
+    @Test
+    public void getCategories(){
+        List<Assessment> assessments = assessmentDAO.getAssessments();
+        Assume.assumeTrue(assessments.size() > 0);
+        Assessment assessment = assessments.get(0);
+        try {
+            Category returnedCategory = categoryDAO.addCategory(assessment.getAssessmentId(), category.getCategoryId());
+            Assert.assertEquals(category.getCategoryId(), returnedCategory.getCategoryId());
+            Assert.assertEquals(category.getName(), returnedCategory.getName());
+        } catch (ResourceNotFound | InvalidValue e) {
+            Assert.assertFalse(true);
+        }
+        List<Category> returnedCategories = categoryDAO.getCategories(assessment.getAssessmentId());
+        Assert.assertTrue(returnedCategories.size() == 1);
+        try {
+            categoryDAO.removeCategory(assessment.getAssessmentId(), category.getCategoryId());
+        } catch (ResourceNotFound e) {
+            Assert.assertFalse(true);
         }
     }
 }

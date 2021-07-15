@@ -16,6 +16,11 @@ public class CategoryServiceImpl implements CategoryService{
     public CategoryServiceImpl(CategoryDAO categoryDAO){
         this.categoryDAO = categoryDAO;
     }
+    
+    @Override
+    public Category createCategory(Category category) throws DuplicateResource, InvalidValue {
+        return this.categoryDAO.createCategory(category);
+    }
 
     @Override
     public List<Category> getCategories() {
@@ -38,8 +43,19 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public Category createCategory(Category category) throws DuplicateResource, InvalidValue {
-        return this.categoryDAO.createCategory(category);
+    public Category addCategory(int assessmentId, int categoryId) throws ResourceNotFound, InvalidValue {
+        return this.categoryDAO.addCategory(assessmentId, categoryId);
+    }
+
+    @Override
+    public List<Category> getCategories(int assessmentId) {
+        return this.categoryDAO.getCategories(assessmentId);
+    }
+
+    @Override
+    public void removeCategory(int assessmentId, int categoryId) throws ResourceNotFound {
+        // TODO Auto-generated method stub
+        
     }
     
 }

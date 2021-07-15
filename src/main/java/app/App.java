@@ -17,7 +17,6 @@ import io.javalin.plugin.openapi.ui.ReDocOptions;
 import io.javalin.plugin.openapi.ui.SwaggerOptions;
 import io.swagger.v3.oas.models.info.Info;
 
-import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class App {
     public static void main(String[] args) {
@@ -73,6 +72,9 @@ public class App {
         app.get("/categories/:categoryId", categoryController.getCategoryById);
         app.put("/categories", categoryController.updateCategory);
         app.delete("/categories/:categoryId", categoryController.deleteCategory);
+        app.post("/assessments/:assessmentId/categories/:categoryId", categoryController.addCategoryToAssessment);
+        app.get("/assessments/:assessmentId/categories", categoryController.getCategoriesForAssessment);
+        app.delete("/assessments/:assessmentId/categories/:categoryId", categoryController.deleteCategoryForAssessment);
     }
 
     private static OpenApiPlugin getConfiguredOpenApiPlugin() {

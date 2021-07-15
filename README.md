@@ -25,3 +25,6 @@
 - GET: "/categories/:id": gets a category by id
 - PATCH: "/categories": updates a category
 - DELETE: "/categories/:id": deletes a category
+- POST: "/assessments/:assessmentId/categories/:categoryId": adds a category to an assessment
+- GET: "/assessments/:assessmentId/categories": gets all categories for an assessment
+- DELETE: "/assessments/:assessmentId/categories/:categoryId": deletes a category from an assessment

@@ -19,4 +19,10 @@ public interface CategoryDAO {
     Category updateCategory(Category category) throws ResourceNotFound, DuplicateResource, InvalidValue;
 
     void deleteCategory(int categoryId) throws ResourceNotFound, ResourceUnchangable;
+
+    Category addCategory(int assessmentId, int categoryId) throws ResourceNotFound, InvalidValue;
+
+    List<Category> getCategories(int assessmentId);
+
+    void removeCategory(int assessmentId, int categoryId) throws ResourceNotFound;
 }

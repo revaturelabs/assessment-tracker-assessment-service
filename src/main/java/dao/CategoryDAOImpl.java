@@ -114,4 +114,60 @@ public class CategoryDAOImpl implements CategoryDAO {
         category.setName(rs.getString("name"));
         return category;
     }
+
+    @Override
+    public Category addCategory(int assessmentId, int categoryId) throws ResourceNotFound, InvalidValue {
+        String sql = "INSERT INTO categories_junction VALUES (?,?)";
+        Category category = this.getCategory(categoryId);
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, assessmentId);
+            ps.setInt(2, categoryId);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return category;
+            }
+        } catch (SQLException e) {
+            if(e.getSQLState().equals("23503"))
+                throw new InvalidValue("Assessment ID doesn't match to a valid reference");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Category> getCategories(int assessmentId){
+        String sql = "SELECT DISTINCT * FROM categories INNER JOIN categories_junction ON categories.id = categories_junction.category_id WHERE assessment_id=?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, assessmentId);
+            ResultSet rs = ps.executeQuery();
+            List<Category> categories = new ArrayList<>();
+            while (rs.next()) {
+                categories.add(buildCategory(rs));
+            }
+            return categories;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void removeCategory(int assessmentId, int categoryId) throws ResourceNotFound {
+        String sql = "DELETE FROM categories_junction WHERE assessment_id=? AND category_id=?";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, assessmentId);
+            ps.setInt(2, categoryId);
+            int rowsChanged = ps.executeUpdate();
+            if (rowsChanged > 0) {
+                return;
+            }
+            else{
+                throw new ResourceNotFound(String.format("Category with assessment id %d and category %d couldn't be found", assessmentId, categoryId));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

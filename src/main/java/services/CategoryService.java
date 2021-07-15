@@ -9,6 +9,8 @@ import exceptions.ResourceUnchangable;
 import models.Category;
 
 public interface CategoryService {
+
+    Category createCategory(Category category) throws DuplicateResource, InvalidValue;
     
     List<Category> getCategories();
 
@@ -18,5 +20,9 @@ public interface CategoryService {
     
     void deleteCategory(int categoryId) throws ResourceNotFound, ResourceUnchangable;
 
-    Category createCategory(Category category) throws DuplicateResource, InvalidValue;
+    Category addCategory(int assessmentId, int categoryId) throws ResourceNotFound, InvalidValue;
+
+    List<Category> getCategories(int assessmentId);
+
+    void removeCategory(int assessmentId, int categoryId) throws ResourceNotFound;
 }
