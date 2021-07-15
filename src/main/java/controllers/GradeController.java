@@ -251,6 +251,7 @@ public class GradeController {
             int batchId = Integer.parseInt(context.pathParam("batchId"));
             int weekId = Integer.parseInt(context.pathParam("weekId"));
             List<Grade> grades = this.gradeService.getGrades(batchId, weekId);
+            context.contentType(CONTENT_TYPE_JSON);
             context.result(gson.toJson(grades));
             context.status(200);
         } catch (NumberFormatException e) {
