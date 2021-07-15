@@ -174,7 +174,7 @@ public class GradeDAOImpl implements GradeDAO {
         String sql = "SELECT * FROM grades INNER JOIN assessments ON assessments.id = grades.assessment_id WHERE batch_id=? AND week=?";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, batchId);
-            ps.setInt(2, weekId);
+            ps.setString(2, Integer.toString(weekId));
             ResultSet rs = ps.executeQuery();
             List<Grade> grades = new ArrayList<>();
             while (rs.next()) {
