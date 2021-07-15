@@ -4,7 +4,6 @@ import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Assessment;
-import models.Grade;
 import models.Note;
 
 import java.sql.SQLException;

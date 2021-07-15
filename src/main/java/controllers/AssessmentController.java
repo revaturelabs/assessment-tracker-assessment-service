@@ -95,13 +95,13 @@ public class AssessmentController {
             int traineeId = Integer.parseInt(context.pathParam("associateId"));
             aclogger.info("Attempting to get all assessments for trainee with id " + traineeId);
             List<Assessment> assessments = as.getAssessmentsByAssociateId(traineeId);
-            if(assessments.size() == 0){
-                throw new RuntimeException("The assessment for trainee " + traineeId + " could not be found");
+            if(assessments.isEmpty()){
+                throw new ResourceNotFound("The assessment for trainee " + traineeId + " could not be found");
             }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(assessments));
             context.status(200);
-        } catch (RuntimeException e) {
+        } catch (ResourceNotFound e) {
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);
@@ -125,13 +125,13 @@ public class AssessmentController {
             String week = Integer.toString(Integer.parseInt(context.pathParam("weekId")));
             aclogger.info("Attempting to get assessments for batch " + batchId + " for week " + week);
             List<Assessment> assessments = as.getBatchWeek(batchId, week);
-            if(assessments.size() == 0){
-                throw new RuntimeException("There are no assessments for the combination of batch " + batchId + " and week " + week);
+            if(assessments.isEmpty()){
+                throw new ResourceNotFound("There are no assessments for the combination of batch " + batchId + " and week " + week);
             }
             context.contentType(CONTENTTYPE);
             context.result(gson.toJson(assessments));
             context.status(200);
-        } catch (RuntimeException e) {
+        } catch (ResourceNotFound e) {
             aclogger.info(e);
             context.result(e.getMessage());
             context.status(404);

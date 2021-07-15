@@ -31,9 +31,7 @@ public class App {
     }
 
     private static void establishRoutes(Javalin app) {
-        // Need a Repo
-        // AssessmentRepo ar= new AssessmentRepo();
-        // Need a Service
+
         CategoryController categoryController = new CategoryController(new CategoryServiceImpl(new CategoryDAOImpl()));
         AssessmentTypeController assessmentTypeController = new AssessmentTypeController(new AssessmentTypeServiceImpl(new AssessmentTypeDAOImpl()));
         GradeController gradeController = new GradeController(new GradeServiceImpl(new GradeDAOImpl()));
@@ -47,12 +45,6 @@ public class App {
         app.get("/batches/:batchId/weeks/:weekId/assessments", ac.getBatchWeek);
         app.patch("/weight/:weight/assessments/:assessmentId", ac.adjustWeight);
         app.patch("/types/:typeId/assessments/:assessmentId",ac.assignAssessmentType);
-
-        // app.get("/assessments/:assessmentId/grade", ac.getGradeForAssociate); //assessments/3/grade?associateId=3
-        // app.get("/grades", ac.getGradesForWeek); //grades?traineeId=1&week=3
-        // app.put("/grades", ac.insertGrade);
-        // app.get("/grades/average", ac.getAverageGrade);
-        //app.get("/notes/:id/:weekid/", ac.getNotesForTrainee);
 
         app.post("/grades", gradeController.createGrade);
         app.get("/assessments/:assessmentId/associates/:associateId/grades", gradeController.getGradeForAssociateAssessment);

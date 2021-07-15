@@ -1,7 +1,6 @@
 package services;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import dao.AssessmentDAO;
@@ -9,7 +8,6 @@ import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Assessment;
-import models.Grade;
 import models.Note;
 
 public class AssessmentServiceImpl implements AssessmentService{
@@ -52,9 +50,6 @@ public class AssessmentServiceImpl implements AssessmentService{
 
     @Override
     public Assessment assignAssessmentType(int id, int typeId) throws ResourceNotFound, SQLException, InvalidValue {
-       // Assessment assessment = this.getAssessment(id);
-        //assessment.setTypeId(typeId);
-        //return this.updateAssessment(assessment);
         if (assessmentDAO.assignAssessmentType(id, typeId)) {
             return assessmentDAO.getAssessmentById(id);
         } else {
