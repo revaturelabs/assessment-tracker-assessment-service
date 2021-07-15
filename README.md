@@ -13,6 +13,7 @@
 - DELETE: "/grades/:gradeId": deletes a grade
 - GET: "/associates/:associateId/week/:weekId/grades": gets the week grades for an associate
 - GET: "/assessments/:assessmentId/grades/average": gets the average grade for an assessment
+- GET: "/batches/:batchId/week/:weekId/grades": /batches/:batchId/week/:weekId/grades
 
 - POST: "/types": creates an assessment type
 - GET: "/types": gets all assessment types
