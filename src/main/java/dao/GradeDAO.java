@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 
+import dtos.WeekAvg;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
@@ -25,4 +26,6 @@ public interface GradeDAO {
     double getAverageGrade(int assessmentId) throws ResourceNotFound;
 
     List<Grade> getGrades(int batchId, int weekId);
+
+    List<WeekAvg> getAvgWeek(int batchId, int weekId);
 }

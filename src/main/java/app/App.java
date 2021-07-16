@@ -53,6 +53,7 @@ public class App {
         app.get("/associates/:associateId/week/:weekId/grades", gradeController.getGradesForWeek);
         app.get("/assessments/:assessmentId/grades/average", gradeController.getAverageGrade);
         app.get("/batches/:batchId/week/:weekId/grades", gradeController.getGradesForBatchWeek);
+        app.get("/batches/:batchId/week/:weekId/grades/average", gradeController.getAvgForBatchWeek);
 
         app.post("types", assessmentTypeController.createAssessmentType);
         app.get("types", assessmentTypeController.getAssessmentTypes);
