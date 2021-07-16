@@ -3,6 +3,7 @@ package services;
 import java.util.List;
 
 import dao.GradeDAO;
+import dtos.WeekAvg;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
@@ -71,4 +72,6 @@ public class GradeServiceImpl implements GradeService {
         return this.gradeDAO.getGrades(batchId, weekId);
     }
 
+    @Override
+    public List<WeekAvg> getWeekAvg(int batchId, int weekId) { return this.gradeDAO.getAvgWeek(batchId, weekId);}
 }

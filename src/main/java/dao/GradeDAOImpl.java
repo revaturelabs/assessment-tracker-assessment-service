@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import dtos.WeekAvg;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
@@ -128,6 +129,13 @@ public class GradeDAOImpl implements GradeDAO {
         return grade;
     }
 
+    private WeekAvg buildWeekAvg(ResultSet rs) throws SQLException {
+        WeekAvg avg = new WeekAvg();
+        avg.setAverageScore(rs.getDouble("avg"));
+        avg.setAssessmentId(rs.getInt("assessment_id"));
+        return avg;
+    }
+
     @Override
     public List<Grade> getGradesForWeek(int associateId, int weekId) {
         String sql = "SELECT g.id, g.assessment_id, g.score, g.associate_id FROM grades as g JOIN assessments a "
@@ -180,6 +188,24 @@ public class GradeDAOImpl implements GradeDAO {
                 grades.add(buildGrade(rs));
             }
             return grades;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<WeekAvg> getAvgWeek(int batchId, int weekId) {
+        String sql = "SELECT assessment_id, avg(score) FROM grades INNER JOIN assessments ON assessments.id = grades.assessment_id WHERE batch_id=? AND week=? group by grades.assessment_id;";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setInt(1, batchId);
+            ps.setString(2, Integer.toString(weekId));
+            ResultSet rs = ps.executeQuery();
+            List<WeekAvg> avgs = new ArrayList<>();
+            while (rs.next()) {
+                avgs.add(buildWeekAvg(rs));
+            }
+            return avgs;
         } catch (SQLException e) {
             e.printStackTrace();
         }

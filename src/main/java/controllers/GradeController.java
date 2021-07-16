@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import dtos.WeekAvg;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
@@ -253,6 +254,34 @@ public class GradeController {
             List<Grade> grades = this.gradeService.getGrades(batchId, weekId);
             context.contentType(CONTENT_TYPE_JSON);
             context.result(gson.toJson(grades));
+            context.status(200);
+        } catch (NumberFormatException e) {
+            context.contentType(CONTENT_TYPE_TEXT);
+            context.result("Batch or week ID couldn't be parsed correctly");
+            context.status(400);
+        }
+    };
+
+    @OpenApi(
+            path = "batches/:batchId/week/:weekId/grades/average",
+            method = HttpMethod.GET,
+            summary = "Gets all average grades per assessment for a batch and week",
+            operationId = "getAvgForBatchWeek",
+            pathParams = {@OpenApiParam(name = "batchId", type = Integer.class, description = "The batch ID"),
+                    @OpenApiParam(name = "weekId", type = Integer.class, description = "The week ID")},
+            tags = {"Grade"},
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = WeekAvg[].class)}),
+                    @OpenApiResponse(status = "400", content = {@OpenApiContent(from = String.class)})
+            }
+    )
+    public Handler getAvgForBatchWeek = context -> {
+        try {
+            int batchId = Integer.parseInt(context.pathParam("batchId"));
+            int weekId = Integer.parseInt(context.pathParam("weekId"));
+            List<WeekAvg> avgs = this.gradeService.getWeekAvg(batchId, weekId);
+            context.contentType(CONTENT_TYPE_JSON);
+            context.result(gson.toJson(avgs));
             context.status(200);
         } catch (NumberFormatException e) {
             context.contentType(CONTENT_TYPE_TEXT);
