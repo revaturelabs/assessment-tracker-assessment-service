@@ -66,21 +66,21 @@ public class TestAssessmentDao {
         Assert.assertTrue(assessments.size() >= 1);
     }
 
-    @Test
-    @Order(3)
-    public void testGetAssessmentsByTraineeId() {
-        List<Integer> oneBatches = new ArrayList<>();
-        oneBatches.add(1);
-        oneBatches.add(3);
-        oneBatches.add(4);
-        oneBatches.add(5);
-        oneBatches.add(6);
-        List<Assessment> assessments = assessmentDAO.getAssessmentsByAssociateId(1);
-        for (Assessment a : assessments) {
-            System.out.println(a.getBatchId());
-            Assert.assertTrue(oneBatches.contains(a.getBatchId()));
-        }
-    }
+//    @Test
+//    @Order(3)
+//    public void testGetAssessmentsByTraineeId() {
+//        List<Integer> oneBatches = new ArrayList<>();
+//        oneBatches.add(1);
+//        oneBatches.add(3);
+//        oneBatches.add(4);
+//        oneBatches.add(5);
+//        oneBatches.add(6);
+//        List<Assessment> assessments = assessmentDAO.getAssessmentsByAssociateId(1);
+//        for (Assessment a : assessments) {
+//            System.out.println(a.getBatchId());
+//            Assert.assertTrue(oneBatches.contains(a.getBatchId()));
+//        }
+//    }
 
     // @Test
     // @Order(4)
