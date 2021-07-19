@@ -72,7 +72,7 @@ public class App {
     }
 
     private static OpenApiPlugin getConfiguredOpenApiPlugin() {
-        Info info = new Info().version("1.0").description("User API");
+        Info info = new Info().version("1.0").description("Assessment API");
         OpenApiOptions options = new OpenApiOptions(info)
                 .activateAnnotationScanningFor("app")
                 .path("/swagger-docs") // endpoint for OpenAPI json
