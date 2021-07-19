@@ -8,7 +8,6 @@ import exceptions.ResourceUnchangable;
 import models.Assessment;
 import models.AssessmentType;
 import models.Grade;
-import models.Note;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.jupiter.api.MethodOrderer;
@@ -21,7 +20,6 @@ import org.junit.Test;
 import services.GradeService;
 import services.GradeServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -124,13 +122,6 @@ public class TestAssessmentDao {
     //        fail();
     //    }
     //}
-
-    @Test
-    @Order(8)
-    public void testGetNotesForTrainee() {
-        List<Note> notes = assessmentDAO.getNotesForTrainee(1, 1);
-        Assert.assertNotNull(notes.get(0));
-    }
 
     @Test
     @Order(9)

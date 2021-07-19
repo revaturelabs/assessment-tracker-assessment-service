@@ -4,7 +4,6 @@ import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
 import exceptions.ResourceUnchangable;
 import models.Assessment;
-import models.Note;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -28,9 +27,5 @@ public interface AssessmentService {
     List<Assessment> getBatchWeek(int batchId, String weekId);
 
     List<Assessment> getAssessmentsByAssociateId(int associateId);
-
-    //BUG - To extract
-    List<Note> getNotesForTrainee(int id, int weekId);
-
 
 }
