@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import dtos.CatAvg;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
@@ -115,6 +116,14 @@ public class CategoryDAOImpl implements CategoryDAO {
         return category;
     }
 
+    private CatAvg buildCatAvg(ResultSet rs) throws SQLException {
+        CatAvg avg = new CatAvg();
+        avg.setTitle(rs.getString("title"));
+        avg.setAssessmentId(rs.getInt("assessment_id"));
+        avg.setAverageScore(rs.getDouble("avg"));
+        return avg;
+    }
+
     @Override
     public Category addCategory(int assessmentId, int categoryId) throws ResourceNotFound, InvalidValue {
         String sql = "INSERT INTO categories_junction VALUES (?,?)";
@@ -168,6 +177,26 @@ public class CategoryDAOImpl implements CategoryDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<CatAvg> getAvgCategory(String categoryName) {
+        String sql = "SELECT avg, assessment_id, title FROM (SELECT avg(score), grades.assessment_id FROM " +
+                "(SELECT DISTINCT name, assessment_id, category_id FROM categories INNER JOIN categories_junction ON " +
+                "categories.id = categories_junction.category_id WHERE name = ?) t1 INNER JOIN grades ON (grades.assessment_id =" +
+                " t1.assessment_id) GROUP BY grades.assessment_id) t2 INNER JOIN assessments ON (assessments.id = t2.assessment_id)";
+        try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
+            ps.setString(1, categoryName);
+            ResultSet rs = ps.executeQuery();
+            List<CatAvg> avgs = new ArrayList<>();
+            while (rs.next()) {
+                avgs.add(buildCatAvg(rs));
+            }
+            return avgs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
 }
