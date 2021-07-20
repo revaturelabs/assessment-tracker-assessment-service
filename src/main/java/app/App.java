@@ -69,6 +69,7 @@ public class App {
         app.post("/assessments/:assessmentId/categories/:categoryId", categoryController.addCategoryToAssessment);
         app.get("/assessments/:assessmentId/categories", categoryController.getCategoriesForAssessment);
         app.delete("/assessments/:assessmentId/categories/:categoryId", categoryController.deleteCategoryForAssessment);
+        app.get("/categories/:categoryName/averages", categoryController.getAvgCategories);
     }
 
     private static OpenApiPlugin getConfiguredOpenApiPlugin() {

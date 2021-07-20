@@ -263,7 +263,7 @@ public class GradeController {
     };
 
     @OpenApi(
-            path = "batches/:batchId/week/:weekId/grades/average",
+            path = "/batches/:batchId/week/:weekId/grades/average",
             method = HttpMethod.GET,
             summary = "Gets all average grades per assessment for a batch and week",
             operationId = "getAvgForBatchWeek",

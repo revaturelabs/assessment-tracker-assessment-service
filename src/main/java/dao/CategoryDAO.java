@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 
+import dtos.CatAvg;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
@@ -83,4 +84,11 @@ public interface CategoryDAO {
      * @throws ResourceNotFound - If assessment ID and category ID were not found together
      */
     void removeCategory(int assessmentId, int categoryId) throws ResourceNotFound;
+
+    /**
+     * Returns the average grade per assessment for assessments of a given category
+     * @param categoryName The name of the category to get the assessments from
+     * @return A list of pairs of assessment ids and their averages
+     */
+    List<CatAvg> getAvgCategory(String categoryName);
 }

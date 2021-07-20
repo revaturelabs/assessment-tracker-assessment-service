@@ -3,6 +3,7 @@ package services;
 import java.util.List;
 
 import dao.CategoryDAO;
+import dtos.CatAvg;
 import exceptions.DuplicateResource;
 import exceptions.InvalidValue;
 import exceptions.ResourceNotFound;
@@ -57,5 +58,10 @@ public class CategoryServiceImpl implements CategoryService{
         // TODO Auto-generated method stub
         
     }
-    
+
+    @Override
+    public List<CatAvg> getAvgCategory(String categoryName) {
+        return this.categoryDAO.getAvgCategory(categoryName);
+    }
+
 }

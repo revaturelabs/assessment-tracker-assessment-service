@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import dtos.CatAvg;
 import io.javalin.http.Handler;
 import io.javalin.plugin.openapi.annotations.*;
 import services.CategoryService;
@@ -284,5 +285,26 @@ public class CategoryController {
             context.result("Category or assessment ID couldn't be parsed correctly");
             context.status(400);
         }
+    };
+
+    @OpenApi(
+            path = "/categories/:categoryName/averages",
+            method = HttpMethod.GET,
+            summary = "Gets averages of all assessments of a given category",
+            operationId = "getAvgCategories",
+            pathParams = {
+                    @OpenApiParam(name = "categoryName", type = String.class, description = "The category name")},
+            tags = {"Category"},
+            responses = {
+                    @OpenApiResponse(status = "200", content = {@OpenApiContent(from = CatAvg[].class)}),
+
+            }
+    )
+    public Handler getAvgCategories = context -> {
+        String categoryName = context.pathParam("categoryName");
+        List<CatAvg> avgs = this.categoryService.getAvgCategory(categoryName);
+        context.contentType(CONTENT_TYPE_JSON);
+        context.result(gson.toJson(avgs));
+        context.status(200);
     };
 }
