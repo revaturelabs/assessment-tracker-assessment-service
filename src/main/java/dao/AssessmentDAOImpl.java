@@ -188,7 +188,7 @@ public class AssessmentDAOImpl implements AssessmentDAO {
 
     @Override
     public List<Assessment> getBatchWeek(int batchId, String weekId) {
-        String sql = "SELECT * FROM assessments WHERE batch_id = ? AND week = ?";
+        String sql = "SELECT * FROM assessments WHERE batch_id = ? AND week = ? ORDER BY id";
         try (PreparedStatement ps = ConnectionDB.getConnection().prepareStatement(sql)) {
             ps.setInt(1, batchId);
             ps.setString(2, weekId);
